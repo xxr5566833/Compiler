@@ -1,9 +1,7 @@
 // main.cpp: 定义控制台应用程序的入口点。
 //
-
-#include "stdafx.h"
 #include "Compiler.h"
-
+#include "stdafx.h"
 /*//程序部分开始
 const char _ = '_', p_ = '+', m__ = '-', s0 = '*', d_0 = '/', a0a = 'a', _00 = '0'; 	//7种代表的标识符全了
 const int _zero = 0, _num = 4, _pnum = +3, _mnum = -9;
