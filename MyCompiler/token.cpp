@@ -89,6 +89,7 @@ void Compiler:: initWordArray()
 	this->wordOutput[NOTYPE] = "NOTYPE";
 	this->wordOutput[ID] = "ID";
 	this->wordOutput[UNSIGNEDINT] = "UNSIGNEDINT";
+	this->wordOutput[ZERO] = "ZERO";
 	this->wordOutput[SINGLECHAR] = "SINGLECHAR";
 	this->wordOutput[STRING] = "STRING";
 	this->wordOutput[CONST] = "CONST";
@@ -391,6 +392,7 @@ void Compiler::inSym()
 		if(this->isZero())
 		{
 			this->tok.val.number = 0;
+			this->tok.id = ZERO;
 		}
 		else{
 			this->nextChar();
@@ -407,9 +409,9 @@ void Compiler::inSym()
 				this->warningHandle(NUMTOOBIG);	
 			}
 			this->tok.val.number = atoi(this->sym.substr(0, kMaxDigits).c_str());
-			this->tok.output = new std::string(this->sym);
+			this->tok.id = UNSIGNEDINT;
 		}
-		this->tok.id = UNSIGNEDINT;
+		this->tok.output = new std::string(this->sym);
 		return ;
 	}
 	if(this->isLess())

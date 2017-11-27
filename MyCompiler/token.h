@@ -8,6 +8,8 @@ enum tokenType {
 	ID,
 	//无符号整数常量
 	UNSIGNEDINT,
+	//0单独作为一类，以保证和老师给定的无符号整数相一致
+	ZERO,
 	//字符常量
 	SINGLECHAR,
 	//字符串常量
