@@ -3,9 +3,7 @@
 
 Compiler::Compiler(char *path)
 {
-	std::cout << path << std::endl;
 	this->file = std::fstream(path, std::ios::in);
-	std::cout << path << std::endl;
 	if(!this->file)
 	{
 		std::cout << "文件路径不存在！" << std::endl;
