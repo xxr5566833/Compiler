@@ -320,12 +320,12 @@ void Compiler::handleSym()
 void Compiler::inSym()
 {
 	this->tok.id = NOTYPE;
-	this->nextChar();
-	this->skipSpace();
 	if(this->isEof())
 	{
 		return ;
 	}
+	this->nextChar();
+	this->skipSpace();
 	this->clearSym();
 	if (this->isLetter()) 
 	{
@@ -337,6 +337,7 @@ void Compiler::inSym()
 		}
 		this->retract();
 		this->handleSym();
+		//std::cout << this->sym << std::endl;
 		return ;
 	}
 	if (this->isSq())
@@ -362,6 +363,7 @@ void Compiler::inSym()
 		else {
 			this->errorHandle(INVALIDCHAR);
 		}
+		//std::cout << this->sym << std::endl;
 		return ;
 	}
 	if (this->isDq())
@@ -384,6 +386,7 @@ void Compiler::inSym()
 		else {
 			this->errorHandle(DQMISMATCH);
 		}
+		//std::cout << this->sym << std::endl;
 		return ;
 	}
 	if(this->isNumber())
@@ -412,6 +415,7 @@ void Compiler::inSym()
 			this->tok.id = UNSIGNEDINT;
 		}
 		this->tok.output = new std::string(this->sym);
+		//std::cout << this->sym << std::endl;
 		return ;
 	}
 	if(this->isLess())
@@ -431,6 +435,7 @@ void Compiler::inSym()
 			this->tok.val.c = LESSSY;
 			this->tok.output = new std::string(this->sym);
 		}
+		//std::cout << this->sym << std::endl;
 		return ;
 	}
 	if(this->isMore())
@@ -450,6 +455,7 @@ void Compiler::inSym()
 			this->tok.val.c = MORESY;
 			this->tok.output = new std::string(this->sym);
 		}
+		//std::cout << this->sym << std::endl;
 		return ;
 	}
 	if(this->isEqu())
@@ -469,6 +475,7 @@ void Compiler::inSym()
 			this->tok.val.c = ASSIGNSY;
 
 		}
+		//std::cout << this->sym << std::endl;
 		return ;
 	}
 	if(this->isEm())
@@ -485,10 +492,12 @@ void Compiler::inSym()
 			this->retract();
 			this->errorHandle(ONLYEM);
 		}
+		//std::cout << this->sym << std::endl;
 		return ;
 	}
 	//接下来就是一些单字符,接下来只需要区分它们的id就好
 	this->symAppend();
+	//std::cout << this->sym << std::endl;
 	this->tok.val.c = this->c;
 	switch(this->c)
 	{

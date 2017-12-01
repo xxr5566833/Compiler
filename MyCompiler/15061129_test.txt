@@ -24,18 +24,18 @@ int _4fib(int num)
 			fib2 = fibarray[num - 2];
 			temp = fib1 + fib2; 
 			fibarray[num] = temp;						
-			return temp ;
+			return (temp) ;
 		}
 		else{
 		
 			if(num)								
 			{
 				fibarray[1] = 1;
-				return 1;
+				return (1);
 			}
 			else{
 				fibarray[0] = + 0;							
-				return - 0;
+				return (- 0);
 			}
 		}
 	;
@@ -60,7 +60,7 @@ void printChar(char c, int num)
 char returnStar
 {
 	printf('*');											
-	return '*';												
+	return ('*');												
 }
 void main()													
 {
@@ -68,7 +68,8 @@ void main()
 	int testarray[10], max, i, num, _no;
 	char c;
 	
-	i = 0;
+	int i ;
+	i = 0 ;
 	while(i <= 999)
 	{
 		fibarray[i] = - i;
@@ -177,4 +178,4 @@ void main()
 		default: printf("out of range!");
 	}
 	
-}
+

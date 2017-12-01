@@ -13,6 +13,7 @@ class Compiler
 public:
 	Compiler(char *path);
 	void begin();
+	void to();
 	~Compiler();
 
 private:
@@ -76,11 +77,44 @@ private:
 
 	//判断标识符或者保留字是否相等
 	bool isIdEqual(std::string id1, std::string id2);
-
-
-
 	//处理sym
 	void handleSym();
+
+	//语法分析相关：
+	//判断
+	bool isInRange(const tokenType range[], int size);
+	//语法成分：
+	void int_();
+	void constDef();
+	void constState();
+	void constant();
+	void varParaList();
+	void factor();
+	void term();
+	void expression();
+	void varDef();
+	void decHead();
+	void para();
+	void noParaFuncDef();
+	void haveParaFuncDef();
+	void notMainVoidFuncDef();
+	void mainDef();
+	void beginWithFunc();
+	void beginWithVar();
+	void program();
+	void condition();
+	void ifStatement();
+	void caseStatement();
+	void caseTab();
+	void switchStatement();
+	void whileStatement();
+	void scanfStatement();
+	void printfStatement();
+	void returnStatement();
+	void statement();
+	void statementList();
+	void varState();
+	void comStatement();
 
 	//处理错误
 	//词法分析的错误
@@ -96,5 +130,7 @@ private:
 	void warningHandle(warningType warningId);
 	void warningSetup();
 	void warningPrint();
+
+
 };
 
