@@ -27,8 +27,8 @@ int main(int argc, char *argv[])
 	std::cout << sizeof(INT_BEGIN) << std::endl;*/
 	//char path[50] ;
 	char path[50];
+	std::cout << "请输入文件路径 :" << std::endl;
 	std::cin >> path;
-
 	Compiler *c = new Compiler(path);
 	c->begin();
 }
