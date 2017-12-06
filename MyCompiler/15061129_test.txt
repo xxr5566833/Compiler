@@ -28,7 +28,7 @@ int _4fib(int num)
 		}
 		else{
 		
-			if(num)								
+			if(_num)								
 			{
 				fibarray[1] = 1;
 				return (1);
@@ -68,7 +68,6 @@ void main()
 	int testarray[10], max, i, num, _no;
 	char c;
 	
-	int i ;
 	i = 0 ;
 	while(i <= 999)
 	{
@@ -82,8 +81,6 @@ void main()
 	printf( - fibarray[+ _zero]);				 
 	printf(" ");
 	printf( + fibarray[- - 9]);	
-	printf(" ");
-	printf( fibarray['a']);
 	printf(" ");
 	printf( + (- ___num));		
 	printf(" ");
@@ -177,5 +174,6 @@ void main()
 		case 4: printf(4);
 		default: printf("out of range!");
 	}
+}
 	
 

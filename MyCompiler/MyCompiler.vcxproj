@@ -77,6 +77,8 @@
     <ClCompile Include="Compiler.cpp" />
     <ClCompile Include="errorHandler.cpp" />
     <ClCompile Include="grammar.cpp" />
+    <ClCompile Include="midcode.cpp" />
+    <ClCompile Include="symbolTab.cpp" />
     <ClCompile Include="test.cpp" />
     <ClCompile Include="token.cpp" />
     <ClCompile Include="main.cpp" />
@@ -87,7 +89,9 @@
     <ClInclude Include="Compiler.h" />
     <ClInclude Include="errorHandler.h" />
     <ClInclude Include="grammar.h" />
+    <ClInclude Include="midcode.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="symbolTab.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="token.h" />
     <ClInclude Include="warningHandler.h" />

@@ -35,11 +35,8 @@ char toLower(char x)
     if(x<65){
         printf("Please check your letter.");
     }else{
-        if(x>90){
-            printf("Please check your letter.");
-        }else{
-            x=x+32;
-        }
+        printf("Please check your letter.");
+
     }
     return (x);
 }
@@ -49,11 +46,7 @@ char toUpper(char x)
     if(x>122){
         printf("Please check your letter.");
     }else{
-        if(x<97){
-            printf("Please check your letter.");
-        }else{
-            x=x-32;
-        }
+        printf("Please check your letter.");
     }
     return (x);
 }
@@ -69,6 +62,7 @@ void exprCheck
 {
     int a,b;
     char op;
+    int res;
     printf("------Expression Check Start------");
     printf("Please input two operands and an operation (eg:5,+,2):");
     scanf(a,op,b);
@@ -115,7 +109,7 @@ void arrayChek
     printf("Please input (size,step(default is 1),start) of an array:");
     scanf(size,step,start);
     if(step!=0){
-        stepSet(st);
+        stepSet(step);
     }else{
         stepSet(1);
     }

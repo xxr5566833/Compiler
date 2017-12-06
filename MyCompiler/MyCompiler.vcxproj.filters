@@ -39,6 +39,12 @@
     <ClCompile Include="grammar.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="symbolTab.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="midcode.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Compiler.h">
@@ -60,6 +66,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="grammar.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="symbolTab.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="midcode.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

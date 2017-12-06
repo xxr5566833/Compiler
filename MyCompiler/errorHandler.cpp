@@ -1,4 +1,3 @@
-#include "errorHandler.h"
 #include "Compiler.h"
 
 //一些错误输出语句的说明
@@ -53,6 +52,40 @@ const char *NOTCASEMSG = "缺少 case";
 const char *NOTRBRACEMSG = "缺少 右大括号}";
 
 const char *NOTVARDEFMSG = "不是变量定义的正确符号 [ ; 或 ,";
+
+//语义：
+
+const char *DUPLICATEDEFMSG = "标识符重复定义！";
+
+const char *PARATYPEDISMATCHMSG = "值参类型与形参类型不一致!";
+
+const char *PARANUMDISMATCHMSG = "值参和形参的数量不一致";
+
+const char *IDNOTDEFMSG = "标识符未定义";
+
+const char *NOTAINTMSG = "不是一个int型表达式";
+
+const char *NOTANARRAYMSG = "不是一个数组类型的标识符";
+
+const char *NOTAFUNCMSG = "标识符不是一个函数名";
+
+const char *NOTANOPARAFUNCMSG = "不是一个无参的函数";
+
+const char *INVALIDIDMSG = "不是一个被正确使用的标识符";
+
+const char *NOTASIMPLEMSG = "不是一个简单变量标识符";
+
+const char *CASESWITCHDISMATCHMSG = "case语句的常量类型和switch语句的表达式类型不一致！";
+
+const char *NONERETURNMSG = "有返回值类型的函数没有一句return。";
+
+const char *CANNOTRETURNMSG = "void不能return 一个实际的值";
+
+const char *RETURNTYPEDISMATCHMSG = "return的类型和函数定义时的类型不一致";
+
+const char *INTTOCHARNOTALLOWMSG = "不允许从把int类型赋给char类型！";
+
+const char *NORETURNVALUEMSG = "不是一个有返回值的函数";
  
 void Compiler:: errorHandle(errorType id)
 {
@@ -92,6 +125,23 @@ void Compiler:: errorSetup()
 	this->errorMsgList[NOTCASE]				=	new std::string(NOTCASEMSG);
 	this->errorMsgList[NOTRBRACE]			=	new std::string(NOTRBRACEMSG);
 	this->errorMsgList[NOTVARDEF]			=	new std::string(NOTVARDEFMSG);
+	
+	//语义和符号表：
+	this->errorMsgList[DUPLICATEDEF]		=	new std::string(DUPLICATEDEFMSG);
+	this->errorMsgList[PARATYPEDISMATCH]	=	new std::string(PARATYPEDISMATCHMSG);
+	this->errorMsgList[PARANUMDISMATCH]		=	new std::string(PARANUMDISMATCHMSG);
+	this->errorMsgList[IDNOTDEF]			=	new std::string(IDNOTDEFMSG);
+	this->errorMsgList[NOTAINT]				=	new std::string(NOTAINTMSG);
+	this->errorMsgList[NOTANARRAY]			=	new std::string(NOTANARRAYMSG);	
+	this->errorMsgList[NOTAFUNC]			=	new std::string(NOTAFUNCMSG);
+	this->errorMsgList[NOTANOPARAFUNC]		=	new std::string(NOTANOPARAFUNCMSG);
+	this->errorMsgList[INVALIDID]			=	new std::string(INVALIDIDMSG);
+	this->errorMsgList[NOTASIMPLE]			=	new std::string(NOTASIMPLEMSG);
+	this->errorMsgList[CASESWITCHDISMATCH]	=	new std::string(CASESWITCHDISMATCHMSG);
+	this->errorMsgList[NONERETURN]			=	new std::string(NONERETURNMSG);
+	this->errorMsgList[RETURNTYPEDISMATCH]	=	new std::string(RETURNTYPEDISMATCHMSG);
+	this->errorMsgList[INTTOCHARNOTALLOW]	=	new std::string(INTTOCHARNOTALLOWMSG);
+	this->errorMsgList[NORETURNVALUE]		=	new std::string(NORETURNVALUEMSG);
 }
 
 void Compiler:: errorPrint()

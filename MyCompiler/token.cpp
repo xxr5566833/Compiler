@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Compiler.h"
 #include "token.h"
 #include "errorHandler.h"
@@ -195,17 +194,6 @@ void Compiler::skipSpace()
 	}
 }
 
-void Compiler:: skipNote()
-{
-	if(this->c == '//')
-	{
-		this->nextChar();
-		while(this->c != '\n')
-		{
-			this->nextChar();
-		}
-	}
-}
 
 
 //≈–∂œ¿‡–Õ

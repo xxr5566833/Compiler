@@ -6,26 +6,10 @@
 
 
 
-unsigned int BKDRHash(char *str)
-{
-    unsigned int seed = 131; // 31 131 1313 13131 131313 etc..
-    unsigned int hash = 0;
- 
-    while (*str)
-    {
-        hash = hash * seed + (*str++);
-    }
- 
-    return (hash & 0x00000FFF);
-}
-
 
 int main(int argc, char *argv[])
 {
-	/*const tokenType s[] = {INT, CHAR};
-	const tokenType INT_BEGIN[] = {PLUS, MINUS, ZERO, UNSIGNEDINT};
-	std::cout << sizeof(INT_BEGIN) << std::endl;*/
-	//char path[50] ;
+
 	char path[50];
 	std::cout << "请输入文件路径 :" << std::endl;
 	std::cin >> path;

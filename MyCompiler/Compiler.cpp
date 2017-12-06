@@ -9,6 +9,7 @@ Compiler::Compiler(char *path)
 		std::cout << "文件路径不存在！" << std::endl;
 		exit(0);
 	}
+	this->midFile = std::fstream("midcode.txt",std::ios::out);
 	this->sym = std::string();
 	this->lineCount = 0;
 	this->warningList = std::vector<warning*>();
@@ -24,26 +25,13 @@ Compiler::~Compiler()
 
 void Compiler:: begin()
 {
+	//符号表初始化
+	this->initSymTab();
+	this->initMidCode();
 	this->setup();
 	this->initWordArray();
 	int i = 0;
 	this->program();
-	this->warningPrint();
-	this->errorPrint();
-}
-
-void Compiler:: to()
-
-{
-	this->setup();
-	this->initWordArray();
-	int i = 0;
-	while(!this->file.eof())
-	{
-		this->inSym();
-		std::cout << this->sym << " ";
-		std::cout << *(this->tok.output) << std::endl;
-	}
 	this->warningPrint();
 	this->errorPrint();
 }

@@ -1,0 +1,347 @@
+init   _4fib
+= num  $_0
+-  $_0 $_0
+= 1  $_1
+-  $_1 $_1
+<= $_0 $_1 Label_0
+= num  $_2
+= 1  $_3
+- $_2 $_3 $_2
+=[] fibarray $_2 $_4
+= $_4  $_5
+= 1  $_6
+-  $_6 $_6
+> $_5 $_6 Label_2
+= num  $_7
+= 1  $_8
+- $_7 $_8 $_7
+=[] fibarray $_7 $_9
+= $_9  $_10
+= $_10  fib1
+goto   Label_3
+  Label_2
+= num  $_11
+= 1  $_12
+- $_11 $_12 $_11
+push   $_11
+call   _4fib
+= RET  $_13
+= $_13  fib1
+  Label_3
+= num  $_14
+= 2  $_15
+- $_14 $_15 $_14
+=[] fibarray $_14 $_16
+= $_16  $_17
+= $_17  fib2
+= fib1  $_18
+= fib2  $_19
++ $_18 $_19 $_18
+= $_18  temp
+= num  $_20
+= temp  $_21
+[]= $_21 $_20 fibarray
+= temp  $_22
+= $_22  RET
+goto   Label_1
+  Label_0
+= _num  $_23
+== $_23 0 Label_4
+= 1  $_24
+= 1  $_25
+[]= $_25 $_24 fibarray
+= 1  $_26
+= $_26  RET
+goto   Label_5
+  Label_4
+= 0  $_27
+= 0  $_28
+[]= $_28 $_27 fibarray
+= 0  $_29
+-  $_29 $_29
+= $_29  RET
+  Label_5
+  Label_1
+ret   _4fib
+init   printStar
+printf   0
+ret   printStar
+init   printChar
+= num  $_30
+= 0  $_31
+!= $_30 $_31 Label_6
+goto   Label_7
+  Label_6
+= c  $_32
+printf char  $_32
+= c  $_33
+push   $_33
+= num  $_34
+= 1  $_35
+- $_34 $_35 $_34
+push   $_34
+call   printChar
+  Label_7
+ret   printChar
+init   returnStar
+= 42  $_36
+printf char  $_36
+= 42  $_37
+= $_37  RET
+ret   returnStar
+init   name
+= 0  $_38
+= $_38  i
+  Label_8
+= i  $_39
+= 999  $_40
+> $_39 $_40 Label_9
+= i  $_41
+= i  $_42
+-  $_42 $_42
+[]= $_42 $_41 fibarray
+= i  $_43
+= 1  $_44
++ $_43 $_44 $_43
+= $_43  i
+goto   Label_8
+  Label_9
+= _  $_45
+printf char  $_45
+printf   1
+= _zero  $_46
+=[] fibarray $_46 $_47
+= $_47  $_48
+-  $_48 $_48
+printf int  $_48
+printf   2
+= -9  $_49
+-  $_49 $_49
+=[] fibarray $_49 $_50
+= $_50  $_51
+printf int  $_51
+printf   3
+= ___num  $_52
+-  $_52 $_52
+= $_52  $_53
+printf int  $_53
+printf   4
+= 100  $_54
+= $_54  $_55
+-  $_55 $_55
+printf int  $_55
+printf   5
+= 23  $_56
+-  $_56 $_56
+printf int  $_56
+printf   6
+= 97  $_57
+-  $_57 $_57
+printf int  $_57
+printf   7
+= _num  $_58
+push   $_58
+call   _4fib
+= RET  $_59
+push   $_59
+call   _4fib
+= RET  $_60
+-  $_60 $_60
+printf int  $_60
+printf   8
+= 97  $_61
+-  $_61 $_61
+= $_61  $_62
+= 98  $_63
+* $_62 $_63 $_62
+printf int  $_62
+printf   9
+= __num  $_64
+push   $_64
+call   _4fib
+= RET  $_65
+= 6  $_66
+push   $_66
+call   _4fib
+\ $_65 RET $_65
+printf int  $_65
+printf   10
+= _k1  $_67
+* $_67 _k2 $_67
+printf int  $_67
+printf   11
+= _k1  $_68
+\ $_68 _k2 $_68
+printf int  $_68
+printf   12
+= 97  $_69
+-  $_69 $_69
+= $_69  $_70
+= 98  $_71
+* $_70 $_71 $_70
+= __num  $_72
+push   $_72
+call   _4fib
+= RET  $_73
+= 6  $_74
+push   $_74
+call   _4fib
+\ $_73 RET $_73
++ $_70 $_73 $_70
+printf int  $_70
+printf   13
+= _k1  $_75
+* $_75 _k2 $_75
+= _k1  $_76
+\ $_76 _k2 $_76
+- $_75 $_76 $_75
+printf int  $_75
+printf   14
+= _k2  $_77
+-  $_77 $_77
+= _k3  $_78
+= _k3  $_79
++ $_78 $_79 $_78
+= $_78  $_80
++ $_77 $_80 $_77
+printf int  $_77
+printf   15
+= _k3  $_81
+= _k1  $_82
+= -9  $_83
+-  $_83 $_83
+=[] fibarray $_83 $_84
+= $_84  $_85
++ $_82 $_85 $_82
+* $_81 $_82 $_81
+printf int  $_81
+printf   16
+= _k4  $_86
+printf char  $_86
+= _k5  $_87
+printf char  $_87
+= _k6  $_88
+printf char  $_88
+= _k7  $_89
+printf char  $_89
+= _k8  $_90
+printf char  $_90
+= _k9  $_91
+printf char  $_91
+printf   17
+= 3  $_92
+= $_92  max
+= max  $_93
+= $_93  i
+  Label_10
+= i  $_94
+== $_94 0 Label_11
+call   printStar
+= i  $_95
+= 1  $_96
+- $_95 $_96 $_95
+= $_95  i
+goto   Label_10
+  Label_11
+printf   18
+scanf int  num
+scanf char  c
+= c  $_97
+push   $_97
+= max  $_98
+push   $_98
+call   printChar
+printf   19
+= num  $_99
+= 2  $_100
+>= $_99 $_100 Label_12
+printf   20
+goto   Label_13
+  Label_12
+= num  $_101
+= 45  $_102
+<= $_101 $_102 Label_14
+printf   21
+goto   Label_15
+  Label_14
+= num  $_103
+push   $_103
+call   _4fib
+printf   22
+  Label_16
+= num  $_104
+= 0  $_105
+< $_104 $_105 Label_17
+printf   23
+= num  $_106
+printf int  $_106
+printf   24
+= num  $_107
+=[] fibarray $_107 $_108
+= $_108  $_109
+-  $_109 $_109
+= $_109  $_110
+-  $_110 $_110
+printf int  $_110
+printf   25
+= num  $_111
+= 1  $_112
+- $_111 $_112 $_111
+= $_111  num
+goto   Label_16
+  Label_17
+  Label_15
+  Label_13
+printf   26
+= max  $_113
+= $_113  i
+  Label_18
+= i  $_114
+= 0  $_115
+== $_114 $_115 Label_19
+call   returnStar
+call   returnStar
+= RET  $_116
+printf char  $_116
+= i  $_117
+= 1  $_118
+- $_117 $_118 $_117
+= $_117  i
+goto   Label_18
+  Label_19
+printf   27
+scanf int  num
+= num  $_119
+= 0  $_120
+!= $_120 $_119 Label_21
+= 0  $_121
+printf int  $_121
+goto   Label_20
+  Label_21
+= 1  $_122
+!= $_122 $_119 Label_22
+= 1  $_123
+printf int  $_123
+goto   Label_20
+  Label_22
+= 2  $_124
+!= $_124 $_119 Label_23
+= 2  $_125
+printf int  $_125
+goto   Label_20
+  Label_23
+= 3  $_126
+!= $_126 $_119 Label_24
+= 3  $_127
+printf int  $_127
+goto   Label_20
+  Label_24
+= 4  $_128
+!= $_128 $_119 Label_25
+= 4  $_129
+printf int  $_129
+goto   Label_20
+  Label_25
+printf   28
+  Label_20
+ret   name
