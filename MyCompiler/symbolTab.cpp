@@ -59,7 +59,7 @@ symbol* Compiler:: push(std::string *name, eRetType returntype, eSymType symbolt
 
 	this->symTab[this->top++] = sym;
 
-	this->printSymTab();
+	//this->printSymTab();
 	return sym;
 }
 
@@ -81,10 +81,11 @@ void Compiler:: pop()
 		int hashindex = Hash(sym->name->c_str());
 		this->symHash[hashindex] = sym->link;
 		//把从原来的符号表中删除的符号信息保存到分函数符号表中
-		this->funcSymTab[this->funcNum][symindex ++] = sym;
+		this->funcSymTab[this->funcNum][this->top - this->index] = sym;
 	}
 	//说明this->top-1处一定是一个函数，设置它的ref域为在函数表中的位置
 	this->symTab[this->top - 1]->ref = this->funcNum;
+	this->funcMaxAddress[this->funcNum] = this->address;
 	this->index = 0;
 	this->address = this->globalAddress;
 	this->currentFuncSymNum = 0;
@@ -99,6 +100,7 @@ void Compiler :: inFunc()
 	this->globalAddress = this->address;
 	this->address = 0;
 }
+
 
 bool Compiler:: find(std::string *name, symbol **sym, bool local)
 {

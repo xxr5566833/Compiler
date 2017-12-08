@@ -373,7 +373,7 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 			{
 				//执行相关函数调用
 				this->pushMidCode(CALLOP, new std::string(), new std::string(), sym->name);
-				resultoperand = new std::string("RET");
+				resultoperand = new std::string("#RET");
 				this->inSym();
 			}
 			else{
@@ -395,7 +395,7 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 					return ;
 				}
 				this->pushMidCode(CALLOP, new std::string(), new std::string(), sym->name);
-				resultoperand = new std::string("RET");
+				resultoperand = new std::string("#RET");
 			}
 			//不要忘记常量标识符
 			else if(sym->symbolType == CONSTSYM){
@@ -480,7 +480,7 @@ void Compiler:: expression(eRetType *resulttype, std::string *operand)
 	this->term(resulttype, termoperand1);
 	if(neg)
 	{
-		this->pushMidCode(NEGOP, new std::string(), termoperand1, termoperand1);
+		this->pushMidCode(NEGOP, termoperand1, new std::string(), termoperand1);
 	}
 	*resulttype = flag ? INTRET : *resulttype;
 	while(this->tok.id ==PLUS || this->tok.id == MINUS)
@@ -796,13 +796,14 @@ void Compiler:: mainDef()
 		this->errorHandle(NOTLBRACE);
 	}
 	bool returnflag = false;
-	this->pushMidCode(FUNCBEGINOP, new std::string(), new std::string(), new std::string("name"));
+	this->pushMidCode(FUNCBEGINOP, new std::string(), new std::string(), new std::string("main"));
 	this->comStatement(&returnflag, VOIDRET);
 	//这里类型是void，不需要检查有没有return
 	if(this->tok.id == RBRACE)
 	{
 		this->pop();
 		std::cout << "这是一个 <主函数定义>" << std::endl;
+
 		this->pushMidCode(EXITOP, new std::string(), new std::string(), new std::string());
 		return ;
 	}
@@ -1349,7 +1350,7 @@ void Compiler:: returnStatement(bool *returnflag, eRetType returntype)
 		else 
 		{
 			//int / char
-			this->pushMidCode(ASSIGNOP, temp, new std::string(), new std::string("RET"));
+			this->pushMidCode(ASSIGNOP, temp, new std::string(), new std::string("#RET"));
 			if(returntype != rettype)
 			{
 				this->errorHandle(RETURNTYPEDISMATCH);

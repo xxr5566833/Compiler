@@ -205,6 +205,8 @@ private:
 	symbol **funcSymTab[kMaxFuncSymbol];
 	//记录编译完的分函数的符号个数，这里分函数不包括最后的main
 	int funcSymNum[kMaxFuncNum];
+	//记录分函数的所需最大地址
+	int funcMaxAddress[kMaxFuncNum];
 	//记录有多少个分函数
 	int funcNum;
 	//记录当前分函数的符号个数
@@ -217,7 +219,10 @@ private:
 	//常量区
 	std::string *stringTab[kMaxStringNum];
 	int stringNum ;
-
+	//需要一个数组记录所有的字符串的相对偏移,如果不能用.asciiz的话，到时候根据字符串的下标，得到其起始地址直接输出也可以
+	int stringAddress[kMaxStringNum];
+	//需要一个来记录字符串占用了多少空间
+	int strAddress;
 	void pushString(std::string *str);
 	void genMessage(std::string *str, int num);
 
@@ -238,6 +243,66 @@ private:
 	int temp;
 	void genLabel(std::string *lab);
 	int label;
+
+	//目标代码生成
+	std::fstream objectFile;
+	//初始化字符串定义
+	void initAscii();
+	//生成目标代码
+	void generate();
+	//存全局常量
+	void initConstAndVar(symbol *sym, int initaddress);
+	//当前占用的空间
+	int mipsAddress;
+	//生成一条指令
+	void generateOrder(std::string *order, std::string *rd, std::string *rs, std::string *rt);
+	void generateOrder(std::string *order, std::string *rs, int baseaddress, std::string *rt);
+	void generateOrder(std::string *order, std::string *rs, int num);
+	void generateOrder(std::string *order, std::string *rd, std::string *rt, int imme);
+	void generateOrder(std::string *order, std::string *rs, std::string *label);
+	void generateOrder(std::string *order, std::string *target);
+	void generateOrder(std::string *order);
+	//函数的开始
+	void funcBegin(std::string *name);
+	//赋值
+	void handleAssign(midcode *code);
+	//当前编译的函数在函数表中的位置
+	int currentRef;
+	//生成label
+	void genMipsLabel(std::string *label);
+	//寻找标识符地址
+	void findAddress(std::string *name, int *offset, bool *global);
+	//loadword
+	void loadWord(std::string *rs, std::string *reg);
+	//storeword
+	void storeWord(std::string *rd);
+	//处理负号
+	void handleNeg(midcode *code);
+	//处理跳转
+	void handleBranch(midcode *code);
+	//处理无条件跳转
+	void handleGoto(std::string *label);
+	//处理实参
+	void handleRealPara(std::string *para);
+	//处理数组赋给其他值
+	void handleRarray(midcode *code);
+	//处理函数调用
+	void handleCall(std::string *name);
+	//处理函数结束
+	void handleRet(std::string *name);
+	//处理运算
+	void handleCompute(midcode *code);
+	//处理输入
+	void handleScanf(midcode *code);
+	//处理输出
+	void handlePrintf(midcode *code);
+	//处理结束
+	void handleExit();
+	//处理其他值给数组
+	void handleLarray(midcode *code);
+
+
+	
 
 
 };

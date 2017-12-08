@@ -7,19 +7,18 @@ const char _k4 = 'a', _k5 = '_', _k6 = 'A', _k7 = '-', _k8 = '*', _k9 = '0';
 
 int v1, fibarray[1000];																	
 char c1, arrayc[1000];
-
 int _4fib(int num)											
 {
 	const char m = '_';
 	int temp, fib1, fib2;
-		if(- num > - 1)							
+		if(- num < -1)							
 		{
 			if (fibarray[num - 1] <= -1)						
 			{
-				fib1 = fibarray[num - 1];					
+				fib1 = _4fib(num - 1);				
 			}
 			else {
-				fib1 = _4fib(num - 1);
+				fib1 = fibarray[num - 1];
 			}
 			fib2 = fibarray[num - 2];
 			temp = fib1 + fib2; 

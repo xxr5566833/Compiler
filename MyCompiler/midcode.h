@@ -2,8 +2,6 @@
 #include "Compiler.h"
 
 enum midop{
-	//形式参数
-	FROMATPARAOP,
 	//实参初始化
 	REALPARAOP,
 	//调用函数op

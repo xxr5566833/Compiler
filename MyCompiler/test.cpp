@@ -1,6 +1,6 @@
 #include "stdafx.h"
 //程序部分开始
-const char _ = '_', p_ = '+', m__ = '-', s0 = '*', d_0 = '/', a0a = 'a', _00 = '0'; 	//7种代表的标识符全了
+/*const char _ = '_', p_ = '+', m__ = '-', s0 = '*', d_0 = '/', a0a = 'a', _00 = '0'; 	//7种代表的标识符全了
 const int _zero = 0, _num = 4, _pnum = +3, _mnum = -9;
 const int __num = 20, __pnum = +56, __mnum = -78;
 const int ___num = 5783, ___pnum = +326, ___mnum = -111;								//
@@ -79,10 +79,11 @@ void printChar(char c, int num)
 //有返回值无参数函数定义
 char returnStar()
 {
+	printf("*");
 	return '*';
 }
 //主函数
-/*void main()
+void main()
 {
 	const char a = '_';
 	int testarray[10], max, i, num, _no;
@@ -98,8 +99,6 @@ char returnStar()
 	printf("%d", - fibarray[+ _zero]);			//<表达式> => [+|-]<标识符>'['[+|-]<标识符>']' 
 	printf(" ");
 	printf("%d", + fibarray[- - 9]);			//<表达式> => [+|-]<标识符>'['[+|-]<整数>']'
-	printf(" ");
-	printf("%d", fibarray['a']);				//<表达式> => [+|-]<标识符>'['[+|-]<字符>']'
 	printf(" ");
 	printf("%d", + (- ___num));					//<表达式> => [+|-]([+|-]<标识符>)		
 	printf(" ");
@@ -180,10 +179,13 @@ char returnStar()
 
 	printf("  ");
 	;
-	returnStar();						//有返回值无参数的函数调用语句
-	std::cout << returnStar();
-
-	printf("  ");
+	i = max;
+	;										while(i != 0)											
+	{
+		returnStar();								
+		std::cout << returnStar();							 
+		i = i - 1;
+	}
 
 	printf("please input a number from 0 to 4: ");
 	std::cin >> num;

@@ -60,6 +60,7 @@ char upcase(char x)
     if (x>='a')
         if (x<='z')
         {
+            y = x - 'a' + 'A';
             return(y);
         }
         else return(x);
@@ -72,6 +73,7 @@ char lowcase(char x)
     if (x>='A')
         if (x<='Z')
         {
+            y = x - 'A' + 'a';
             return(y);
         }
         else return(x);
@@ -139,6 +141,7 @@ void display(int m)
             alphabet[i] = upcase(letter);
             printf(alphabet[i]);
             i = i + 1;
+            letter = letter + 1;
         }
         printspace;
         i = 0;
@@ -209,10 +212,9 @@ void optimize
 
 void process
 {
-    int choice;
-    char choice_ch;
+    char choice;
     scanf(choice);
-    switch (choice_ch)
+    switch (choice)
     {
         case 'a':
             expre;

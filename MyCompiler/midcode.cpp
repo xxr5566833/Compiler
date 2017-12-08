@@ -3,15 +3,15 @@
 
 //临时变量首个标识符
 
-const char *tempid = "$_";
+const char *tempid = "$t";
 
 //label首个标识符
 
-const char *labelid = "Label_";
+const char *labelid = "$label";
 
 //字符串标识符
 
-const char *messageid = "Message_";
+const char *messageid = "$Message";
 
 //统一中间代码的标识符
 //临时变量就临时生成，简单变量，数组变量和常量就用原来的标识符，函数标识符作为label，有参函数调用后的返回变量统一用RET
@@ -168,15 +168,17 @@ void Compiler:: writeMidCode(midcode *code)
 		break;
 	case LARRAYOP:
 		ss << midlarray << " ";
+		break;
 	case EXITOP:
-		ss << midexit < " ";
+		ss << midexit << " ";
+		break;
 	
 	}
 	ss << *(code->op1name) << " ";
 	ss << *(code->op2name) << " ";
 	ss << *(code->rstname) << "\n";
 	this->midFile << ss.str();
-	std::cout << ss.str();
+	//std::cout << ss.str();
 }
 
 void Compiler::initMidCode()

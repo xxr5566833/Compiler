@@ -78,6 +78,7 @@
     <ClCompile Include="errorHandler.cpp" />
     <ClCompile Include="grammar.cpp" />
     <ClCompile Include="midcode.cpp" />
+    <ClCompile Include="objectCode.cpp" />
     <ClCompile Include="symbolTab.cpp" />
     <ClCompile Include="test.cpp" />
     <ClCompile Include="token.cpp" />
