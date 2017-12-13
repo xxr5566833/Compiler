@@ -82,7 +82,7 @@ const char *NEQUSY = "!=";
 
 
 
-
+//初始化单词类型的string输出，与枚举一一对应
 void Compiler:: initWordArray()
 {
 	this->wordOutput[NOTYPE] = "NOTYPE";
@@ -129,7 +129,7 @@ void Compiler:: initWordArray()
 	this->wordOutput[NEQU] = "NEQU";
 }
 
-//建立保留字表：
+//建立保留字表，便于得到当前单词是不是一个保留字
 //CONST, INT, CHAR, VOID, MAIN, IF, ELSE, WHILE, SWITCH, CASE, DEFAULT, SCANF, PRINTF, RETURN
 void Compiler::setup()
 {
@@ -151,28 +151,31 @@ void Compiler::setup()
 
 
 //和sym有关的：
+//清空已经读入的字符数组
 void Compiler:: clearSym()
 {
 	this->sym.clear();
 }
-
+//把当前字符加入到当前字符数组
 void Compiler::symAppend()
 {
 	this->sym.append(1, this->c);
 }
-
+//让文件指针下一次读到的单词还是当前这个单词，并维护行数
 void Compiler::retract()
 {
 	this->file.putback(this->c);
 	if(this->c == '\n')
 		this->lineCount -= 1;
 }
-
+//返回文件是否读完
 bool Compiler::isEof()
 {
 	return this->file.peek() == EOF;
 }
-
+/*读下一个字符，有个问题就是当使用notepad++替换功能时，开头会莫名多出三个字符，且ascii值都小于0  。。
+所以这里设置了这个while，当然不能把EOF给空过去。。
+*/
 void Compiler:: nextChar()
 {
 	this->c = this->file.get();
@@ -183,7 +186,7 @@ void Compiler:: nextChar()
 	//std::cout << this->c << std::endl;
 }
 
-//跳过不处理
+//跳过空白字符不处理，注意维护lineCount
 void Compiler::skipSpace()
 {
 	while (this->isNewLine() || this->isSpace() || this->isTab())
@@ -197,7 +200,7 @@ void Compiler::skipSpace()
 
 
 //判断类型
-
+//判断三大空白字符
 bool Compiler::isSpace()
 {
 	return this->c == ' ';
@@ -262,18 +265,18 @@ bool Compiler::isNumber()
 {
 	return this->c >= '0' && this->c <= '9';
 }
-
+//注意下划线
 bool Compiler::isLetter()
 {
 	return this->c == '_' || (this->c >= 'A' && this->c <= 'Z')
 		|| (this->c >= 'a' && this->c <= 'z');
 }
-
+//判断是否在文法给定的字符串的字符范围内
 bool Compiler::isInStringRange()
 {
 	return this->c == 32 || this->c == 33 || (this->c >= 35 && this->c <=  126);
 }
-
+//判断两个string类型的标识符是否相等，注意这里是不区分大小写的判断
 bool Compiler:: isIdEqual(std::string id1, std::string id2)
 {
 	std::string::iterator p = id1.begin();
@@ -287,8 +290,7 @@ bool Compiler:: isIdEqual(std::string id1, std::string id2)
 	return p == id1.end() && q == id2.end();
 }
 
-//处理sym
-
+//专门用于处理当前是保留字还是标识符
 void Compiler::handleSym()
 {
 	//先查是不是保留字
@@ -307,22 +309,27 @@ void Compiler::handleSym()
 
 void Compiler::inSym()
 {
+	//这里每一次一开始都要自己读入一个字符，和后面的语法分析不一样
 	this->tok.id = NOTYPE;
 	if(this->isEof())
 	{
 		return ;
 	}
+	//先读进一个字符，再调用跳过空格方法
 	this->nextChar();
 	this->skipSpace();
 	this->clearSym();
+	//可能是标识符或保留字
 	if (this->isLetter()) 
 	{
+		//每一次判断正确，都需要把当前字符加入到合法字符数组中，就和语法分析那里一样，一旦正确，那么读下一个单词
 		this->symAppend();		
 		this->nextChar();
 		while (this->isLetter() || this->isNumber()) {
 			this->symAppend();
 			this->nextChar();
 		}
+
 		this->retract();
 		this->handleSym();
 		//std::cout << this->sym << std::endl;
@@ -340,6 +347,7 @@ void Compiler::inSym()
 			if (this->isSq())
 			{
 				this->symAppend();
+				//跳过单引号
 				this->tok.val.c = this->sym[1];
 				this->tok.id = SINGLECHAR;
 				this->tok.output = new std::string(this->sym);
@@ -363,6 +371,7 @@ void Compiler::inSym()
 			this->symAppend();
 			this->nextChar();
 		}
+		//这里和<字符>不同，字符串两个双引号之间可能一个字符都没有
 		if (this->isDq())
 		{
 			this->symAppend();
@@ -461,7 +470,7 @@ void Compiler::inSym()
 			this->retract();
 			this->tok.id = ASSIGN;
 			this->tok.val.c = ASSIGNSY;
-
+			this->tok.output = new std::string(this->sym);
 		}
 		//std::cout << this->sym << std::endl;
 		return ;

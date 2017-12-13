@@ -70,13 +70,14 @@ private:
 	std::fstream file;
 	//当前字符
 	char c;
-	//当前单词
+	//当前读入的字符集合
 	std::string sym;
+	//inSym()执行后，保存的当前 单词
 	token tok;
 	//当前行数
 	int lineCount ;
 
-	//保留字集合
+	//保留字集合，因为要比较是不是保留字必须要一个个字符进行比较
 	std::string reserve[kMaxReserve];
 	//单词标志输出数组，与枚举类型一一对应
 	std::string wordOutput[kMaxWord];
@@ -154,7 +155,7 @@ private:
 	void program();
 	void condition(std::string *label);
 	void ifStatement(bool *returnflag, eRetType returntype);
-	void caseStatement(eRetType switchtype, std::string *switchtemp, bool *returnflag, eRetType returntype, std::string *donelab, std::string *nextlab);
+	void caseStatement(eRetType switchtype, std::string *switchtemp, bool *returnflag, eRetType returntype, std::string *donelab, std::string *nextlab, int *caseconst);
 	void caseTab(eRetType switchtype, std::string *switchtemp, bool *returnflag, eRetType returntype, std::string *donelab);
 	void switchStatement(bool *returnflag, eRetType returntype);
 	void whileStatement(bool *returnflag, eRetType returntype);

@@ -6,7 +6,11 @@ const int kMaxWarningType = 100;
 
 //warning的枚举定义
 enum warningType{
+	//词法分析
 	NUMTOOBIG = 0, 
+
+	//语义分析
+	TOOMANYCASE,
 };
 
 //warning的结构体

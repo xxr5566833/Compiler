@@ -342,6 +342,37 @@ $t129 = 4
 printf $t129
 goto $label20
 $label25:
+$t130 = 5
+if $t130 != $t119 then goto $label26
+$t131 = 5
+printf $t131
+goto $label20
+$label26:
+$t132 = 6
+if $t132 != $t119 then goto $label27
+$t133 = 6
+printf $t133
+goto $label20
+$label27:
+$t134 = 7
+if $t134 != $t119 then goto $label28
+$t135 = 7
+printf $t135
+goto $label20
+$label28:
+$t136 = 8
+if $t136 != $t119 then goto $label29
+$t137 = 8
+printf $t137
+goto $label20
+$label29:
+$t138 = 8
+if $t138 != $t119 then goto $label30
+$t139 = 9
+printf $t139
+goto $label20
+$label30:
 printf 28
 $label20:
+printf 29
 exit 

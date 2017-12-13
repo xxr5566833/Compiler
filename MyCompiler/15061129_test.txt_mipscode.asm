@@ -295,6 +295,7 @@
 	li	$t0	,	33
 	sb	$t0	,	268435616($zero)
 	sb	$zero	,	268435617($zero)
+	sb	$zero	,	268435618($zero)
 	li	$t0	,	95
 	sw	$t0	,	268435620($zero)
 	li	$t0	,	43
@@ -1304,9 +1305,87 @@ $label24:
 	j	$label20
 	nop
 $label25:
+	li	$t0	,	5
+	sw	$t0	,	268444252($zero)
+	lw	$t0	,	268444252($zero)
+	lw	$t1	,	268444208($zero)
+	sub	$t0	,	$t0	,	$t1
+	bne	$t0	,	$zero	,	$label26
+	nop
+	li	$t0	,	5
+	sw	$t0	,	268444256($zero)
+	li	$v0	,	1
+	lw	$a0	,	268444256($zero)
+	syscall
+	j	$label20
+	nop
+$label26:
+	li	$t0	,	6
+	sw	$t0	,	268444260($zero)
+	lw	$t0	,	268444260($zero)
+	lw	$t1	,	268444208($zero)
+	sub	$t0	,	$t0	,	$t1
+	bne	$t0	,	$zero	,	$label27
+	nop
+	li	$t0	,	6
+	sw	$t0	,	268444264($zero)
+	li	$v0	,	1
+	lw	$a0	,	268444264($zero)
+	syscall
+	j	$label20
+	nop
+$label27:
+	li	$t0	,	7
+	sw	$t0	,	268444268($zero)
+	lw	$t0	,	268444268($zero)
+	lw	$t1	,	268444208($zero)
+	sub	$t0	,	$t0	,	$t1
+	bne	$t0	,	$zero	,	$label28
+	nop
+	li	$t0	,	7
+	sw	$t0	,	268444272($zero)
+	li	$v0	,	1
+	lw	$a0	,	268444272($zero)
+	syscall
+	j	$label20
+	nop
+$label28:
+	li	$t0	,	8
+	sw	$t0	,	268444276($zero)
+	lw	$t0	,	268444276($zero)
+	lw	$t1	,	268444208($zero)
+	sub	$t0	,	$t0	,	$t1
+	bne	$t0	,	$zero	,	$label29
+	nop
+	li	$t0	,	8
+	sw	$t0	,	268444280($zero)
+	li	$v0	,	1
+	lw	$a0	,	268444280($zero)
+	syscall
+	j	$label20
+	nop
+$label29:
+	li	$t0	,	8
+	sw	$t0	,	268444284($zero)
+	lw	$t0	,	268444284($zero)
+	lw	$t1	,	268444208($zero)
+	sub	$t0	,	$t0	,	$t1
+	bne	$t0	,	$zero	,	$label30
+	nop
+	li	$t0	,	9
+	sw	$t0	,	268444288($zero)
+	li	$v0	,	1
+	lw	$a0	,	268444288($zero)
+	syscall
+	j	$label20
+	nop
+$label30:
 	li	$v0	,	4
 	la	$a0	,	268435604
 	syscall
 $label20:
+	li	$v0	,	4
+	la	$a0	,	268435618
+	syscall
 	li	$v0	,	10
 	syscall

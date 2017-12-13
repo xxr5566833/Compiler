@@ -83,6 +83,8 @@ enum errorType{
 	 INTTOCHARNOTALLOW,
 	 //不是一个有返回值的函数
 	 NORETURNVALUE,
+	 //case后面的常量重复
+	 CASEVALUEDUPLICATE,
 
 
 };

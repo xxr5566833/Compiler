@@ -1,6 +1,9 @@
 #include "Compiler.h"
 #include "grammar.h"
 
+//一些限制
+const int kMaxCaseNum = 11;
+
 const tokenType PROGRAM_BEGIN[] = {CONST, INT, CHAR, VOID};
 
 const int PROGRAM_BEGIN_SIZE = 4;
@@ -808,7 +811,7 @@ void Compiler:: mainDef()
 		return ;
 	}
 	else{
-		this->errorHandle(NOTRBRACKET);
+		this->errorHandle(NOTRBRACE);
 	}
 
 }
@@ -1038,7 +1041,7 @@ void Compiler:: ifStatement(bool *returnflag, eRetType returntype)
 	std::cout << "这是一个 <条件语句>" << std::endl;
 }
 
-void Compiler:: caseStatement(eRetType switchtype, std::string *switchtemp, bool *returnflag, eRetType returntype, std::string *donelab, std::string *nextlab)
+void Compiler:: caseStatement(eRetType switchtype, std::string *switchtemp, bool *returnflag, eRetType returntype, std::string *donelab, std::string *nextlab, int *caseconst)
 {
 	//std::cout << "进入 <情况子语句>" << std::endl;
 	this->inSym();
@@ -1052,6 +1055,8 @@ void Compiler:: caseStatement(eRetType switchtype, std::string *switchtemp, bool
 			this->errorHandle(CASESWITCHDISMATCH);
 			return ;
 		}
+		//获得case后的常量的值
+		*caseconst = value;
 		std::string *constoperand = new std::string();
 		this->genTemp(constoperand);
 		std::string *constvalue = new std::string();
@@ -1085,11 +1090,26 @@ void Compiler:: caseTab(eRetType switchtype, std::string *switchtemp, bool *retu
 	//std::cout << "进入 <情况表>" << std::endl;
 	if(this->tok.id == CASE)
 	{
+		int casevalue[kMaxCaseNum];
+		int count = 0;
 		do{
+			int caseconst = 0;
 			std::string *nextlab = new std::string();
 			this->genLabel(nextlab);
-			this->caseStatement(switchtype, switchtemp, returnflag, returntype, donelab, nextlab);
+			this->caseStatement(switchtype, switchtemp, returnflag, returntype, donelab, nextlab, &caseconst);
 			this->pushMidCode(LABOP, new std::string(), new std::string(), nextlab);
+
+			//检查上个case常量是否与之前某个case的常量相等
+			for(int i = 0 ; i < count ; ++i)
+			{
+				if(casevalue[i] == caseconst)
+				{
+					this->errorHandle(CASEVALUEDUPLICATE);
+				}
+			}
+			casevalue[count++] = caseconst;
+			if(count == kMaxCaseNum)
+				this->warningHandle(TOOMANYCASE);
 		}while(this->tok.id == CASE);
 	}
 	else{

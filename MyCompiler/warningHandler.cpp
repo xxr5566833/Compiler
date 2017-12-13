@@ -8,6 +8,8 @@
 
 const char *NUMTOOBIGMSG = "无符号整数常量超过最大位数";
 
+const char *TOOMANYCASEMSG = "case超出了最大个数上限";
+
 /*
 创建相应的warning结构体
 并添加到this->warningList中
@@ -25,7 +27,11 @@ void Compiler:: warningHandle(warningType id)
 
 void Compiler:: warningSetup()
 {
-	this->warningMsgList[NUMTOOBIG] = new std::string(NUMTOOBIGMSG);
+	//词法
+	this->warningMsgList[NUMTOOBIG]		=	new std::string(NUMTOOBIGMSG);
+
+	//语义
+	this->warningMsgList[TOOMANYCASE]	=	new std::string(TOOMANYCASEMSG);
 }
 
 void Compiler:: warningPrint()
@@ -35,11 +41,8 @@ void Compiler:: warningPrint()
 	for(unsigned int i = 0; i < this->warningList.size(); ++i)
 	{
 		warning *war = warningList[i];
-		std::string *msg = new std::string();
-		*msg += war->lineCount + ": ";
-		*msg += *(war->token) + " ";
-		*msg += *(this->warningMsgList[war->id]) + "\n";
-		std::cout << *msg ;
-		delete msg;
+		std::stringstream msg = std::stringstream();
+		msg << "line:" << war->lineCount << "\t" << "在" << *war->token << "的附近:" << *(this->warningMsgList[war->id]) << "\n";
+		std::cout << msg.str() ;
 	}
 }

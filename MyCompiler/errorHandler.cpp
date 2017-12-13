@@ -86,10 +86,12 @@ const char *RETURNTYPEDISMATCHMSG = "return的类型和函数定义时的类型不一致";
 const char *INTTOCHARNOTALLOWMSG = "不允许从把int类型赋给char类型！";
 
 const char *NORETURNVALUEMSG = "不是一个有返回值的函数";
+
+const char *CASEVALUEDUPLICATEMSG = "case后的常量出现了重复";
  
 void Compiler:: errorHandle(errorType id)
 {
-	std::cout << this->sym << std::endl;
+	//std::cout << this->sym << std::endl;
 	error *err = new error();
 	err->id = id;
 	err->lineCount = this->lineCount;
@@ -100,11 +102,14 @@ void Compiler:: errorHandle(errorType id)
 
 void Compiler:: errorSetup()
 {
+	//词法分析
 	this->errorMsgList[SQMISMATCH]			=	new std::string(SQMISMATCHMSG);
 	this->errorMsgList[DQMISMATCH]			=	new std::string(DQMISMATCHMSG);
 	this->errorMsgList[INVALIDCHAR]			=	new std::string(INVALIDCHARMSG);
 	this->errorMsgList[ONLYEM]				=	new std::string(ONLYEMMSG);
 	this->errorMsgList[INVALIDVT]			=	new std::string(INVALIDVTMSG);
+
+	//语法分析
 	this->errorMsgList[NOTUNSIGNEDINT]		=	new std::string(NOTUNSIGNEDINTMSG);
 	this->errorMsgList[NOTASSIGN]			=	new std::string(NOTASSIGNMSG);
 	this->errorMsgList[NOTINT]				=	new std::string(NOTINTMSG);
@@ -142,6 +147,7 @@ void Compiler:: errorSetup()
 	this->errorMsgList[RETURNTYPEDISMATCH]	=	new std::string(RETURNTYPEDISMATCHMSG);
 	this->errorMsgList[INTTOCHARNOTALLOW]	=	new std::string(INTTOCHARNOTALLOWMSG);
 	this->errorMsgList[NORETURNVALUE]		=	new std::string(NORETURNVALUEMSG);
+	this->errorMsgList[CASEVALUEDUPLICATE]	=	new std::string(CASEVALUEDUPLICATEMSG);
 }
 
 void Compiler:: errorPrint()
@@ -151,18 +157,8 @@ void Compiler:: errorPrint()
 	for(unsigned int i = 0; i < this->errorList.size(); ++i)
 	{
 		error *err = errorList[i];
-		std::string *msg = new std::string();
-		char linecount[10];
-		sprintf(linecount, "%d", err->lineCount);
-		*msg += (std::string(linecount) + ": ");
-		*msg += "error ";
-		char id[10];
-		sprintf(id, "%d", err->id);
-		*msg += id;
-		*msg += ": ";
-		*msg += *(err->token) + " ";
-		*msg += *(this->errorMsgList[err->id]) + "\n";
-		std::cout << *msg ;
-		delete msg;
+		std::stringstream msg = std::stringstream();
+		msg << "line:" << err->lineCount << "\t" << "在" << *err->token << "的附近:" << *(this->errorMsgList[err->id]) << "\n";
+		std::cout << msg.str() ;
 	}
 }

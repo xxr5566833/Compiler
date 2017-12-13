@@ -6,11 +6,11 @@ enum tokenType {
 	NOTYPE = 0,
 	//标识符
 	ID,
-	//无符号整数常量
+	//非0无符号整数常量
 	UNSIGNEDINT,
 	//0单独作为一类，以保证和老师给定的无符号整数相一致
 	ZERO,
-	//字符常量
+	//<字符>所文法中两个单引号之间的那个语法成分
 	SINGLECHAR,
 	//字符串常量
 	STRING,
@@ -40,4 +40,4 @@ typedef struct token{
 }token;
 
 //一些限制：
-const int kMaxDigits = 9;
+const int kMaxDigits = 10;
