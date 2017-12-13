@@ -1,347 +1,347 @@
-init   _4fib
-= num  $t0
-- $t0  $t0
-= 1  $t1
-- $t1  $t1
->= $t0 $t1 $label0
-= num  $t2
-= 1  $t3
-- $t2 $t3 $t2
-=[] fibarray $t2 $t4
-= $t4  $t5
-= 1  $t6
-- $t6  $t6
-> $t5 $t6 $label2
-= num  $t7
-= 1  $t8
-- $t7 $t8 $t7
-push   $t7
-call   _4fib
-= #RET  $t9
-= $t9  fib1
-goto   $label3
-  $label2
-= num  $t10
-= 1  $t11
-- $t10 $t11 $t10
-=[] fibarray $t10 $t12
-= $t12  $t13
-= $t13  fib1
-  $label3
-= num  $t14
-= 2  $t15
-- $t14 $t15 $t14
-=[] fibarray $t14 $t16
-= $t16  $t17
-= $t17  fib2
-= fib1  $t18
-= fib2  $t19
-+ $t18 $t19 $t18
-= $t18  temp
-= num  $t20
-= temp  $t21
-[]= $t21 $t20 fibarray
-= temp  $t22
-= $t22  #RET
-goto   $label1
-  $label0
-= _num  $t23
-== $t23 0 $label4
-= 1  $t24
-= 1  $t25
-[]= $t25 $t24 fibarray
-= 1  $t26
-= $t26  #RET
-goto   $label5
-  $label4
-= 0  $t27
-= 0  $t28
-[]= $t28 $t27 fibarray
-= 0  $t29
-- $t29  $t29
-= $t29  #RET
-  $label5
-  $label1
-ret   _4fib
-init   printStar
-printf   0
-ret   printStar
-init   printChar
-= num  $t30
-= 0  $t31
-!= $t30 $t31 $label6
-goto   $label7
-  $label6
-= c  $t32
-printf char  $t32
-= c  $t33
-push   $t33
-= num  $t34
-= 1  $t35
-- $t34 $t35 $t34
-push   $t34
-call   printChar
-  $label7
-ret   printChar
-init   returnStar
-= 42  $t36
-printf char  $t36
-= 42  $t37
-= $t37  #RET
-ret   returnStar
-init   main
-= 0  $t38
-= $t38  i
-  $label8
-= i  $t39
-= 999  $t40
-> $t39 $t40 $label9
-= i  $t41
-= i  $t42
-- $t42  $t42
-[]= $t42 $t41 fibarray
-= i  $t43
-= 1  $t44
-+ $t43 $t44 $t43
-= $t43  i
-goto   $label8
-  $label9
-= _  $t45
-printf char  $t45
-printf   1
-= _zero  $t46
-=[] fibarray $t46 $t47
-= $t47  $t48
-- $t48  $t48
-printf int  $t48
-printf   2
-= -9  $t49
-- $t49  $t49
-=[] fibarray $t49 $t50
-= $t50  $t51
-printf int  $t51
-printf   3
-= ___num  $t52
-- $t52  $t52
-= $t52  $t53
-printf int  $t53
-printf   4
-= 100  $t54
-= $t54  $t55
-- $t55  $t55
-printf int  $t55
-printf   5
-= 23  $t56
-- $t56  $t56
-printf int  $t56
-printf   6
-= 97  $t57
-- $t57  $t57
-printf int  $t57
-printf   7
-= _num  $t58
-push   $t58
-call   _4fib
-= #RET  $t59
-push   $t59
-call   _4fib
-= #RET  $t60
-- $t60  $t60
-printf int  $t60
-printf   8
-= 97  $t61
-- $t61  $t61
-= $t61  $t62
-= 98  $t63
-* $t62 $t63 $t62
-printf int  $t62
-printf   9
-= __num  $t64
-push   $t64
-call   _4fib
-= #RET  $t65
-= 6  $t66
-push   $t66
-call   _4fib
-\ $t65 #RET $t65
-printf int  $t65
-printf   10
-= _k1  $t67
-* $t67 _k2 $t67
-printf int  $t67
-printf   11
-= _k1  $t68
-\ $t68 _k2 $t68
-printf int  $t68
-printf   12
-= 97  $t69
-- $t69  $t69
-= $t69  $t70
-= 98  $t71
-* $t70 $t71 $t70
-= __num  $t72
-push   $t72
-call   _4fib
-= #RET  $t73
-= 6  $t74
-push   $t74
-call   _4fib
-\ $t73 #RET $t73
-+ $t70 $t73 $t70
-printf int  $t70
-printf   13
-= _k1  $t75
-* $t75 _k2 $t75
-= _k1  $t76
-\ $t76 _k2 $t76
-- $t75 $t76 $t75
-printf int  $t75
-printf   14
-= _k2  $t77
-- $t77  $t77
-= _k3  $t78
-= _k3  $t79
-+ $t78 $t79 $t78
-= $t78  $t80
-+ $t77 $t80 $t77
-printf int  $t77
-printf   15
-= _k3  $t81
-= _k1  $t82
-= -9  $t83
-- $t83  $t83
-=[] fibarray $t83 $t84
-= $t84  $t85
-+ $t82 $t85 $t82
-* $t81 $t82 $t81
-printf int  $t81
-printf   16
-= _k4  $t86
-printf char  $t86
-= _k5  $t87
-printf char  $t87
-= _k6  $t88
-printf char  $t88
-= _k7  $t89
-printf char  $t89
-= _k8  $t90
-printf char  $t90
-= _k9  $t91
-printf char  $t91
-printf   17
-= 3  $t92
-= $t92  max
-= max  $t93
-= $t93  i
-  $label10
-= i  $t94
-== $t94 0 $label11
-call   printStar
-= i  $t95
-= 1  $t96
-- $t95 $t96 $t95
-= $t95  i
-goto   $label10
-  $label11
-printf   18
-scanf int  num
-scanf char  c
-= c  $t97
-push   $t97
-= max  $t98
-push   $t98
-call   printChar
-printf   19
-= num  $t99
-= 2  $t100
->= $t99 $t100 $label12
-printf   20
-goto   $label13
-  $label12
-= num  $t101
-= 45  $t102
-<= $t101 $t102 $label14
-printf   21
-goto   $label15
-  $label14
-= num  $t103
-push   $t103
-call   _4fib
-printf   22
-  $label16
-= num  $t104
-= 0  $t105
-< $t104 $t105 $label17
-printf   23
-= num  $t106
-printf int  $t106
-printf   24
-= num  $t107
-=[] fibarray $t107 $t108
-= $t108  $t109
-- $t109  $t109
-= $t109  $t110
-- $t110  $t110
-printf int  $t110
-printf   25
-= num  $t111
-= 1  $t112
-- $t111 $t112 $t111
-= $t111  num
-goto   $label16
-  $label17
-  $label15
-  $label13
-printf   26
-= max  $t113
-= $t113  i
-  $label18
-= i  $t114
-= 0  $t115
-== $t114 $t115 $label19
-call   returnStar
-call   returnStar
-= #RET  $t116
-printf char  $t116
-= i  $t117
-= 1  $t118
-- $t117 $t118 $t117
-= $t117  i
-goto   $label18
-  $label19
-printf   27
-scanf int  num
-= num  $t119
-= 0  $t120
-!= $t120 $t119 $label21
-= 0  $t121
-printf int  $t121
-goto   $label20
-  $label21
-= 1  $t122
-!= $t122 $t119 $label22
-= 1  $t123
-printf int  $t123
-goto   $label20
-  $label22
-= 2  $t124
-!= $t124 $t119 $label23
-= 2  $t125
-printf int  $t125
-goto   $label20
-  $label23
-= 3  $t126
-!= $t126 $t119 $label24
-= 3  $t127
-printf int  $t127
-goto   $label20
-  $label24
-= 4  $t128
-!= $t128 $t119 $label25
-= 4  $t129
-printf int  $t129
-goto   $label20
-  $label25
-printf   28
-  $label20
-exit   
+init _4fib
+$t0 = num
+$t0 = 0 - $t0
+$t1 = 1
+$t1 = 0 - $t1
+if $t0 >= $t1 then goto $label0
+$t2 = num
+$t3 = 1
+$t2 = $t2 - $t3
+$t4 = fibarray[$t2]
+$t5 = $t4
+$t6 = 1
+$t6 = 0 - $t6
+if $t5 > $t6 then goto $label2
+$t7 = num
+$t8 = 1
+$t7 = $t7 - $t8
+push $t7
+call _4fib
+$t9 = #RET
+fib1 = $t9
+goto $label3
+$label2:
+$t10 = num
+$t11 = 1
+$t10 = $t10 - $t11
+$t12 = fibarray[$t10]
+$t13 = $t12
+fib1 = $t13
+$label3:
+$t14 = num
+$t15 = 2
+$t14 = $t14 - $t15
+$t16 = fibarray[$t14]
+$t17 = $t16
+fib2 = $t17
+$t18 = fib1
+$t19 = fib2
+$t18 = $t18 + $t19
+temp = $t18
+$t20 = num
+$t21 = temp
+fibarray[$t20] = $t21
+$t22 = temp
+#RET = $t22
+goto $label1
+$label0:
+$t23 = _num
+if $t23 == 0 then goto $label4
+$t24 = 1
+$t25 = 1
+fibarray[$t24] = $t25
+$t26 = 1
+#RET = $t26
+goto $label5
+$label4:
+$t27 = 0
+$t28 = 0
+fibarray[$t27] = $t28
+$t29 = 0
+$t29 = 0 - $t29
+#RET = $t29
+$label5:
+$label1:
+ret _4fib
+init printStar
+printf 0
+ret printStar
+init printChar
+$t30 = num
+$t31 = 0
+if $t30 != $t31 then goto $label6
+goto $label7
+$label6:
+$t32 = c
+printf $t32
+$t33 = c
+push $t33
+$t34 = num
+$t35 = 1
+$t34 = $t34 - $t35
+push $t34
+call printChar
+$label7:
+ret printChar
+init returnStar
+$t36 = 42
+printf $t36
+$t37 = 42
+#RET = $t37
+ret returnStar
+init main
+$t38 = 0
+i = $t38
+$label8:
+$t39 = i
+$t40 = 999
+if $t39 > $t40 then goto $label9
+$t41 = i
+$t42 = i
+$t42 = 0 - $t42
+fibarray[$t41] = $t42
+$t43 = i
+$t44 = 1
+$t43 = $t43 + $t44
+i = $t43
+goto $label8
+$label9:
+$t45 = _
+printf $t45
+printf 1
+$t46 = _zero
+$t47 = fibarray[$t46]
+$t48 = $t47
+$t48 = 0 - $t48
+printf $t48
+printf 2
+$t49 = -9
+$t49 = 0 - $t49
+$t50 = fibarray[$t49]
+$t51 = $t50
+printf $t51
+printf 3
+$t52 = ___num
+$t52 = 0 - $t52
+$t53 = $t52
+printf $t53
+printf 4
+$t54 = 100
+$t55 = $t54
+$t55 = 0 - $t55
+printf $t55
+printf 5
+$t56 = 23
+$t56 = 0 - $t56
+printf $t56
+printf 6
+$t57 = 97
+$t57 = 0 - $t57
+printf $t57
+printf 7
+$t58 = _num
+push $t58
+call _4fib
+$t59 = #RET
+push $t59
+call _4fib
+$t60 = #RET
+$t60 = 0 - $t60
+printf $t60
+printf 8
+$t61 = 97
+$t61 = 0 - $t61
+$t62 = $t61
+$t63 = 98
+$t62 = $t62 * $t63
+printf $t62
+printf 9
+$t64 = __num
+push $t64
+call _4fib
+$t65 = #RET
+$t66 = 6
+push $t66
+call _4fib
+$t65 = $t65 \ #RET
+printf $t65
+printf 10
+$t67 = _k1
+$t67 = $t67 * _k2
+printf $t67
+printf 11
+$t68 = _k1
+$t68 = $t68 \ _k2
+printf $t68
+printf 12
+$t69 = 97
+$t69 = 0 - $t69
+$t70 = $t69
+$t71 = 98
+$t70 = $t70 * $t71
+$t72 = __num
+push $t72
+call _4fib
+$t73 = #RET
+$t74 = 6
+push $t74
+call _4fib
+$t73 = $t73 \ #RET
+$t70 = $t70 + $t73
+printf $t70
+printf 13
+$t75 = _k1
+$t75 = $t75 * _k2
+$t76 = _k1
+$t76 = $t76 \ _k2
+$t75 = $t75 - $t76
+printf $t75
+printf 14
+$t77 = _k2
+$t77 = 0 - $t77
+$t78 = _k3
+$t79 = _k3
+$t78 = $t78 + $t79
+$t80 = $t78
+$t77 = $t77 + $t80
+printf $t77
+printf 15
+$t81 = _k3
+$t82 = _k1
+$t83 = -9
+$t83 = 0 - $t83
+$t84 = fibarray[$t83]
+$t85 = $t84
+$t82 = $t82 + $t85
+$t81 = $t81 * $t82
+printf $t81
+printf 16
+$t86 = _k4
+printf $t86
+$t87 = _k5
+printf $t87
+$t88 = _k6
+printf $t88
+$t89 = _k7
+printf $t89
+$t90 = _k8
+printf $t90
+$t91 = _k9
+printf $t91
+printf 17
+$t92 = 3
+max = $t92
+$t93 = max
+i = $t93
+$label10:
+$t94 = i
+if $t94 == 0 then goto $label11
+call printStar
+$t95 = i
+$t96 = 1
+$t95 = $t95 - $t96
+i = $t95
+goto $label10
+$label11:
+printf 18
+scanf int num
+scanf char c
+$t97 = c
+push $t97
+$t98 = max
+push $t98
+call printChar
+printf 19
+$t99 = num
+$t100 = 2
+if $t99 >= $t100 then goto $label12
+printf 20
+goto $label13
+$label12:
+$t101 = num
+$t102 = 45
+if $t101 <= $t102 then goto $label14
+printf 21
+goto $label15
+$label14:
+$t103 = num
+push $t103
+call _4fib
+printf 22
+$label16:
+$t104 = num
+$t105 = 0
+if $t104 < $t105 then goto $label17
+printf 23
+$t106 = num
+printf $t106
+printf 24
+$t107 = num
+$t108 = fibarray[$t107]
+$t109 = $t108
+$t109 = 0 - $t109
+$t110 = $t109
+$t110 = 0 - $t110
+printf $t110
+printf 25
+$t111 = num
+$t112 = 1
+$t111 = $t111 - $t112
+num = $t111
+goto $label16
+$label17:
+$label15:
+$label13:
+printf 26
+$t113 = max
+i = $t113
+$label18:
+$t114 = i
+$t115 = 0
+if $t114 == $t115 then goto $label19
+call returnStar
+call returnStar
+$t116 = #RET
+printf $t116
+$t117 = i
+$t118 = 1
+$t117 = $t117 - $t118
+i = $t117
+goto $label18
+$label19:
+printf 27
+scanf int num
+$t119 = num
+$t120 = 0
+if $t120 != $t119 then goto $label21
+$t121 = 0
+printf $t121
+goto $label20
+$label21:
+$t122 = 1
+if $t122 != $t119 then goto $label22
+$t123 = 1
+printf $t123
+goto $label20
+$label22:
+$t124 = 2
+if $t124 != $t119 then goto $label23
+$t125 = 2
+printf $t125
+goto $label20
+$label23:
+$t126 = 3
+if $t126 != $t119 then goto $label24
+$t127 = 3
+printf $t127
+goto $label20
+$label24:
+$t128 = 4
+if $t128 != $t119 then goto $label25
+$t129 = 4
+printf $t129
+goto $label20
+$label25:
+printf 28
+$label20:
+exit 

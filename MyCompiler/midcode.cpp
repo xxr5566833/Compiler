@@ -104,79 +104,80 @@ void Compiler:: pushMidCode(midop op,std::string *operand1, std::string *operand
 void Compiler:: writeMidCode(midcode *code)
 {
 	std::stringstream ss = std::stringstream();
+	std::string rst = *(code->rstname);
+	std::string op1name = *(code->op1name);
+	std::string op2name = *(code->op2name);
 	switch(code->op)
 	{
 	case REALPARAOP:
-		ss << midrealpara << " ";
+		ss << midrealpara << " " << rst;
 		break;
 	case RARRAYOP:
-		ss << midrarray << " ";
+		ss << rst << " " << "=" << " " << op1name << "[" << op2name << "]";
 		break;
 	case CALLOP:
-		ss << midcall << " ";
+		ss << midcall << " " << rst;
 		break;
 	case GOTOOP:
-		ss << midgoto << " ";
+		ss << midgoto << " " << rst;
 		break;
 	case FUNCBEGINOP:
-		ss<< midinit << " ";
+		ss<< midinit << " " << rst;
 		break;
 	case RETOP:
-		ss << midret << " ";
-		break;
-	case NEGOP:
-		ss << midneg << " ";
+		ss << midret << " " << rst;
 		break;
 	case ASSIGNOP:
-		ss << midassign << " ";
+		ss << rst << " " << midassign << " " << op1name;
 		break;
 	case MULOP:
-		ss << midmul << " ";
+		ss << rst << " " << midassign << " " << op1name << " " << midmul << " " << op2name;
 		break;
 	case DIVOP:
-		ss << middiv << " ";
+		ss << rst << " " << midassign << " " << op1name << " " << middiv << " " << op2name;
 		break;
 	case ADDOP:
-		ss << midadd << " ";
+		ss << rst << " " << midassign << " " << op1name << " " << midadd << " " << op2name;
 		break;
 	case SUBOP:
-		ss << midsub << " ";
+		ss << rst << " " << midassign << " " << op1name << " " << midsub << " " << op2name;
 		break;
 	case EQUOP:
-		ss << midequ << " ";
+		ss << "if" << " " << op1name << " " << midequ << " " << op2name << " " << "then goto" << " " << rst;
 		break;
 	case NEQUOP:
-		ss << midnequ << " ";
+		ss << "if" << " " << op1name << " " << midnequ << " " << op2name << " " << "then goto" << " " << rst;
 		break;
 	case MOREOP:
-		ss << midmore << " ";
+		ss << "if" << " " << op1name << " " << midmore << " " << op2name << " " << "then goto" << " " << rst;
 		break;
 	case MOREEQUOP:
-		ss << midmoreequ << " ";
+		ss << "if" << " " << op1name << " " << midmoreequ << " " << op2name << " " << "then goto" << " " << rst;
 		break;
 	case LESSOP:
-		ss << midless << " ";
+		ss << "if" << " " << op1name << " " << midless << " " << op2name << " " << "then goto" << " " << rst;
 		break;
 	case LESSEQUOP:
-		ss << midlessequ << " ";
+		ss << "if" << " " << op1name << " " << midlessequ << " " << op2name << " " << "then goto" << " " << rst;
 		break;
 	case SCANFOP:
-		ss << midscanf << " ";
+		ss << midscanf << " " << op1name << " " << rst;
 		break;
 	case PRINTFOP:
-		ss << midprintf << " ";
+		ss << midprintf << " " << rst;
 		break;
 	case LARRAYOP:
-		ss << midlarray << " ";
+		ss << rst << "[" <<	op2name << "]" << " " << midassign << " " << op1name;
 		break;
 	case EXITOP:
 		ss << midexit << " ";
 		break;
+	//这里忘了写生成标号的情况了！
+	case LABOP :
+		ss << rst << ":";
 	
 	}
-	ss << *(code->op1name) << " ";
-	ss << *(code->op2name) << " ";
-	ss << *(code->rstname) << "\n";
+	ss << "\n"; 
 	this->midFile << ss.str();
 	//std::cout << ss.str();
 }

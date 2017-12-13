@@ -328,12 +328,6 @@ void Compiler::handleAssign(midcode *code)
 }
 
 
-void Compiler::handleNeg(midcode *code)
-{
-	this->loadWord(code->op1name, new std::string(T0));
-	this->generateOrder(new std::string(SUB), new std::string(T0), new std::string(R0), new std::string(T0));
-	this->storeWord(code->rstname);
-}
 
 void Compiler::handleBranch(midcode *code)
 {
@@ -531,9 +525,6 @@ void Compiler::generate()
 			break;
 		case ASSIGNOP:
 			this->handleAssign(code);
-			break;
-		case NEGOP:
-			this->handleNeg(code);
 			break;
 		case EQUOP:
 		case NEQUOP:

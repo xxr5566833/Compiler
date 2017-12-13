@@ -14,8 +14,8 @@ enum midop{
 	RARRAYOP,
 	//简单变量赋值
 	ASSIGNOP,
-	//加减乘除，还有个取负
-	ADDOP, SUBOP, MULOP, DIVOP,NEGOP,
+	//加减乘除
+	ADDOP, SUBOP, MULOP, DIVOP,
 	//关系运算符
 	EQUOP, NEQUOP, MOREOP, MOREEQUOP, LESSOP, LESSEQUOP,
 	//生成标号的op

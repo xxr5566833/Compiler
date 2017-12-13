@@ -480,7 +480,7 @@ void Compiler:: expression(eRetType *resulttype, std::string *operand)
 	this->term(resulttype, termoperand1);
 	if(neg)
 	{
-		this->pushMidCode(NEGOP, termoperand1, new std::string(), termoperand1);
+		this->pushMidCode(SUBOP, new std::string("0"), termoperand1, termoperand1);
 	}
 	*resulttype = flag ? INTRET : *resulttype;
 	while(this->tok.id ==PLUS || this->tok.id == MINUS)
