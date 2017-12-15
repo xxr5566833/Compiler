@@ -75,6 +75,8 @@ void main()
 	}
 	
 	
+	printf(fibarray[0 * 100]);
+	 
 	printf( _);							
 	printf(" ");
 	printf( - fibarray[+ _zero]);				 

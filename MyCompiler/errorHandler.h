@@ -63,6 +63,8 @@ enum errorType{
 	 NOTAINT,
 	 //不是一个数组型的标识符
 	 NOTANARRAY,
+	 //数组下标是静态的，越界了
+	 ARRAYINDEXOUTOFRANGE,
 	 //不是一个函数名
 	 NOTAFUNC,
 	 //不是一个无参函数
@@ -85,6 +87,8 @@ enum errorType{
 	 NORETURNVALUE,
 	 //case后面的常量重复
 	 CASEVALUEDUPLICATE,
+	 //静态的可以检测到的除0
+	 DIVZERO,
 
 
 };

@@ -88,6 +88,10 @@ const char *INTTOCHARNOTALLOWMSG = "不允许从把int类型赋给char类型！";
 const char *NORETURNVALUEMSG = "不是一个有返回值的函数";
 
 const char *CASEVALUEDUPLICATEMSG = "case后的常量出现了重复";
+
+const char *ARRAYINDEXOUTOFRANGEMSG = "数组下标越界！";
+
+const char *DIVZEROMSG = "不能除以0";
  
 void Compiler:: errorHandle(errorType id)
 {
@@ -148,6 +152,8 @@ void Compiler:: errorSetup()
 	this->errorMsgList[INTTOCHARNOTALLOW]	=	new std::string(INTTOCHARNOTALLOWMSG);
 	this->errorMsgList[NORETURNVALUE]		=	new std::string(NORETURNVALUEMSG);
 	this->errorMsgList[CASEVALUEDUPLICATE]	=	new std::string(CASEVALUEDUPLICATEMSG);
+	this->errorMsgList[ARRAYINDEXOUTOFRANGE]=	new std::string(ARRAYINDEXOUTOFRANGEMSG);
+	this->errorMsgList[DIVZERO]				=	new std::string(DIVZEROMSG);
 }
 
 void Compiler:: errorPrint()

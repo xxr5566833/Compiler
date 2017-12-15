@@ -168,12 +168,13 @@ private:
 	void comStatement(bool *returnflag, eRetType returntype);
 
 	//处理错误
-	//词法分析的错误
 	std::vector<error*> errorList;
 	std::string *errorMsgList[kMaxErrorType];
 	void errorHandle(errorType errodId);
 	void errorSetup();
 	void errorPrint();
+	//跳读
+	void errorSkip(tokenType id);
 
 	//处理警告
 	std::vector<warning*> warningList;
@@ -301,6 +302,26 @@ private:
 	void handleExit();
 	//处理其他值给数组
 	void handleLarray(midcode *code);
+
+	//判断操作数的类型
+	//判断这个操作数是不是一个数字(- 或者是 数字开头)
+	bool isOperandNumber(std::string *operand);
+	//判断这个操作数是不是一个临时变量
+	bool isOperandTemp(std::string *operand);
+	//判断这个操作数是不是一个返回值
+	bool isOperandRet(std::string *operand);
+	//判断是不是一个标识符
+	bool isOperandId(std::string *operand);
+
+	//寄存器简单分配
+	//10个临时寄存器，分别代表t0到t9
+	int tempReg[10];
+	//8个为标识符准备的寄存器，分别代表s0到s7,值为0表示没有被分配，值不为0，表示被这个名字的标识符分配
+	std::string *symReg[8];
+
+	void allocReg(std::string *operand, std::string *reg);
+
+
 
 
 	

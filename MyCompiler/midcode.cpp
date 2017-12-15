@@ -94,9 +94,12 @@ void Compiler:: pushMidCode(midop op,std::string *operand1, std::string *operand
 {
 	midcode *code = new midcode();
 	code->op = op;
-	code->op1name = operand1;
-	code->op2name = operand2;
-	code->rstname = rst;
+	code->op1name = new std::string();
+	*(code->op1name) = *operand1;
+	code->op2name = new std::string();
+	*(code->op2name) = *operand2;
+	code->rstname = new std::string();
+	*(code->rstname) = *rst;
 	this->codes[this->midindex ++] = code;
 	this->writeMidCode(code);
 }
@@ -217,4 +220,25 @@ void Compiler ::genMessage(std::string *str, int num)
 	ss << messageid;
 	ss << num;
 	*str = ss.str();
+}
+
+bool Compiler::isOperandNumber(std::string *rs)
+{
+	return (*rs)[0] >= '0' && (*rs)[0] <= '9' || (*rs)[0] == '-';
+}
+
+bool Compiler::isOperandTemp(std::string *rs)
+{
+	return (*rs)[0] == '$';
+}
+
+bool Compiler::isOperandRet(std::string *rs)
+{
+	return (*rs)[0] == '#';
+}
+
+bool Compiler::isOperandId(std::string *rs)
+{
+	return (*rs)[0] == '_' || ((*rs)[0] >= 'A' && (*rs)[0] <= 'Z')
+		|| ((*rs)[0] >= 'a' && (*rs)[0] <= 'z');
 }

@@ -256,6 +256,8 @@ void Compiler::findAddress(std::string *name, int *offset, bool *global)
 	}
 
 }
+
+
 //控制四元式操作数 -> 寄存器
 void Compiler::loadWord(std::string *rs, std::string *reg)
 {
@@ -318,14 +320,45 @@ void Compiler::storeWord(std::string *rd)
 	}
 }
 
+void Compiler::allocReg(std::string *operand, std::string *reg)
+{
+	//根据operand的性质分配寄存器，可能有三种情况：v0，标识符或者是临时变量
+}
+
 void Compiler::handleAssign(midcode *code)
+{
+	std::string *rs = code->op1name;
+	std::string *rt = code->rstname;
+	if(this->isOperandNumber(rs))
+	{
+		//整数的赋值对象可能有三种，标识符，临时变量和v0
+		std::string *reg = new std::string();
+		//所以allocReg这里需要把v0也考虑进去
+		this->allocReg(rt, reg);
+		//生成LI  表示整数赋值
+		this->generateOrder(new std::string(LI), reg, rs);
+	}
+	else 
+	{
+		//除了可能是整数，还可能是标识符/临时变量/v0 ，这三种都是通过allocReg来获得存它们的值所在的寄存器
+		std::string *rsreg = new std::string();
+		this->allocReg(rs, rsreg);
+		std::string *rtreg = new std::string();
+		this->allocReg(rt, rtreg);
+		//生成move 指令，这里直接用add zero
+		this->generateOrder(new std::string(ADD), rtreg, rsreg, new std::string(R0));
+	}
+}
+
+/*void Compiler::handleAssign(midcode *code)
 {
 	std::string *rs = code->op1name;
 	std::string *rt = code->rstname;
 
 	this->loadWord(rs, new std::string(T0));
+	//然后分配存储rt的是哪一个，
 	this->storeWord(rt);
-}
+}*/
 
 
 

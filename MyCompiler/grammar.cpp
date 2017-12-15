@@ -346,6 +346,18 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 				//TODO跳读处理
 				return ;
 			}
+			if(this->isOperandNumber(temp))
+			{
+				//如果表达式返回的临时变量是一个常数，那么这里就需要检查数组下标是否越界
+				int constvalue = atoi(temp->c_str());
+				//注意还要和0比较
+				if(constvalue >= sym->feature || constvalue < 0)
+				{
+					this->errorHandle(ARRAYINDEXOUTOFRANGE);
+					//跳读
+					return ;
+				}
+			}
 			this->genTemp(resultoperand);
 			this->pushMidCode(RARRAYOP, sym->name, temp, resultoperand);
 			if(this->tok.id == RBRACKET)
@@ -388,7 +400,7 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 			if(sym->symbolType == SIMPLESYM || sym->symbolType == PARASYM)
 			{
 				//标识符直接作为操作数返回
-				resultoperand = sym->name;
+				*resultoperand = *sym->name;
 			}
 			else if(sym->symbolType == FUNCSYM){
 				if(sym->feature != 0)
@@ -402,7 +414,12 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 			}
 			//不要忘记常量标识符
 			else if(sym->symbolType == CONSTSYM){
-				resultoperand = sym->name;
+				//老师说了，数组下标如果是一个整形常量，那么也需要检查，即只要能够确定值的，都需要检查，
+				//所以说这里我们把常量直接当做一个值传出去，这样也好计算最后的下标
+				int value = sym->feature;
+				std::string *constvalue = new std::string();
+				this->int2string(constvalue, value);
+				*resultoperand = *constvalue;
 			}
 			else{
 				this->errorHandle(INVALIDID);
@@ -422,6 +439,7 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 		}
 	}
 	else if(this->isInRange(CONSTANT_BEGIN, CONSTANT_BEGIN_SIZE)){
+		//常数，那么此时直接把它的值作为操作数
 		int value;
 		this->constant(&value, resulttype);
 		std::string *constvalue = new std::string();
@@ -442,25 +460,77 @@ void Compiler:: term(eRetType *resulttype, std::string *operand)
 	//这个是这个term的最终返回的中间代码
 	std::string *factoroperand = new std::string();
 	this->factor(resulttype, factoroperand);
+	//这里不再产生一个临时变量来接受因子返回的操作数
 	std::string *resultoperand = new std::string();
-	//这里统一再产生一个临时变量获取从factor传来的操作数，并把这个临时变量作为最后的操作数
-	this->genTemp(resultoperand);
-	this->pushMidCode(ASSIGNOP, factoroperand, new std::string(), resultoperand);
+	*resultoperand = *factoroperand;
+	if(!this->isOperandTemp(resultoperand) && !this->isOperandNumber(resultoperand))
+	{
+		//如果不是一个临时变量且不是一个数字，那么需要产生一个临时变量来接受这个操作数
+		//因为除了这两种情况以外，就只剩下 标识符 或者 v0寄存器，这两个都是不能作为中间结果的
+		std::string *temp = new std::string();
+		this->genTemp(temp);
+		this->pushMidCode(ASSIGNOP, resultoperand, new std::string(), temp);
+		*resultoperand = *temp;
+	}
+	//所以第一个操作数，要么是一个临时变量，要么是一个数字
+	/*this->genTemp(resultoperand);
+	this->pushMidCode(ASSIGNOP, factoroperand, new std::string(), resultoperand);*/
 	while(this->tok.id == STAR || this->tok.id == DIV)
 	{
+		//因为一旦有了计算，那么最后的项的类型一定是int
+		*resulttype = INTRET;
+
 		bool isstar = this->tok.id == STAR;
 		eRetType fact = NOTTYPE;
 		std::string *factoroperand2 = new std::string();
 		this->inSym();
 		this->factor(&fact, factoroperand2);
-		if(isstar)
+
+		if(this->isOperandNumber(resultoperand))
 		{
-			this->pushMidCode(MULOP, resultoperand, factoroperand2, resultoperand);
+			if(this->isOperandNumber(factoroperand2))
+			{
+				//如果两个都是数字，那么可以直接计算结果
+				int op1 = atoi(resultoperand->c_str());
+				int op2 = atoi(factoroperand2->c_str());
+				if(op2 == 0 && !isstar)
+				{
+					//不能除以0！
+					this->errorHandle(DIVZERO);
+					//这里不跳读什么,并把op2加1，以防止它为0
+					op2 +=1;
+				}
+				int result = isstar ? op1 * op2 : op1 / op2;
+				std::string *constvalue = new std::string();
+				this->int2string(constvalue, result);
+				*resultoperand = *constvalue;
+			}
+			else{
+				//第一个是数字，第二个不是数字，同样的道理，这里需要对于那些不是临时变量且不是数字的因子操作数赋给一个临时变量操作数
+
+				if(!this->isOperandTemp(factoroperand2))
+				{
+					//不是临时变量，那么需要生成临时变量，并把原来的操作数的值给这个临时变量，让这个临时变量参与运算并作为结果操作数
+					std::string *result = new std::string();
+					this->genTemp(result);
+					this->pushMidCode(ASSIGNOP, factoroperand2, new std::string(), result);
+					this->pushMidCode(isstar ? MULOP : DIVOP, resultoperand, result, result);
+					*resultoperand = *result;
+				}
+				else{
+					//是临时变量，那么直接把它作为最后的操作数
+					this->pushMidCode(isstar ? MULOP : DIVOP, resultoperand, factoroperand2, factoroperand2);
+					//然后需要让resultoperand始终存放结果操作数
+					*resultoperand = *factoroperand2;
+				}
+			}
 		}
 		else{
-			this->pushMidCode(DIVOP, resultoperand, factoroperand2, resultoperand);
+			//第一个不是数字，那么只有可能是临时变量了，因为首先第一个之前的限制就是临时变量或者数字，之后如果参与了与第二个因子
+			//的运算，那么最后的结果也要么是临时变量，要么是数字
+			this->pushMidCode(isstar ? MULOP : DIVOP, resultoperand, factoroperand2, resultoperand);
 		}
-		*resulttype = INTRET;
+
 	}
 	*operand = *resultoperand;
 	std::cout << "这是一个 <项>" << std::endl;
@@ -483,7 +553,22 @@ void Compiler:: expression(eRetType *resulttype, std::string *operand)
 	this->term(resulttype, termoperand1);
 	if(neg)
 	{
-		this->pushMidCode(SUBOP, new std::string("0"), termoperand1, termoperand1);
+		//同样这里还是需要看，如果项是一个常量，那么直接就可以计算结果
+		if(this->isOperandNumber(termoperand1))
+		{
+			//项返回了一个数字常量
+			int value = atoi(termoperand1->c_str());
+			value = -1 * value;
+			std::string *constvalue = new std::string();
+			//先获得它的int值，然后取相反数，然后再变成string
+			this->int2string(constvalue, value);
+			//把结果给了第一个项操作数
+			*termoperand1 = *constvalue;
+		}
+		else{
+			//不是数字常量，那么肯定是临时变量了
+			this->pushMidCode(SUBOP, new std::string("0"), termoperand1, termoperand1);
+		}
 	}
 	*resulttype = flag ? INTRET : *resulttype;
 	while(this->tok.id ==PLUS || this->tok.id == MINUS)
@@ -494,12 +579,26 @@ void Compiler:: expression(eRetType *resulttype, std::string *operand)
 		this->inSym();
 		this->term(&result, termoperand2);
 		*resulttype = INTRET;
-		if(isplus)
+		//还是需要看两个操作数是不是数字
+		if(this->isOperandNumber(termoperand1))
 		{
-			this->pushMidCode(ADDOP, termoperand1, termoperand2, termoperand1);
+			if(this->isOperandNumber(termoperand2))
+			{
+				//两个操作数都是数字常量，那么计算，并把结果给termoperand1
+				int op1 = atoi(termoperand1->c_str());
+				int op2 = atoi(termoperand2->c_str());
+				int result = isplus ? op1 + op2 : op1 - op2;
+				std::string *constvalue = new std::string();
+				this->int2string(constvalue, result);
+				*termoperand1 = *constvalue;
+			}
+			else{
+				this->pushMidCode(isplus ? ADDOP : SUBOP, termoperand1, termoperand2, termoperand2);
+				*termoperand1 = *termoperand2;
+			}
 		}
 		else{
-			this->pushMidCode(SUBOP, termoperand1, termoperand2, termoperand1);
+			this->pushMidCode(isplus ? ADDOP : SUBOP, termoperand1, termoperand2, termoperand1);
 		}
 	}
 	*operand = *termoperand1;
@@ -1487,7 +1586,7 @@ void Compiler:: statement(bool *returnflag, eRetType returntype)
 		}
 		else if(this->tok.id == ASSIGN)
 		{
-			//说明是个简单变量或者参数变量，首先需要检查简单变量
+			//说明是个简单变量或者参数变量，首先需要检查是不是简单变量或参数变量
 			if(sym->symbolType != SIMPLESYM && sym->symbolType != PARASYM)
 			{
 				this->errorHandle(NOTASIMPLE);
@@ -1527,8 +1626,16 @@ void Compiler:: statement(bool *returnflag, eRetType returntype)
 			eRetType rettype = NOTTYPE;
 			std::string *indexoperand = new std::string();
 			this->expression(&rettype, indexoperand);
-
-
+			//这里看indexoperand是不是一个整数常量
+			if(this->isOperandNumber(indexoperand))
+			{
+				//如果是一个可以直接获得值的数字，那么需要检查
+				int index = atoi(indexoperand->c_str());
+				if(index >= sym->feature)
+				{
+					this->errorHandle(ARRAYINDEXOUTOFRANGE);
+				}
+			}
 			if(this->tok.id == RBRACKET)
 			{
 				this->inSym();
