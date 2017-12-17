@@ -95,7 +95,7 @@ const char *DIVZEROMSG = "²»ÄÜ³ıÒÔ0";
  
 void Compiler:: errorHandle(errorType id)
 {
-	//std::cout << this->sym << std::endl;
+	std::cout << this->sym << std::endl;
 	error *err = new error();
 	err->id = id;
 	err->lineCount = this->lineCount;

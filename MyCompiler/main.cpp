@@ -10,4 +10,5 @@ int main(int argc, char *argv[])
 	std::cin >> path;
 	Compiler *c = new Compiler(path);
 	c->begin();
+
 }

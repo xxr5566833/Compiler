@@ -48,6 +48,9 @@
     <ClCompile Include="objectCode.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="randomToUpper.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Compiler.h">

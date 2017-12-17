@@ -172,7 +172,7 @@ void Compiler::generateOrder(std::string *order, std::string *rs, int num)
 {
 	std::stringstream ss = std::stringstream();
 	ss << "\t" << *order << "\t" << *rs << "\t,\t" << num << std::endl;
-	std::cout << ss.str();
+	//std::cout << ss.str();
 	this->objectFile << ss.str();
 }
 
@@ -180,7 +180,7 @@ void Compiler::generateOrder(std::string *order, std::string *rs, int num, std::
 {
 	std::stringstream ss = std::stringstream();
 	ss << "\t" << *order << "\t" << *rs << "\t,\t" << num << "(" << *rt << ")" << std::endl;
-	std::cout << ss.str();
+	//std::cout << ss.str();
 	this->objectFile << ss.str();
 }
 
@@ -188,7 +188,7 @@ void Compiler::generateOrder(std::string *order, std::string *rd, std::string *r
 {
 	std::stringstream ss = std::stringstream();
 	ss << "\t" << *order << "\t" << *rd << "\t,\t" << *rt << "\t,\t" << imme << std::endl;
-	std::cout << ss.str();
+	//std::cout << ss.str();
 	this->objectFile << ss.str();
 }
 
@@ -196,7 +196,7 @@ void Compiler::generateOrder(std::string *order, std::string *rd, std::string *r
 {
 	std::stringstream ss = std::stringstream();
 	ss << "\t" << *order << "\t" << *rd << "\t,\t" << *rs << "\t,\t" << *rt << std::endl;
-	std::cout << ss.str();
+	//std::cout << ss.str();
 	this->objectFile << ss.str();
 }
 
@@ -204,7 +204,7 @@ void Compiler:: generateOrder(std::string *order, std::string *rs, std::string *
 {
 	std::stringstream ss = std::stringstream();
 	ss << "\t" << *order << "\t" << *rs << "\t,\t" << *label << std::endl;
-	std::cout << ss.str();
+	//std::cout << ss.str();
 	this->objectFile << ss.str();
 }
 
@@ -212,13 +212,13 @@ void Compiler::generateOrder(std::string *order, std::string *target)
 {
 	std::stringstream ss = std::stringstream();
 	ss << "\t" << *order << "\t" << *target << std::endl;
-	std::cout << ss.str();
+	//std::cout << ss.str();
 	this->objectFile << ss.str();
 }
 
 void Compiler::generateOrder(std::string *order)
 {
-	std::cout << "\t" << *order << std::endl;;
+	//std::cout << "\t" << *order << std::endl;;
 	this->objectFile << "\t" << *order << std::endl;
 }
 
@@ -263,7 +263,7 @@ void Compiler::genMipsLabel(std::string *label)
 {
 	std::string *newlab = new std::string();
 	this->str2Lower(label, newlab);
-	std::cout << *newlab << ":" << std::endl;
+	//std::cout << *newlab << ":" << std::endl;
 	this->objectFile << *newlab << ":" << std::endl;
 }
 

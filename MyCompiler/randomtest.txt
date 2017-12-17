@@ -1,0 +1,378 @@
+CONsT chaR _chAr__ = '_', _chaR_LOwer_A = 'A', _CHAR_LOWer_B = 'b', _chAr_loWeR_c = 'C', _cHar_LowEr_D = 'd';
+conSt CHar _ChaR_upPER_A = 'A', _ChaR_uPper_B = 'B', _char_UppeR_C = 'C', _char_D = 'D';
+COnST CHar _Char_0 = '0', _cHAR_1 = '1', _chAR_2 = '2', _chAR_3 = '3', _ChaR_4 = '4', _cHaR_5 = '5', _cHar_6 = '6', _chAR_7 = '7', _cHaR_8 = '8', _Char_9 = '9';
+ConST Char _Char_pLus = '+', _ChaR_mINUS = '-', _cHaR_MUl = '*', _ChAr_diV = '/';
+
+coNST INT _int_0 = 0;
+coNST int _iNT_1 = 1, _inT_256 = 256, _inT_34545 = 34545;
+cOnSt InT _iNt_MinUs400 = -400, _int_MInUs888 = -888, _iNT_mINuS1563 = -1563;
+coNSt INT _InT_plUs567 = +567, _iNT_pLus5 = +5, _INT_pLUS1000 = +1000;
+consT INT _iNt_Temp = 77;
+COnST InT _INT_I = 56;
+
+CHAR _ARRAY_chaR_A[1000], _aRRay_chAr_c[1000], _siMplE_Char_T;
+InT _SImPlE_Int_e, _arRaY_Int_FIBArRay[1000], _ArRAy_INt_fIBArRAY_tEMp[1000], _SIMPlE_int_NUM, _Array_iNT_A[1000];
+
+
+inT _arRAY_InT_quICkSORt_[100], _siMple_Int_COUNT;
+INt _siMpLe_InT_LeNgth;
+
+INt fib(inT _sImplE_int_NuM)
+{
+	inT _iNt_tEMp, FIB1, Fib2;
+	iNt _ARRAY_Int_FIBARrAY_TeMP[50];
+	if (- _SimPLe_iNt_NuM < - (- (- _INt_1)))
+	{
+		iF (_arrAy_iNt_FIbARrAy[_sIMplE_InT_nUm - 1] <= -1)
+		{
+			FIb1 = fib(_SimpLe_iNt_nUM - 1);
+		}
+		ElSE {
+			fIb1 = _Array_Int_fiBaRRaY[_SimPle_INt_nUm - 1];
+		}
+		FiB2 = _ArRaY_int_fIBaRrAY[_SImple_iNt_nUM - 2];
+		_inT_tEmp = FIB1 + FIB2;
+		_arRAY_INt_FiBARRAy[_SimplE_InT_NuM] = _int_tEMp;					
+		RETuRN (_int_teMp);
+	}
+	ElSE {
+		iF (_SImpLe_InT_num * (_simPLe_InT_num + _INT_1) / (_simPLe_int_nUM + 1))
+		{
+			_aRRAY_Int_fiBArRaY[1] = 1;
+			_aRrAY_iNt_fibaRRAy_tEmP[1] = _Int_1;
+			rETurn (_ARraY_INt_FIbArraY_tEMP[_ArRay_InT_FibARRaY[_aRrAy_iNt_fIbArRAY_tEmP[_InT_1]]] * (_Array_InT_FiBARRAy[_aRRAY_int_fiBARrAY_tEmP[1]]) + _INt_0);
+		}
+		eLSe {
+			_ArRaY_InT_FibARrAY[0] = 0;
+			_ArRay_iNt_fiBarRAY_teMP[0] = _INt_0;
+			rEtUrn (_aRrAY_Int_fIBarRay_Temp[_arraY_INt_fIBArRaY[_InT_0]] * (_aRrAY_iNt_fIbarray[_ARrAy_InT_FiBaRray_teMp[0]]) + _INT_0);
+		}
+	}
+	{
+		;
+	}
+}
+
+voID MAIN1{
+	inT _iNT_i;
+	_inT_I = 0;
+	while(_Int_i < 46)
+	{
+		_ARRaY_iNt_fibARRay_tEmP[_Int_i] = - 1;
+		_aRRaY_iNT_fibaRraY[_iNt_i] = -1;
+		_ARRAY_CHAr_A[_iNt_i + _Int_0 / _CHar_pluS] = _cHar_0;
+		_ArRAY_CHAr_c[_int_i] = '0';
+		_iNT_I = _inT_i + 1 - _INt_0;
+	}
+	_sIMPLe_iNt_nUm = 0;
+	priNtF("pLEAse gIvE Me yOur mAx InDEX IN RaNGE fROM 2 tO 45 :");
+	scANF(_SiMPlE_iNT_num);
+	if (_SImpLe_INt_nUM < 2)
+	{
+		PriNTf("nUM IS LESs ThAN 2!");
+	}
+	ELsE {
+		If (_sImPlE_INt_nUM > 45)
+		{
+			printf("num iS more tHAn 45!");
+		}
+		ELSE {
+			fIb(_SImpLe_InT_NUm + FIB(_Int_0) - fib(_INt_1) + FIb(_inT_1 + _Int_1));
+			WHiLe (_sIMPle_Int_NUm >= 0) {
+				PRintf(- (- _ARRay_InT_FIbArRay[_simplE_INt_num]));		
+				if(_arRAY_int_FibArray_tEmP[_SiMPLe_int_nuM] != -1)
+				{
+					priNtF("ERROr");
+				}
+				elSE{
+					{
+						{
+							{
+								;
+							}
+						}
+					}
+				}
+				prIntf(" ");
+				_SIMPle_INT_nuM = _SIMPLe_INt_NUm - _INt_1;
+			}
+		}
+	}
+}
+
+iNT printArray {
+    inT A;
+    A = 1;
+    iF(_simPLE_iNt_LENgTH >= 1){
+        PriNtF(_aRRAY_INt_quICKSoRT_[0]);
+    } eLsE {
+        rETUrn (-1);
+    }
+    while (A < _SIMPlE_iNt_lEnGth) {
+        prInTF(", ", _aRray_INT_QuiCKsoRT_[A]);
+        A = A + 1;
+    }
+    REtURN (0);
+}
+
+VOID quiCKSOrt(inT hEAd, InT TAIL) {
+    inT a, B, tMp;
+    if(heAD >= TAil){
+        ReTuRn;
+    }elSE {}
+    A = HeAd + 1;
+    B = head;
+    wHiLe(a <= TAIl) {
+        if(_aRRAY_int_QuicksorT_[A] < _arRaY_iNt_quIckSOrt_[B]) {
+            tMp = _ArRay_inT_QuIckSORT_[a];
+            _ArraY_INt_quicKSOrt_[a] = _aRraY_iNt_quIcKsORt_[b];
+            _arRAy_Int_quICKSort_[B] = tmP;
+            Tmp = _arRAY_INt_qUickSOrt_[a];
+            _ArRAy_iNT_qUicksOrt_[A] = _arRAy_iNt_qUicKSorT_[b + 1];
+            _arRAY_inT_QuICksort_[B + 1] = tMP;
+            B = b + 1;
+            _SIMPlE_Int_cOuNt = _siMPlE_iNt_coUnt + 1;
+        } eLSe {;}
+        a = a + 1;
+    }
+    QuICkSORT(HEAD, B - 1);
+    quIcKSORT(B + 1, TaiL);
+    retURn;
+}
+
+iNT rETurn1
+{
+	REtURN (1);
+}
+
+Int returN999
+{
+	rEtUrN (999);
+}
+
+iNt reTURnMInus998
+{
+	reTurN (-998);
+}
+
+vOid main2
+{
+    InT i;
+    INT rEtuRn1;
+    _sImpLe_inT_CoUnT = 0;
+    I = 0;
+    pRInTF("ThiS Is A qUiCk sort, iNPUt CoUNT of NUMBERS iN the FirsT LinE:");
+    scAnf(_SIMplE_INt_leNGth);
+    If(_sImplE_iNt_LenGtH != 0) {
+        _SIMPle_Int_lENGTh = (_sIMPlE_INT_lenGTh + _simPLE_inT_lENGtH * _simPle_INt_lengTH) / _sIMplE_iNT_lENgth - 1;
+    } Else{;}
+    pRintf("INpUT yOUR RaW ARRay, SpliT nuMBERs WITh spaCE:");
+    whilE (i < _SimPlE_iNT_lENgtH) {
+        scaNf(retuRN1);
+        _ArRaY_inT_quiCKsORT_[I] = RETuRN1;
+        I = I + rEturn999 + rETURNMInuS998;
+    }
+    SWiTcH (_SiMpLE_iNt_lenGtH) {
+        cAse 0: PrINTARrAy;
+        cAse 1: pRINTARRAy;
+        DEfault: {
+            IF (_SiMpLE_INt_lENgTh < 0) {
+                PriNtF("INValID lenGTH!");
+                RETUrn;
+            }Else {
+                qUICKSoRT(returN999 - 999, _SIMPLE_Int_leNGth - (RetUrn999 + reTUrNmInuS998));
+                prinTArraY;
+            }
+        }
+    }
+    PRintF("excHANGe TiME Of numBeRS:", _sImpLE_Int_coUNT);
+    reTUrN;
+}
+
+chAR reTURna
+{
+	REturN (_ChAR_LOWER_A);
+}
+
+cHAr rETURNPLUS
+{
+	REtuRN ('+');
+}
+
+Char RetuRnStaR
+{											
+	RetuRN ('*');												
+}
+
+Char RETurnCHAr(chAR C)
+{
+	RETuRN (c);
+}
+
+vOId mAin3
+{
+	inT i;
+	I = 0;
+	wHiLe(I < 45)
+	{
+		_ArRAY_cHaR_A[i] = 'A';
+		_arRAy_iNt_a[i] = 100;
+		_aRRAY_InT_fiBaRRAY[I] = -1;
+		I = i + 1;
+		
+	}
+
+	I = 0;
+	printf(" ");
+	
+	pRintf( _Char__);							
+	_sIMPLE_CHar_T = _cHAr_upPeR_A;
+	PrinTF(" ");
+	
+	PrintF( _sIMPlE_cHar_T);
+	pRintF(" ");
+	
+	pRinTF( '+');
+	prIntF(" ");
+	
+	pRiNTF( _Array_cHar_a[_iNT_1]);
+	PRiNtf(" ");
+	
+	pRINTf( rEtuRNCHAR(_arRay_CHAR_A[_InT_plUS5]));
+	pRintF(" ");
+	
+	PRinTf( rEtuRNA);
+	PRiNTF(" ");
+	
+
+	pRIntF( _iNT_34545);
+	PRintf(" ");
+	
+	pRiNTf( _int_MiNuS400);
+	pRInTF(" ");
+	
+	PrINTF( _iNt_minUS1563);
+	pRintf(" ");
+	
+	PRIntf( _int_pluS1000);
+	pRintf(" ");
+	
+	PrinTF( 0);
+	pRiNtF(" ");
+	
+	prINtF( -888);
+	PrinTf(" ");
+	
+	pRInTf( +456);
+	PRintF(" ");
+	
+	prINtf( _ArRAy_inT_a[20]);
+	prinTf(" ");
+	
+	pRinTf( _ArRay_Int_a[_iNt_1]);
+	prInTf(" ");
+	
+	PRinTF( FIb(0));
+	pRINTf(" ");
+	
+	prinTf( Fib(_InT_1));
+	pRiNtf(" ");
+	
+	prINTF( Fib(_INt_PlUS5));
+	PRINTf(" ");
+	
+	PriNTF( (100));
+	Printf(" ");
+	
+	PriNtF( (((_aRraY_INt_a[20]))));
+	prInTf(" ");
+	
+	PrintF( (fib(_inT_Plus5)));
+	PRIntF(" ");
+	
+
+	PRIntF( _ChAR__ * _SiMPLe_chAR_T);
+	PRInTF(" ");
+	
+	priNTF( '+' / _array_ChAR_a[_INT_1]);
+	prINtf(" ");
+	
+	PriNtf( _arRaY_CHaR_A[_INT_1] / _InT_miNUs400);
+	priNTf(" ");
+	
+	PriNTf( rETUrnCHar('/') * Fib(_iNT_1));
+	PRInTF(" ");
+	
+	pRINtF( _Int_MinuS400 * -888);
+	priNTF(" ");
+	
+	priNtF( _InT_plUs1000 / FIb(_INT_Plus5));
+	pRinTf(" ");
+	
+	pRinTf( _ChAR__ / _SIMPLE_CHar_t * FIB(_int_1));
+	PrinTF(" ");
+	
+	Printf( _Int_mINuS400 * -888 * fib(_InT_0));
+	PriNTF(" ");
+	
+	prINTf( _int_MinUs400 * -888 / _Simple_cHaR_t);
+	PRiNtF(" ");
+	
+	pRInTf( reTuRNCHAR(_aRRay_cHar_A[_inT_PlUS5]) * returnChaR(_arRaY_cHAr_A[_InT_pLUs5]) * REtURnCHAr(_arRAY_char_A[_INt_PlUs5]));
+	PRintF(" ");
+	
+	pRinTF( (_iNt_MINUs400 * -888 / _sIMPlE_cHAr_t) / (_int_miNUS400 * -888) * ((((_ARrAy_iNT_a[20])))));
+	PrinTf(" ");
+	
+	prIntF( _chAR__ * (reTURNCHaR(_ARraY_CHaR_A[_iNt_PlUS5]) * REtUrNChAr(_ArRaY_CHar_A[_Int_PLuS5]) * REtUrNCHAr(_arRay_chAR_a[_INt_PLUS5])));
+	pRiNTf(" ");
+	
+	PRInTf( fIb(fiB(fIB(6)) - fiB(_iNT_plus5) ));
+	PrintF(" ");
+	
+	PrINtF( _ArrAY_inT_a[fib(_arRAy_int_A[fiB(fIB(FIb(_INt_0)))] - _aRRay_Int_a[FIB(Fib(_aRRAY_inT_a[0] / _ARrAy_Int_A[0]))])]);
+	PrIntf(" ");
+	
+
+	pRiNTf( + -888);
+	PrinTF(" ");
+	
+	prInTf( - retUrNa);
+	PRinTf(" ");
+	
+	PrintF( - _array_InT_a[FIb(_arRay_iNT_a[FiB(fIB(FIb(_inT_0)))] - _ARray_iNt_A[FIb(FIB(_aRray_inT_A[0] / _ARraY_INt_a[0]))])] + (_InT_MInus400 * -888 / _SImPLe_cHaR_T) / (_iNT_minuS400 * -888) * ((((_aRray_INt_a[20])))));
+	PrINTF(" ");
+	
+	pRINtf( + _ARray_Int_A[FIb(_arRay_InT_A[FIB(FIb(fIB(_Int_0)))] - _ArRaY_iNt_a[fIb(FiB(_Array_iNT_a[0] / _ArRay_iNt_a[0]))])] - _ChAr__ * (REturNChAR(_aRRay_CHar_A[_inT_Plus5]) * RETuRnChar(_aRRaY_CHar_A[_INt_pLUs5]) * retuRNChAr(_aRrAy_cHar_A[_int_PlUs5])));
+	PrINtf(" ");
+	
+	pRIntF( + (+ _ArRAY_int_A[FiB(_aRraY_iNt_A[FiB(FIB(FIb(_int_0)))] - _ArRAY_Int_A[FIb(fIb(_array_INT_A[0] / _ARrAY_int_a[0]))])] - _ChAr__ * (retUrNChAr(_ArraY_CHAr_A[_Int_pLUs5]) * RetURnCHAr(_ARRAy_Char_A[_iNt_PLUs5]) * RETUrnCHAr(_ARray_chAR_A[_INT_PlUS5])))
+			 - (- fIB(FiB(FiB(6)) - fIB(_INt_PLuS5) )) + _inT_miNus400 * -888 * Fib(_InT_0));
+	prInTF(" ");
+	
+	pRiNtf( FiB(_InT_pLuS1000 / fIb(_Int_pluS5) - 200 + (+ (+ _ARraY_iNT_A[fib(_ArRaY_int_a[fiB(fIb(fib(_Int_0)))] - _aRRAy_INt_a[fiB(FIB(_aRraY_iNT_A[0] / _ArRAy_InT_A[0]))])] - _cHar__ * (reTUrnChaR(_ARRaY_cHAr_A[_iNT_pLUs5]) * rETURNChAr(_aRRay_cHar_A[_Int_PLuS5]) * rETurNChAr(_arraY_chaR_a[_Int_PLUs5])))
+			 - (- fIb(fIB(fiB(3 + fib(_Int_Plus5)) - FIB(_INt_pLus5) ))) + _int_MInUS400 * -888 * fib(_INt_0)) / (- (+ _ARRaY_Int_A[fIB(_ARrAY_INT_a[FiB(Fib(FiB(_inT_0)))] - _ARRaY_iNt_A[fIB(FiB(_ARraY_Int_A[0] / _aRrAy_InT_A[0]))])] - _chAr__ * (retUrnCHar(_aRrAy_CHAR_a[_InT_PLUS5]) * reTuRNChaR(_ARrAy_chaR_A[_Int_pLUS5]) * ReTurnCHAR(_array_char_A[_INt_plUS5])))
+			 - (- fIb(Fib(FiB(3 + fiB(_int_PLUs5)) - fib(_iNT_plUS5) ))) + _int_MinUs400 * -888 * fIB(_INT_0))));
+
+
+
+
+}
+
+
+vOid mAIN()
+{
+	char ChOOSE;
+	prinTF("givE ME YOUR cHoiCE  a IS FIbONaCCi  B iS qUicKSorT C iS expRESSioNs PriNt :");
+	ScANF(CHOoSE);
+	swiTCh(cHoOSE)
+	{
+	case 'a' : main1;
+	CAse 'b' : MAIn2;
+	caSe 'c' : MAin3;
+	DeFAult: pRiNTf("out oF range");
+	}
+	retUrn;
+
+
+}
