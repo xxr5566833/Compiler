@@ -5,6 +5,7 @@
 #include "warningHandler.h"
 #include "symbolTab.h"
 #include "midcode.h"
+#include "objectCode.h"
 //最大保留字空间
 const int kMaxReserve = 100;
 //最大单词数量空间
@@ -63,6 +64,8 @@ public:
 	void printSymTab();
 	//辅助函数 int to string
 	void int2string(std::string *s, int value);
+	//统一转换为小写
+	void str2Lower(std::string *oldstr, std::string *newstr);
 	~Compiler();
 
 private:
@@ -131,6 +134,7 @@ private:
 	//处理sym
 	void handleSym();
 
+
 	//语法分析相关：
 	//判断
 	bool isInRange(const tokenType range[], int size);
@@ -154,18 +158,18 @@ private:
 	void beginWithVar();
 	void program();
 	void condition(std::string *label);
-	void ifStatement(bool *returnflag, eRetType returntype);
-	void caseStatement(eRetType switchtype, std::string *switchtemp, bool *returnflag, eRetType returntype, std::string *donelab, std::string *nextlab, int *caseconst);
-	void caseTab(eRetType switchtype, std::string *switchtemp, bool *returnflag, eRetType returntype, std::string *donelab);
-	void switchStatement(bool *returnflag, eRetType returntype);
-	void whileStatement(bool *returnflag, eRetType returntype);
+	void ifStatement(bool *returnflag, eRetType returntype, std::string *name);
+	void caseStatement(eRetType switchtype, std::string *switchtemp, bool *returnflag, eRetType returntype, std::string *donelab, std::string *nextlab, int *caseconst, std::string *name);
+	void caseTab(eRetType switchtype, std::string *switchtemp, bool *returnflag, eRetType returntype, std::string *donelab, std::string *name);
+	void switchStatement(bool *returnflag, eRetType returntype, std::string *name);
+	void whileStatement(bool *returnflag, eRetType returntype, std::string *name);
 	void scanfStatement();
 	void printfStatement();
-	void returnStatement(bool *returnflag, eRetType returntype);
-	void statement(bool *returnflag, eRetType returntype);
-	void statementList(bool *returnflag, eRetType returntype);
+	void returnStatement(bool *returnflag, eRetType returntype, std::string *name);
+	void statement(bool *returnflag, eRetType returntype, std::string *name);
+	void statementList(bool *returnflag, eRetType returntype, std::string *name);
 	void varState();
-	void comStatement(bool *returnflag, eRetType returntype);
+	void comStatement(bool *returnflag, eRetType returntype, std::string *name);
 
 	//处理错误
 	std::vector<error*> errorList;
@@ -248,6 +252,8 @@ private:
 
 	//目标代码生成
 	std::fstream objectFile;
+	//初始化寄存器池
+	void objectInit();
 	//初始化字符串定义
 	void initAscii();
 	//生成目标代码
@@ -314,12 +320,16 @@ private:
 	bool isOperandId(std::string *operand);
 
 	//寄存器简单分配
-	//10个临时寄存器，分别代表t0到t9
-	int tempReg[10];
+	//9个临时寄存器，分别代表t0到t8,-1表示未分配
+	int tempReg[8];
+	int tempRegIndex ;
 	//8个为标识符准备的寄存器，分别代表s0到s7,值为0表示没有被分配，值不为0，表示被这个名字的标识符分配
 	std::string *symReg[8];
-
+	int symRegIndex;
 	void allocReg(std::string *operand, std::string *reg);
+	regAllocStack regStack;
+	void stackPop();
+	void stackPush();
 
 
 

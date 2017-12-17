@@ -24,6 +24,8 @@ bld/
 # Roslyn cache directories
 *.ide/
 
+# 生成的汇编代码
+*.asm
 
 # MSTest test Results
 [Tt]est[Rr]esult*/

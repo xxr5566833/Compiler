@@ -37,7 +37,23 @@ void Compiler:: begin()
 	this->initWordArray();
 	int i = 0;
 	this->program();
+	this->objectInit();
 	this->generate();
 	this->warningPrint();
 	this->errorPrint();
+}
+
+//一些所有模块都可能用到的方法加在这里吧
+
+void Compiler::str2Lower(std::string *oldstr, std::string *newstr)
+{
+	if(!newstr)
+	{
+		newstr = new std::string();
+	}
+	for(int i = 0; i < oldstr->length() ; i++)
+	{
+		char c = tolower((*oldstr)[i]);
+		newstr->append(1, c);
+	}
 }

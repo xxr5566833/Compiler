@@ -32,64 +32,76 @@ $t12 = temp
 fibarray[$t11] = $t12
 $t13 = temp
 #RET = $t13
+goto _4fib$end
 goto $label1
 $label0:
 if 4 == 0 then goto $label4
-fibarray[1] = 1
+$t14 = 1
+fibarray[1] = $t14
 #RET = 1
+goto _4fib$end
 goto $label5
 $label4:
-fibarray[0] = 0
+$t15 = 0
+fibarray[0] = $t15
 #RET = 0
+goto _4fib$end
 $label5:
 $label1:
+_4fib$end:
 ret _4fib
 init printStar
 printf 0
+goto printStar$end
+printStar$end:
 ret printStar
 init printChar
-$t14 = num
-if $t14 != 0 then goto $label6
+$t16 = num
+if $t16 != 0 then goto $label6
+goto printChar$end
 goto $label7
 $label6:
-$t15 = c
-printf $t15
-$t16 = c
-push $t16
-$t17 = num
-$t17 = $t17 - 1
-push $t17
+$t17 = c
+printf $t17
+$t18 = c
+push $t18
+$t19 = num
+$t19 = $t19 - 1
+push $t19
 call printChar
 $label7:
+printChar$end:
 ret printChar
 init returnStar
 printf 42
 #RET = 42
+goto returnStar$end
+returnStar$end:
 ret returnStar
 init main
 i = 0
 $label8:
-$t18 = i
-if $t18 > 999 then goto $label9
-$t19 = i
 $t20 = i
-$t20 = 0 - $t20
-fibarray[$t19] = $t20
+if $t20 > 999 then goto $label9
 $t21 = i
-$t21 = $t21 + 1
-i = $t21
+$t22 = i
+$t22 = 0 - $t22
+fibarray[$t21] = $t22
+$t23 = i
+$t23 = $t23 + 1
+i = $t23
 goto $label8
 $label9:
-$t22 = fibarray[0]
-printf $t22
+$t24 = fibarray[0]
+printf $t24
 printf 95
 printf 1
-$t23 = fibarray[0]
-$t23 = 0 - $t23
-printf $t23
+$t25 = fibarray[0]
+$t25 = 0 - $t25
+printf $t25
 printf 2
-$t24 = fibarray[9]
-printf $t24
+$t26 = fibarray[9]
+printf $t26
 printf 3
 printf -5783
 printf 4
@@ -101,22 +113,22 @@ printf -97
 printf 7
 push 4
 call _4fib
-$t25 = #RET
-push $t25
+$t27 = #RET
+push $t27
 call _4fib
-$t26 = #RET
-$t26 = 0 - $t26
-printf $t26
+$t28 = #RET
+$t28 = 0 - $t28
+printf $t28
 printf 8
 printf -9506
 printf 9
 push 20
 call _4fib
-$t27 = #RET
+$t29 = #RET
 push 6
 call _4fib
-$t27 = $t27 \ #RET
-printf $t27
+$t29 = $t29 \ #RET
+printf $t29
 printf 10
 printf 0
 printf 11
@@ -124,21 +136,21 @@ printf 0
 printf 12
 push 20
 call _4fib
-$t28 = #RET
+$t30 = #RET
 push 6
 call _4fib
-$t28 = $t28 \ #RET
-$t28 = -9506 + $t28
-printf $t28
+$t30 = $t30 \ #RET
+$t30 = -9506 + $t30
+printf $t30
 printf 13
 printf 0
 printf 14
 printf -2100
 printf 15
-$t29 = fibarray[9]
-$t29 = 0 + $t29
-$t29 = -1000 * $t29
-printf $t29
+$t31 = fibarray[9]
+$t31 = 0 + $t31
+$t31 = -1000 * $t31
+printf $t31
 printf 16
 printf 97
 printf 95
@@ -148,125 +160,125 @@ printf 42
 printf 48
 printf 17
 max = 3
-$t30 = max
-i = $t30
-$label10:
-$t31 = i
-if $t31 == 0 then goto $label11
-call printStar
-$t32 = i
-$t32 = $t32 - 1
+$t32 = max
 i = $t32
+$label10:
+$t33 = i
+if $t33 == 0 then goto $label11
+call printStar
+$t34 = i
+$t34 = $t34 - 1
+i = $t34
 goto $label10
 $label11:
 printf 18
 scanf int num
 scanf char c
-$t33 = c
-push $t33
-$t34 = max
-push $t34
+$t35 = c
+push $t35
+$t36 = max
+push $t36
 call printChar
 printf 19
-$t35 = num
-if $t35 >= 2 then goto $label12
+$t37 = num
+if $t37 >= 2 then goto $label12
 printf 20
 goto $label13
 $label12:
-$t36 = num
-if $t36 <= 45 then goto $label14
+$t38 = num
+if $t38 <= 45 then goto $label14
 printf 21
 goto $label15
 $label14:
-$t37 = num
-push $t37
+$t39 = num
+push $t39
 call _4fib
 printf 22
 $label16:
-$t38 = num
-if $t38 < 0 then goto $label17
-printf 23
-$t39 = num
-printf $t39
-printf 24
 $t40 = num
-$t41 = fibarray[$t40]
-$t41 = 0 - $t41
-$t41 = 0 - $t41
+if $t40 < 0 then goto $label17
+printf 23
+$t41 = num
 printf $t41
-printf 25
+printf 24
 $t42 = num
-$t42 = $t42 - 1
-num = $t42
+$t43 = fibarray[$t42]
+$t43 = 0 - $t43
+$t43 = 0 - $t43
+printf $t43
+printf 25
+$t44 = num
+$t44 = $t44 - 1
+num = $t44
 goto $label16
 $label17:
 $label15:
 $label13:
 printf 26
-$t43 = max
-i = $t43
+$t45 = max
+i = $t45
 $label18:
-$t44 = i
-if $t44 == 0 then goto $label19
-call returnStar
-call returnStar
-$t45 = #RET
-printf $t45
 $t46 = i
-$t46 = $t46 - 1
-i = $t46
+if $t46 == 0 then goto $label19
+call returnStar
+call returnStar
+$t47 = #RET
+printf $t47
+$t48 = i
+$t48 = $t48 - 1
+i = $t48
 goto $label18
 $label19:
 printf 27
 scanf int num
-$t47 = num
-$t48 = 0
-if $t48 != $t47 then goto $label21
+$t49 = num
+$t50 = 0
+if $t50 != $t49 then goto $label21
 printf 0
 goto $label20
 $label21:
-$t49 = 1
-if $t49 != $t47 then goto $label22
+$t51 = 1
+if $t51 != $t49 then goto $label22
 printf 1
 goto $label20
 $label22:
-$t50 = 2
-if $t50 != $t47 then goto $label23
+$t52 = 2
+if $t52 != $t49 then goto $label23
 printf 2
 goto $label20
 $label23:
-$t51 = 3
-if $t51 != $t47 then goto $label24
+$t53 = 3
+if $t53 != $t49 then goto $label24
 printf 3
 goto $label20
 $label24:
-$t52 = 4
-if $t52 != $t47 then goto $label25
+$t54 = 4
+if $t54 != $t49 then goto $label25
 printf 4
 goto $label20
 $label25:
-$t53 = 5
-if $t53 != $t47 then goto $label26
+$t55 = 5
+if $t55 != $t49 then goto $label26
 printf 5
 goto $label20
 $label26:
-$t54 = 6
-if $t54 != $t47 then goto $label27
+$t56 = 6
+if $t56 != $t49 then goto $label27
 printf 6
 goto $label20
 $label27:
-$t55 = 7
-if $t55 != $t47 then goto $label28
+$t57 = 7
+if $t57 != $t49 then goto $label28
 printf 7
 goto $label20
 $label28:
-$t56 = 8
-if $t56 != $t47 then goto $label29
+$t58 = 8
+if $t58 != $t49 then goto $label29
 printf 8
 goto $label20
 $label29:
-$t57 = 9
-if $t57 != $t47 then goto $label30
+$t59 = 9
+if $t59 != $t49 then goto $label30
 printf 9
 goto $label20
 $label30:

@@ -52,7 +52,8 @@ void printChar(char c, int num)
 		return ;
 	}
 	else{
-		printf(c);									printChar(c, num - 1);								
+		printf(c);									
+		printChar(c, num - 1);								
 	}
 }
 

@@ -77,5 +77,8 @@
     <ClInclude Include="midcode.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="objectCode.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

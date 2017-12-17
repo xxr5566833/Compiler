@@ -1,0 +1,79 @@
+const int a2_ = -2, a_3 = +35;
+const char b1 = 'b', b2 = 'c';
+
+int _a1;
+
+int array[100], length;
+
+int printArray {
+    int A;
+    a = 1;
+    if(length >= 1){
+        printf(array[0]);
+    } else {
+        return (-1);
+    }
+    while (a < length) {
+        printf(", ", array[a]);
+        a = a + 1;
+    }
+    return (0);
+}
+
+void quickSort(int head, int tail) {
+    int a, b, tmp;
+    if(head >= tail){
+        return;
+    }else {}
+    a = head + 1;
+    b = head;
+    while(a <= tail) {
+        if(array[a] < array[b]) {
+            tmp = array[a];
+            array[a] = array[b];
+            array[b] = tmp;
+            tmp = array[a];
+            array[a] = array[b + 1];
+            array[b + 1] = tmp;
+            b = b + 1;
+            _a1 = _a1 + 1;
+        } else {;}
+        a = a + 1;
+    }
+    quicksort(head, b - 1);
+    quicksort(b + 1, tail);
+    return;
+}
+
+void main() {
+    int i;
+    int j;
+    _a1 = 0;
+    i = 0;
+    printf("this is a quick sort, input count of numbers in the first line:");
+    scanf(length);
+    if(length != 0) {
+        length = (length + length * length) / length - 1;
+    } else{;}
+    printf("input your raw array, split numbers with space:");
+    while (i < length) {
+        scanf(j);
+        array[i] = j;
+        i = i + 1;
+    }
+    switch (length) {
+        case 0: prINTarray;
+        case 1: printArray;
+        default: {
+            if (length < 0) {
+                printf("invalid length!");
+                return;
+            }else {
+                quicksort(0, length - 1);
+                printArray;
+            }
+        }
+    }
+    printf("exchange time of numbers: ", _a1);
+    return;
+}

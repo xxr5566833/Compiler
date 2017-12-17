@@ -460,7 +460,6 @@ void Compiler:: term(eRetType *resulttype, std::string *operand)
 	//这个是这个term的最终返回的中间代码
 	std::string *factoroperand = new std::string();
 	this->factor(resulttype, factoroperand);
-	//这里不再产生一个临时变量来接受因子返回的操作数
 	std::string *resultoperand = new std::string();
 	*resultoperand = *factoroperand;
 	if(!this->isOperandTemp(resultoperand) && !this->isOperandNumber(resultoperand))
@@ -796,7 +795,7 @@ void Compiler:: noParaFuncDef(symbol *sym)
 	}
 	bool returnflag = false;
 	this->pushMidCode(FUNCBEGINOP, new std::string(), new std::string(), sym->name);
-	this->comStatement(&returnflag, sym->returnType);
+	this->comStatement(&returnflag, sym->returnType, sym->name);
 	if(this->tok.id == RBRACE)
 	{
 		//退出函数
@@ -811,6 +810,10 @@ void Compiler:: noParaFuncDef(symbol *sym)
 	else{
 		this->errorHandle(NOTRBRACKET);
 	}
+	//先生成函数结束的标号
+	std::stringstream ss = std::stringstream();
+	ss << *(sym->name) << "$end";
+	this->pushMidCode(LABOP, new std::string(), new std::string(), &(ss.str()));
 	this->pushMidCode(RETOP, new std::string(), new std::string(), sym->name);
 	std::cout << "这是一个 <无参函数定义处理>" << std::endl;
 }
@@ -899,7 +902,7 @@ void Compiler:: mainDef()
 	}
 	bool returnflag = false;
 	this->pushMidCode(FUNCBEGINOP, new std::string(), new std::string(), new std::string("main"));
-	this->comStatement(&returnflag, VOIDRET);
+	this->comStatement(&returnflag, VOIDRET, name);
 	//这里类型是void，不需要检查有没有return
 	if(this->tok.id == RBRACE)
 	{
@@ -1060,6 +1063,7 @@ void Compiler:: condition(std::string *label)
 		this->expression(&rettype2, tempoperand2);
 		//如果类型不一样，那么可以统一转换为int计算
 		//生成语句
+		//这里统一让操作数1减去操作数2
 		switch(token)
 		{
 		case EQU:
@@ -1090,7 +1094,7 @@ void Compiler:: condition(std::string *label)
 	std::cout << "这是一个 <条件>" << std::endl;
 }
 
-void Compiler:: ifStatement(bool *returnflag, eRetType returntype)
+void Compiler:: ifStatement(bool *returnflag, eRetType returntype, std::string *name)
 {
 	//std::cout << "进入 <条件语句>" << std::endl;
 	this->inSym();
@@ -1115,7 +1119,7 @@ void Compiler:: ifStatement(bool *returnflag, eRetType returntype)
 	}
 	if(this->isInRange(STATEMENT_BEGIN, STATEMENT_BEGIN_SIZE))
 	{
-		this->statement(returnflag, returntype);
+		this->statement(returnflag, returntype, name);
 	}
 	else{
 		this->errorHandle(NOTSTATEMENT);
@@ -1131,7 +1135,7 @@ void Compiler:: ifStatement(bool *returnflag, eRetType returntype)
 	}
 	if(this->isInRange(STATEMENT_BEGIN, STATEMENT_BEGIN_SIZE))
 	{
-		this->statement(returnflag, returntype);
+		this->statement(returnflag, returntype, name);
 	}
 	else{
 		this->errorHandle(NOTSTATEMENT);
@@ -1140,7 +1144,7 @@ void Compiler:: ifStatement(bool *returnflag, eRetType returntype)
 	std::cout << "这是一个 <条件语句>" << std::endl;
 }
 
-void Compiler:: caseStatement(eRetType switchtype, std::string *switchtemp, bool *returnflag, eRetType returntype, std::string *donelab, std::string *nextlab, int *caseconst)
+void Compiler:: caseStatement(eRetType switchtype, std::string *switchtemp, bool *returnflag, eRetType returntype, std::string *donelab, std::string *nextlab, int *caseconst, std::string *name)
 {
 	//std::cout << "进入 <情况子语句>" << std::endl;
 	this->inSym();
@@ -1175,7 +1179,7 @@ void Compiler:: caseStatement(eRetType switchtype, std::string *switchtemp, bool
 	}
 	if(this->isInRange(STATEMENT_BEGIN, STATEMENT_BEGIN_SIZE))
 	{
-		this->statement(returnflag, returntype);
+		this->statement(returnflag, returntype, name);
 	}
 	else{
 		this->errorHandle(NOTSTATEMENT);
@@ -1184,7 +1188,7 @@ void Compiler:: caseStatement(eRetType switchtype, std::string *switchtemp, bool
 	std::cout << "这是一个 <情况子语句>" << std::endl;
 }
 
-void Compiler:: caseTab(eRetType switchtype, std::string *switchtemp, bool *returnflag, eRetType returntype, std::string *donelab)
+void Compiler:: caseTab(eRetType switchtype, std::string *switchtemp, bool *returnflag, eRetType returntype, std::string *donelab, std::string *name)
 {
 	//std::cout << "进入 <情况表>" << std::endl;
 	if(this->tok.id == CASE)
@@ -1195,7 +1199,7 @@ void Compiler:: caseTab(eRetType switchtype, std::string *switchtemp, bool *retu
 			int caseconst = 0;
 			std::string *nextlab = new std::string();
 			this->genLabel(nextlab);
-			this->caseStatement(switchtype, switchtemp, returnflag, returntype, donelab, nextlab, &caseconst);
+			this->caseStatement(switchtype, switchtemp, returnflag, returntype, donelab, nextlab, &caseconst, name);
 			this->pushMidCode(LABOP, new std::string(), new std::string(), nextlab);
 
 			//检查上个case常量是否与之前某个case的常量相等
@@ -1217,7 +1221,7 @@ void Compiler:: caseTab(eRetType switchtype, std::string *switchtemp, bool *retu
 	std::cout << "这是一个 <情况表>" << std::endl;
 }
 
-void Compiler:: switchStatement(bool *returnflag, eRetType returntype)
+void Compiler:: switchStatement(bool *returnflag, eRetType returntype, std::string *name)
 {
 	//std::cout << "进入 <情况语句>" << std::endl;
 	this->inSym();
@@ -1249,7 +1253,7 @@ void Compiler:: switchStatement(bool *returnflag, eRetType returntype)
 	else{
 		this->errorHandle(NOTLBRACE);
 	}
-	this->caseTab(switchtype, switchtemp, returnflag, returntype, done);
+	this->caseTab(switchtype, switchtemp, returnflag, returntype, done, name);
 	if(this->tok.id == DEFAULT)
 	{
 		this->inSym();
@@ -1262,7 +1266,7 @@ void Compiler:: switchStatement(bool *returnflag, eRetType returntype)
 		}
 		if(this->isInRange(STATEMENT_BEGIN, STATEMENT_BEGIN_SIZE))
 		{
-			this->statement(returnflag, returntype);
+			this->statement(returnflag, returntype, name);
 		}
 		else{
 			this->errorHandle(NOTSTATEMENT);
@@ -1278,7 +1282,7 @@ void Compiler:: switchStatement(bool *returnflag, eRetType returntype)
 	std::cout << "这是一个 <情况语句>" << std::endl;
 }
 
-void Compiler:: whileStatement(bool *returnflag, eRetType returntype)
+void Compiler:: whileStatement(bool *returnflag, eRetType returntype, std::string *name)
 {
 	//std::cout << "进入 <循环语句>" << std::endl;
 	std::string *whilelab = new std::string();
@@ -1304,7 +1308,7 @@ void Compiler:: whileStatement(bool *returnflag, eRetType returntype)
 	}
 	if(this->isInRange(STATEMENT_BEGIN, STATEMENT_BEGIN_SIZE))
 	{
-		this->statement(returnflag, returntype);
+		this->statement(returnflag, returntype, name);
 	}
 	else{
 		this->errorHandle(NOTSTATEMENT);
@@ -1334,6 +1338,7 @@ void Compiler::scanfStatement()
 			this->errorHandle(IDNOTDEF);
 			return ;
 		}
+		//注意只有参数类型和标识符类型可以被输入所改变
 		if(sym->symbolType != SIMPLESYM && sym->symbolType != PARASYM)
 		{
 			this->errorHandle(NOTASIMPLE);
@@ -1451,7 +1456,7 @@ void Compiler:: printfStatement()
 	std::cout << "这是一个 <写语句>" << std::endl;
 }
 
-void Compiler:: returnStatement(bool *returnflag, eRetType returntype)
+void Compiler:: returnStatement(bool *returnflag, eRetType returntype, std::string *name)
 {
 	//std::cout << "进入 <返回语句>" << std::endl;
 	this->inSym();
@@ -1491,10 +1496,17 @@ void Compiler:: returnStatement(bool *returnflag, eRetType returntype)
 		this->errorHandle(RETURNTYPEDISMATCH);
 		return ;
 	}
+	//bug：返回语句应该统一跳到这个函数的结束段，但是之前却没有这个设定
+	//统一函数体的结束处为 函数名$end
+	std::stringstream ss = std::stringstream();
+	ss << *name << "$end";
+	//bug:注意这里main函数不需要返回！这里其他函数的return才有效，main函数因为根本不需要main的结束标号
+	if(!this->isIdEqual(std::string("main"), *name))
+		this->pushMidCode(GOTOOP, new std::string(), new std::string(), &(ss.str()));
 	std::cout << "这是一个 <返回语句>" << std::endl;
 }
 
-void Compiler:: statement(bool *returnflag, eRetType returntype)
+void Compiler:: statement(bool *returnflag, eRetType returntype, std::string *funcname)
 {
 	//std::cout << "进入 <语句>" << std::endl;
 	std::string *name = this->tok.val.str;
@@ -1502,14 +1514,14 @@ void Compiler:: statement(bool *returnflag, eRetType returntype)
 	switch(this->tok.id)
 	{
 	case IF:
-		this->ifStatement(returnflag, returntype);
+		this->ifStatement(returnflag, returntype, funcname);
 		break;
 	case WHILE:
-		this->whileStatement(returnflag, returntype);
+		this->whileStatement(returnflag, returntype, funcname);
 		break;
 	case LBRACE:
 		this->inSym();
-		this->statementList(returnflag, returntype);
+		this->statementList(returnflag, returntype, funcname);
 		if(this->tok.id == RBRACE)
 		{
 			this->inSym();
@@ -1539,10 +1551,10 @@ void Compiler:: statement(bool *returnflag, eRetType returntype)
 		}
 		break;
 	case SWITCH:
-		this->switchStatement(returnflag, returntype);
+		this->switchStatement(returnflag, returntype, funcname);
 		break;
 	case RETURN:
-		this->returnStatement(returnflag, returntype);
+		this->returnStatement(returnflag, returntype, funcname);
 		if(this->tok.id == SEMI)
 		{
 			this->inSym();
@@ -1596,11 +1608,8 @@ void Compiler:: statement(bool *returnflag, eRetType returntype)
 			std::string *expressoperand = new std::string();
 			this->expression(&rettype, expressoperand);
 			//做赋值
-			//和下面的数组赋值一样：这里分为
-			//char -> int 那么把char 的ascii给int
-			//char -> char 那么就直接把char的int值给char
+
 			//int-> char 把int的值给char 这个是不被允许的！
-			//int->int
 			if(sym->returnType == CHARRET && rettype == INTRET)
 			{
 				this->errorHandle(INTTOCHARNOTALLOW);
@@ -1653,7 +1662,19 @@ void Compiler:: statement(bool *returnflag, eRetType returntype)
 			eRetType righttype = NOTTYPE;
 			std::string *tempoperand = new std::string();
 			this->expression(&righttype, tempoperand);
-			//如果是int给char类型赋值，那么不允许！
+			//这里为了之后好处理，把要给数组元素赋值的右边变量统一用临时变量表示
+			if(this->isOperandNumber(tempoperand))
+			{
+				std::string *temp = new std::string();
+				this->genTemp(temp);
+				this->pushMidCode(ASSIGNOP, tempoperand, new std::string(), temp);
+				*tempoperand = *temp;
+			}
+			//如果是int给char类型赋值，那么不允许！这里一开始怎么没把判断加上
+			if(sym->returnType == CHARRET && righttype == INTRET)
+			{
+				this->errorHandle(INTTOCHARNOTALLOW);
+			}
 			this->pushMidCode(LARRAYOP, tempoperand, indexoperand, name);
 			if(this->tok.id == SEMI)
 			{
@@ -1687,12 +1708,12 @@ void Compiler:: statement(bool *returnflag, eRetType returntype)
 	std::cout << "这是一个 <语句>" << std::endl;
 }
 
-void Compiler:: statementList(bool *returnflag, eRetType returntype)
+void Compiler:: statementList(bool *returnflag, eRetType returntype, std::string *name)
 {
 	//std::cout << "进入 <语句列>" << std::endl;
 	while(this->isInRange(STATEMENT_BEGIN, STATEMENT_BEGIN_SIZE))
 	{
-		this->statement(returnflag, returntype);
+		this->statement(returnflag, returntype, name);
 	}
 	std::cout << "这是一个 <语句列>" << std::endl;
 }
@@ -1730,7 +1751,7 @@ void Compiler:: varState()
 	std::cout << "这是一个 <变量说明>" << std::endl;
 }
 
-void Compiler:: comStatement(bool *returnflag, eRetType returntype)
+void Compiler:: comStatement(bool *returnflag, eRetType returntype, std::string *name)
 {
 	//std::cout << "进入 <复合语句>" << std::endl;
 	if(this->tok.id == CONST)
@@ -1741,7 +1762,7 @@ void Compiler:: comStatement(bool *returnflag, eRetType returntype)
 	{
 		this->varState();
 	}
-	this->statementList(returnflag, returntype);
+	this->statementList(returnflag, returntype, name);
 
 	std::cout << "这是一个 <复合语句>" << std::endl;
 }
