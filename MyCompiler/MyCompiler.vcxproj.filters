@@ -51,6 +51,9 @@
     <ClCompile Include="randomToUpper.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="optimization.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Compiler.h">
@@ -81,6 +84,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="objectCode.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="optimization.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -12,8 +12,6 @@ enum midop{
 	LARRAYOP,
 	//数组元素给其他操作数赋值
 	RARRAYOP,
-	//简单变量赋值
-	ASSIGNOP,
 	//加减乘除
 	ADDOP, SUBOP, MULOP, DIVOP,
 	//关系运算符
@@ -28,6 +26,8 @@ enum midop{
 	SCANFOP, PRINTFOP,
 	//程序结束
 	EXITOP,
+	//无op
+	NOTOP,
 	
 };
 

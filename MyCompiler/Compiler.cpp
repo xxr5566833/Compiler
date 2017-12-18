@@ -10,8 +10,11 @@ Compiler::Compiler(char *path)
 		exit(0);
 	}
 	std::stringstream ss = std::stringstream();
-	ss << path << "_midcode.txt";
-	this->midFile = std::fstream(ss.str(),std::ios::out);
+	ss << path << "_midcode_before.txt";
+	this->midFile = std::fstream(ss.str(), std::ios::out);
+	ss.str("");
+	ss << path << "_midcode_after.txt";
+	this->optimizeFile = std::fstream(ss.str(), std::ios::out);
 	ss.str("");
 	ss << path << "_mipscode.asm";
 	this->objectFile = std::fstream(ss.str(), std::ios::out);
@@ -37,6 +40,8 @@ void Compiler:: begin()
 	this->initWordArray();
 	int i = 0;
 	this->program();
+	this->initOptimize();
+	this->printBlock();
 	this->objectInit();
 	this->generate();
 	this->warningPrint();

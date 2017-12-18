@@ -605,7 +605,7 @@ void Compiler::allocReg(std::string *operand, std::string *reg)
 	}
 }*/
 
-void Compiler::handleAssign(midcode *code)
+/*void Compiler::handleAssign(midcode *code)
 {
 	std::string *rs = code->op1name;
 	std::string *rt = code->rstname;
@@ -613,7 +613,7 @@ void Compiler::handleAssign(midcode *code)
 	this->loadWord(rs, new std::string(T0));
 	//然后分配存储rt的是哪一个，
 	this->storeWord(rt);
-}
+}*/
 
 
 /*void Compiler::handleBranch(midcode *code)
@@ -1054,9 +1054,6 @@ void Compiler::generate()
 		case FUNCBEGINOP:
 			this->currentRef += 1;
 			this->funcBegin(code->rstname);
-			break;
-		case ASSIGNOP:
-			this->handleAssign(code);
 			break;
 		case EQUOP:
 		case NEQUOP:

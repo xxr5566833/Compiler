@@ -90,7 +90,7 @@ void Compiler::int2string(std::string *s, int value)
 	*s = ss.str();
 }
 
-void Compiler:: pushMidCode(midop op,std::string *operand1, std::string *operand2, std::string *rst)
+void Compiler:: pushMidCode(midop op,std::string *operand1, std::string *operand2, std::string *rst, bool optimize)
 {
 	midcode *code = new midcode();
 	code->op = op;
@@ -100,11 +100,17 @@ void Compiler:: pushMidCode(midop op,std::string *operand1, std::string *operand
 	*(code->op2name) = *operand2;
 	code->rstname = new std::string();
 	*(code->rstname) = *rst;
-	this->codes[this->midindex ++] = code;
-	this->writeMidCode(code);
+	if(optimize)
+		this->optimizeCodes[this->optimizeMidIndex++] = code;
+	else
+		this->codes[this->midindex ++] = code;
+	this->writeMidCode(code, false, true, optimize);
 }
 
-void Compiler:: writeMidCode(midcode *code)
+
+
+
+void Compiler:: writeMidCode(midcode *code, bool stdflag, bool fileflag, bool optimize)
 {
 	std::stringstream ss = std::stringstream();
 	std::string rst = *(code->rstname);
@@ -129,9 +135,6 @@ void Compiler:: writeMidCode(midcode *code)
 		break;
 	case RETOP:
 		ss << midret << " " << rst;
-		break;
-	case ASSIGNOP:
-		ss << rst << " " << midassign << " " << op1name;
 		break;
 	case MULOP:
 		ss << rst << " " << midassign << " " << op1name << " " << midmul << " " << op2name;
@@ -181,8 +184,19 @@ void Compiler:: writeMidCode(midcode *code)
 	
 	}
 	ss << "\n"; 
-	this->midFile << ss.str();
-	//std::cout << ss.str();
+	if(fileflag)
+	{
+		if(!optimize)
+		{
+			this->midFile << ss.str();
+		}
+		else{
+			this->optimizeFile << ss.str();
+		}
+	}
+		
+	if(stdflag)
+		std::cout << ss.str();
 }
 
 void Compiler::initMidCode()
@@ -191,6 +205,7 @@ void Compiler::initMidCode()
 	this->label = 0;
 	this->temp = 0;
 	this->stringNum = 0;
+
 }
 
 void Compiler:: genTemp(std::string *temp)

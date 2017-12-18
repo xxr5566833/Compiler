@@ -6,6 +6,7 @@
 #include "symbolTab.h"
 #include "midcode.h"
 #include "objectCode.h"
+#include "optimization.h"
 //最大保留字空间
 const int kMaxReserve = 100;
 //最大单词数量空间
@@ -24,6 +25,10 @@ const int kMaxParaNum = 20;
 const int kMaxMidCode = 5000;
 //最大常量字符串数
 const int kMaxStringNum = 1000;
+//最大基本快的数量
+const int kMaxBasicBlock = 1000;
+//最大临时变量的数量
+const int kMaxTemp = 1000;
 
 //标识符的类型  与种类分开
 enum eRetType {INTRET = 7, CHARRET, VOIDRET, NOTTYPE };
@@ -233,7 +238,7 @@ private:
 	void genMessage(std::string *str, int num);
 
 	//四元式相关
-	void writeMidCode(midcode *code);
+	void writeMidCode(midcode *code, bool stdflag, bool fileflag, bool optimize);
 	//四元式文件
 	std::fstream midFile;
 	//四元式数组
@@ -241,7 +246,7 @@ private:
 	//数组指针
 	int midindex;
 	//保存一个四元式
-	void pushMidCode(midop op, std::string *operand1, std::string *operand2, std::string *rst);
+	void pushMidCode(midop op, std::string *operand1, std::string *operand2, std::string *rst, bool optimize);
 	//init
 	void initMidCode();
 	//label和临时变量需要有个生成函数,而且分别有个不断增长的量来维护
@@ -249,6 +254,25 @@ private:
 	int temp;
 	void genLabel(std::string *lab);
 	int label;
+
+	//优化后四元式的文件
+	std::fstream optimizeFile;
+	//优化后四元式数组
+	midcode* optimizeCodes[kMaxMidCode];
+	int optimizeMidIndex;
+
+	//优化相关
+	void divideToBlock();
+	//优化一开始的初始化
+	void initOptimize();
+	void printBlock();
+	void findNodeInTab(ListNode *nodelist[], int length, std::string *name, ListNode **x);
+	bool canAdd(bool flag[], Node *x);
+	void DAG();
+	int blockBegin[kMaxBasicBlock];
+	int blockIndex;
+	int tempMap[kMaxTemp];
+
 
 	//目标代码生成
 	std::fstream objectFile;
@@ -330,7 +354,6 @@ private:
 	regAllocStack regStack;
 	void stackPop();
 	void stackPush();
-
 
 
 
