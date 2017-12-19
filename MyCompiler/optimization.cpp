@@ -16,7 +16,12 @@ void Compiler::divideToBlock()
 		case REALPARAOP:
 			this->blockBegin[this->blockIndex++] = i;
 			break;
+		case EXITOP:
+			this->blockBegin[this->blockIndex++] = i;
+			break;
 		//call的下一句是ret的返回地址/分支语句的下一句也是同理
+		//这里暂定  遇到其他变量给数组赋值 就作为基本块的最后一句
+		case LARRAYOP:
 		case RETOP:
 		case CALLOP:
 		case GOTOOP:
@@ -65,13 +70,17 @@ bool Compiler::canAdd(bool flag[],  Node *x)
 void Compiler::DAG()
 {
 	//限制一个基本块最多有100个节点
-	const int kMaxNodeNum = 100;
 	this->divideToBlock();
-	int newtemp = 0;
+	const int kMaxNodeNum = 100;
 	for(int i = 0 ; i < this->blockIndex ; i++)
 	{
 		int begin = this->blockBegin[i];
-		int end = i + 1 > this->blockIndex ? this->midindex : this->blockBegin[i + 1];
+		int end = i + 1 >= this->blockIndex ? this->midindex : this->blockBegin[i + 1];
+		if(begin == end)
+		{
+			//这个基本块为空，直接跳过
+			continue;
+		}
 		int tablength = 0;
 		int nodeindex = 0;
 		ListNode *nodetab[kMaxNodeNum];
@@ -84,12 +93,19 @@ void Compiler::DAG()
 			this->pushMidCode(firstcode->op, firstcode->op1name, firstcode->op2name, firstcode->rstname, true);
 			begin += 1;
 		}
+		//如果此时基本块结束了，那么就直接continue
+		if(end == begin)
+			continue;
 		//如果此时这个基本块就只剩下一句话没有处理了，那么直接处理这剩下的跳转语句，直接continue
 		if(end - 1 == begin)
 		{
+			firstcode = this->codes[begin];
 			this->pushMidCode(firstcode->op, firstcode->op1name, firstcode->op2name, firstcode->rstname, true);
 			continue;
 		}
+		//此时基本块一定有至少两句四元式，那么一定至少有一句运算语句
+		//这里不一定所有的基本块都是可以经过dag图优化的，所以设置一个限制，只有找到公共子表达式的才会使用dag图进行优化
+		int findcount = 0;
 		//接下来才是dag图的构建,注意这里最后一句肯定是不参与dag图的创建的，最后处理
 		for(int j = begin ; j < end - 1 ; j++)
 		{
@@ -172,7 +188,10 @@ void Compiler::DAG()
 					newx->parentnum = 0;
 					newx->xindex = -1;
 					newx->yindex = -1;
+					newx->mainname = 0;
 					newx->index = nodeindex;
+					newx->mainname = new std::string();
+					*newx->mainname = *code->op1name;
 					dag[nodeindex ++] = newx;
 					x = new ListNode();
 					x->name = code->op1name;
@@ -187,10 +206,13 @@ void Compiler::DAG()
 					Node *newy = new Node();
 					newy->isLeaf = true;
 					newy->op = NOTOP;
+					newy->mainname = 0;
 					newy->parentnum = 0;
 					newy->xindex = -1;
 					newy->yindex = -1;
 					newy->index = nodeindex;
+					newy->mainname = new std::string();
+					*newy->mainname = *code->op2name;
 					dag[nodeindex++] = newy;
 					y = new ListNode();
 					y->name = code->op2name;
@@ -206,24 +228,28 @@ void Compiler::DAG()
 					{
 						//满足条件
 						mid = node;
+						findcount += 1;
 						break;
 					}
 				}
 				if(!mid)
 				{
 					//如果这个中间节点未被创建
-					Node *newz = new Node();
-					newz->index = nodeindex;
-					newz->isLeaf = true;
-					newz->op = code->op;
-					newz->parentnum = 0;
-					newz->xindex = x->index;
-					newz->yindex = y->index;
+					//bug:这里一开始没有对mid赋值
+					mid = new Node();
+					mid->index = nodeindex;
+					mid->isLeaf = false;
+					mid->mainname = new std::string();
+					mid->mainname = code->rstname;
+					mid->op = code->op;
+					mid->parentnum = 0;
+					mid->xindex = x->index;
+					mid->yindex = y->index;
 					Node *xnode = dag[x->index];
 					Node *ynode = dag[y->index];
 					xnode->parentindex[xnode->parentnum ++] = nodeindex;
 					ynode->parentindex[ynode->parentnum ++] = nodeindex;
-					dag[nodeindex ++] = newz;
+					dag[nodeindex ++] = mid;
 				}
 				//然后在节点表中找z
 				ListNode *z = 0;
@@ -233,11 +259,25 @@ void Compiler::DAG()
 					//没有找到
 					z = new ListNode();
 					z->name = code->rstname;
+					//bug:这里一开始没有把z添加到nodetab中
+					nodetab[tablength ++] = z;
 				}
+				//修改为创建时就指定其主名字，这样在恢复时一定可以以创建它时的名字作为操作符
 				z->index = mid->index;
 
 				break;
 			}
+		}
+		//感觉dag图优化真的有时没什么用。。
+		//而且其精髓在于“公共”表达式的删除，所以我设立了findcount变量来统计遇到公共表达式的次数，如果为0次，那就别白费力气了，最后结果肯定和原来一样
+		if(findcount)
+		{
+			for(int j = begin ; j < end ; j++)
+			{
+				midcode *code = this->codes[j];
+				this->pushMidCode(code->op, code->op1name, code->op2name, code->rstname, true);
+			}
+			continue;
 		}
 		//建立好dag图和节点表以后，就可以导出新的中间代码了
 		Node *queue[kMaxNodeNum] = {0};
@@ -245,6 +285,16 @@ void Compiler::DAG()
 		Node *midqueue[kMaxNodeNum] = {0};
 		bool flag[kMaxNodeNum] = {0};
 		int midlength = 0;
+		//首先把所有中间节点进入队列
+		for(int j = 0 ; j < nodeindex ; j++)
+		{
+			Node *node = dag[j];
+			if(!node->isLeaf)
+			{
+				midqueue[midlength ++] = node;
+			}
+		}
+		//然后采用启发式算法进行计算
 		while(1)
 		{
 			bool endflag = true;
@@ -295,97 +345,49 @@ void Compiler::DAG()
 		{
 			Node *midnode = queue[j];
 			std::string *mid = new std::string();
-			//这里我们把和这个节点index相同的临时变量都映射到这个新的临时变量
-			
+			//经过修改，是一定有主名字的
+
+			//如果已经有 主名字，那么这里直接用这个主名字，如果还没有主名字， 那么这里选择和这个节点相同的index 的一个名字作为主名字
+			/*if(!midnode->mainname)
+			{
+				//没有主名字，找一个作为主名字
+				for(int k = 0 ; k < tablength ; k++)
+				{
+					ListNode *node = nodetab[k];
+					if(node->index == midnode->index)
+					{
+						midnode->mainname = new std::string();
+						*midnode->mainname = *node->name;
+						break;
+					}
+				}
+			}*/
+			*mid = *midnode->mainname;
 			Node *x = dag[midnode->xindex];
 			Node *y = dag[midnode->yindex];
 			std::string *op1name = new std::string();
 			std::string *op2name = new std::string();
-			//这里改变策略，不管是叶子节点还是中间节点，都选择一个和它的index相同的名字即可，反正最后同一个index的不同变量的值一定是一样的，都要写对应的赋值语句
-			if(x->isLeaf)
-			{
-				for(int k = 0 ; k < tablength ; k++)
-				{
-					ListNode *n = nodetab[k];
-					if(n->index = x->index )
-					{
-						*op1name = *(n->name);
-						break;
-					}
-				}
-			}
-			else{
-				std::stringstream ss = std::stringstream();
-				int index = -1;
-				for(int k = queuelength - 1 ; k >= 0 ; k-- )
-				{
-					Node *node = queue[k];
-					if(node->index == x->index)
-					{
-						//说明就是这个中间节点,那么对应的临时变量下标的增量就是queuelength -1 再减去当前下标
-						index = (queuelength - 1) - k;
-						break;
-					}
-				}
-				ss << "$t" << newtemp + index;
-				*op1name = ss.str();
-			}
-			//右子节点同理
-			if(y->isLeaf)
-			{
-				for(int k = 0 ; k < tablength ; k++)
-				{
-					ListNode *n = nodetab[k];
-					if(n->index == y->index && (this->isOperandId(n->name) || this->isOperandNumber(n->name) || this->isOperandRet(n->name)))
-					{
-						*op2name = *(n->name);
-						break;
-					}
-				}
-			}
-			else{
-				std::stringstream ss = std::stringstream();
-				int index = -1;
-				for(int k = queuelength - 1 ; k >= 0 ; k-- )
-				{
-					Node *node = queue[k];
-					if(node->index == y->index)
-					{
-						//说明就是这个中间节点,那么对应的临时变量下标的增量就是queuelength -1 再减去当前下标
-						index = (queuelength - 1) - k;
-						break;
-					}
-				}
-				ss << "$t" << newtemp + index;
-				*op2name = ss.str();
-			}
+			//改变为：不管是叶子节点还是中间节点，都选择它的主名字作为操作数
+			*op1name = *x->mainname;
+			*op2name = *y->mainname;
+			
+
 			//这时就可以生成新的中间代码
 			this->pushMidCode(midnode->op, op1name, op2name, mid, true);
-			//同时这时还需要把和这个节点的index相同的 标识符 #RET 生成相应的赋值操作
+			//同时这时还需要把和这个节点的index相同的 标识符 #RET 临时变量 都生成相应的赋值操作，因为无法判断之后这些变量是否还活跃
 			for(int k = 0 ; k < tablength ; k++)
 			{
 				ListNode *listnode = nodetab[k];
-				if(listnode->index == midnode->index)
+				if(listnode->index == midnode->index && !this->isIdEqual(*listnode->name, *mid))
 				{
-					if(this->isOperandTemp(listnode->name))
-					{
-						int oldtemp = atoi(listnode->name->substr(2).c_str());
-						//映射到新的临时变量
-						this->tempMap[temp] = this->temp - 1;
-						continue;
-					}
-					if(this->isOperandRet(listnode->name) || this->isOperandId(listnode->name))
-					{
-						this->pushMidCode(ADDOP, mid, new std::string("0"), listnode->name, true);
-					}
-					
+					//赋值语句，就是让当前中间节点的值给 和这个节点index相同的变量
+					this->pushMidCode(ADDOP, mid, new std::string("0"), listnode->name, true);
 				}
 			}
 		}
-		//然后处理每个基本块的最后一个四元式，因为这里操作数可能是之前的临时变量，所以需要替换为最新的临时变量
-		//不过首先还是要保证有最后一句
-		//最后记得把newtemp给更新一下
-		newtemp = this->temp;
+		//这里处理最后一个跳转语句
+		midcode *endcode = this->codes[end - 1];
+		this->pushMidCode(endcode->op, endcode->op1name, endcode->op2name, endcode->rstname, true);
 	}
 }
 
@@ -395,12 +397,12 @@ void Compiler::printBlock()
 	for(int i = 0 ; i < this->blockIndex ; i++)
 	{
 		int begin = this->blockBegin[i];
-		int end = i + 1 > this->blockIndex ? this->midindex : this->blockBegin[i + 1];
+		int end = i + 1 >= this->blockIndex ? this->midindex : this->blockBegin[i + 1];
 		for(int j = begin ; j < end ; j++)
 		{
-			this->writeMidCode(this->codes[j], true, false, false);
+			this->writeMidCode(this->codes[j], false, true, true);
 		}
-		std::cout << "第" << i << "个基本块" << std::endl;
+		this->optimizeFile << "第" << i << "个基本块" << std::endl;
 	}
 }
 
@@ -409,5 +411,4 @@ void Compiler::initOptimize()
 {
 	this->blockIndex = 0;
 	this->optimizeMidIndex = 0;
-	this->temp = 0;
 }

@@ -104,7 +104,7 @@ void Compiler:: pushMidCode(midop op,std::string *operand1, std::string *operand
 		this->optimizeCodes[this->optimizeMidIndex++] = code;
 	else
 		this->codes[this->midindex ++] = code;
-	this->writeMidCode(code, false, true, optimize);
+	this->writeMidCode(code, true, true, optimize);
 }
 
 

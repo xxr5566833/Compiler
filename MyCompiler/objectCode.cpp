@@ -1046,9 +1046,9 @@ void Compiler::generate()
 	//¼Ó¸ögotomain
 	this->generateOrder(new std::string(ADD), new std::string(FP), new std::string(SP), new std::string(R0));
 	this->handleGoto(new std::string("main"));
-	for(int i = 0 ; i < this->midindex ; i++)
+	for(int i = 0 ; i < this->optimizeMidIndex ; i++)
 	{
-		midcode *code = this->codes[i];
+		midcode *code = this->optimizeCodes[i];
 		switch(code->op)
 		{
 		case FUNCBEGINOP:

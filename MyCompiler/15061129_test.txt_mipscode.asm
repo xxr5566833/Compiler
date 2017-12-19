@@ -331,19 +331,6 @@ $label0:
 	sub	$t0	,	$fp	,	$t0
 	lw	$t0	,	0($t0)
 	sw	$t0	,	268456492($zero)
-	lw	$t0	,	268456492($zero)
-	addi	$t0	,	$t0	,	2037
-	li	$t1	,	4
-	mul	$t0	,	$t0	,	$t1
-	lw	$t0	,	268435856($t0)
-	sw	$t0	,	268456496($zero)
-	lw	$t0	,	268456496($zero)
-	addi	$t0	,	$t0	,	4
-	li	$t1	,	4
-	mul	$t0	,	$t0	,	$t1
-	sub	$t0	,	$fp	,	$t0
-	lw	$t0	,	0($t0)
-	sw	$t0	,	268456500($zero)
 	li	$t0	,	1
 	addi	$t0	,	$t0	,	4
 	li	$t1	,	4
@@ -357,6 +344,19 @@ $label0:
 	mul	$t0	,	$t0	,	$t1
 	lw	$t0	,	268435856($t0)
 	sw	$t0	,	268456508($zero)
+	lw	$t0	,	268456492($zero)
+	addi	$t0	,	$t0	,	2037
+	li	$t1	,	4
+	mul	$t0	,	$t0	,	$t1
+	lw	$t0	,	268435856($t0)
+	sw	$t0	,	268456496($zero)
+	lw	$t0	,	268456496($zero)
+	addi	$t0	,	$t0	,	4
+	li	$t1	,	4
+	mul	$t0	,	$t0	,	$t1
+	sub	$t0	,	$fp	,	$t0
+	lw	$t0	,	0($t0)
+	sw	$t0	,	268456500($zero)
 	lw	$t0	,	268456500($zero)
 	lw	$t1	,	268456508($zero)
 	mul	$t0	,	$t0	,	$t1
@@ -401,13 +401,6 @@ $label4:
 	mul	$t0	,	$t0	,	$t1
 	lw	$t0	,	268435856($t0)
 	sw	$t0	,	268456520($zero)
-	lw	$t0	,	268456520($zero)
-	addi	$t0	,	$t0	,	4
-	li	$t1	,	4
-	mul	$t0	,	$t0	,	$t1
-	sub	$t0	,	$fp	,	$t0
-	lw	$t0	,	0($t0)
-	sw	$t0	,	268456524($zero)
 	li	$t0	,	0
 	addi	$t0	,	$t0	,	4
 	li	$t1	,	4
@@ -421,6 +414,13 @@ $label4:
 	mul	$t0	,	$t0	,	$t1
 	lw	$t0	,	268435856($t0)
 	sw	$t0	,	268456532($zero)
+	lw	$t0	,	268456520($zero)
+	addi	$t0	,	$t0	,	4
+	li	$t1	,	4
+	mul	$t0	,	$t0	,	$t1
+	sub	$t0	,	$fp	,	$t0
+	lw	$t0	,	0($t0)
+	sw	$t0	,	268456524($zero)
 	lw	$t0	,	268456524($zero)
 	lw	$t1	,	268456532($zero)
 	mul	$t0	,	$t0	,	$t1
@@ -463,34 +463,38 @@ $label6:
 	sub	$t0	,	$t0	,	$t1
 	bgez	$t0	,	$label7
 	nop
-	lw	$t0	,	0($fp)
-	li	$t1	,	0
-	add	$t0	,	$t0	,	$t1
-	sw	$t0	,	268456540($zero)
 	li	$t0	,	-1
 	li	$t1	,	0
 	add	$t0	,	$t0	,	$t1
 	sw	$t0	,	268456544($zero)
+	lw	$t0	,	0($fp)
+	li	$t1	,	0
+	add	$t0	,	$t0	,	$t1
+	sw	$t0	,	268456540($zero)
 	lw	$t1	,	268456540($zero)
 	addi	$t1	,	$t1	,	3037
 	li	$t0	,	4
 	mul	$t0	,	$t0	,	$t1
 	lw	$t1	,	268456544($zero)
 	sw	$t1	,	268435856($t0)
-	lw	$t0	,	0($fp)
-	li	$t1	,	0
-	add	$t0	,	$t0	,	$t1
-	sw	$t0	,	268456548($zero)
 	li	$t0	,	-1
 	li	$t1	,	0
 	add	$t0	,	$t0	,	$t1
 	sw	$t0	,	268456552($zero)
+	lw	$t0	,	0($fp)
+	li	$t1	,	0
+	add	$t0	,	$t0	,	$t1
+	sw	$t0	,	268456548($zero)
 	lw	$t1	,	268456548($zero)
 	addi	$t1	,	$t1	,	2037
 	li	$t0	,	4
 	mul	$t0	,	$t0	,	$t1
 	lw	$t1	,	268456552($zero)
 	sw	$t1	,	268435856($t0)
+	li	$t0	,	48
+	li	$t1	,	0
+	add	$t0	,	$t0	,	$t1
+	sw	$t0	,	268456560($zero)
 	lw	$t0	,	0($fp)
 	li	$t1	,	0
 	add	$t0	,	$t0	,	$t1
@@ -499,24 +503,20 @@ $label6:
 	li	$t1	,	0
 	add	$t0	,	$t0	,	$t1
 	sw	$t0	,	268456556($zero)
-	li	$t0	,	48
-	li	$t1	,	0
-	add	$t0	,	$t0	,	$t1
-	sw	$t0	,	268456560($zero)
 	lw	$t1	,	268456556($zero)
 	addi	$t1	,	$t1	,	35
 	li	$t0	,	4
 	mul	$t0	,	$t0	,	$t1
 	lw	$t1	,	268456560($zero)
 	sw	$t1	,	268435856($t0)
-	lw	$t0	,	0($fp)
-	li	$t1	,	0
-	add	$t0	,	$t0	,	$t1
-	sw	$t0	,	268456564($zero)
 	li	$t0	,	48
 	li	$t1	,	0
 	add	$t0	,	$t0	,	$t1
 	sw	$t0	,	268456568($zero)
+	lw	$t0	,	0($fp)
+	li	$t1	,	0
+	add	$t0	,	$t0	,	$t1
+	sw	$t0	,	268456564($zero)
 	lw	$t1	,	268456564($zero)
 	addi	$t1	,	$t1	,	1035
 	li	$t0	,	4
@@ -716,14 +716,14 @@ printarray:
 	sw	$ra	,	-8($sp)
 	add	$fp	,	$sp	,	$zero
 	addi	$sp	,	$sp	,	-12
-	li	$t0	,	1
-	li	$t1	,	0
-	add	$t0	,	$t0	,	$t1
-	sw	$t0	,	0($fp)
 	lw	$t0	,	268456412($zero)
 	li	$t1	,	0
 	add	$t0	,	$t0	,	$t1
 	sw	$t0	,	268456624($zero)
+	li	$t0	,	1
+	li	$t1	,	0
+	add	$t0	,	$t0	,	$t1
+	sw	$t0	,	0($fp)
 	lw	$t0	,	268456624($zero)
 	li	$t1	,	1
 	sub	$t0	,	$t0	,	$t1
@@ -749,14 +749,14 @@ $label16:
 	nop
 $label17:
 $label18:
-	lw	$t0	,	0($fp)
-	li	$t1	,	0
-	add	$t0	,	$t0	,	$t1
-	sw	$t0	,	268456632($zero)
 	lw	$t0	,	268456412($zero)
 	li	$t1	,	0
 	add	$t0	,	$t0	,	$t1
 	sw	$t0	,	268456636($zero)
+	lw	$t0	,	0($fp)
+	li	$t1	,	0
+	add	$t0	,	$t0	,	$t1
+	sw	$t0	,	268456632($zero)
 	lw	$t0	,	268456632($zero)
 	lw	$t1	,	268456636($zero)
 	sub	$t0	,	$t0	,	$t1
@@ -811,14 +811,14 @@ quicksort:
 	sw	$ra	,	-24($sp)
 	add	$fp	,	$sp	,	$zero
 	addi	$sp	,	$sp	,	-28
-	lw	$t0	,	0($fp)
-	li	$t1	,	0
-	add	$t0	,	$t0	,	$t1
-	sw	$t0	,	268456652($zero)
 	lw	$t0	,	-4($fp)
 	li	$t1	,	0
 	add	$t0	,	$t0	,	$t1
 	sw	$t0	,	268456656($zero)
+	lw	$t0	,	0($fp)
+	li	$t1	,	0
+	add	$t0	,	$t0	,	$t1
+	sw	$t0	,	268456652($zero)
 	lw	$t0	,	268456652($zero)
 	lw	$t1	,	268456656($zero)
 	sub	$t0	,	$t0	,	$t1
@@ -851,29 +851,19 @@ $label21:
 	add	$t0	,	$t0	,	$t1
 	sw	$t0	,	-12($fp)
 $label22:
-	lw	$t0	,	-8($fp)
-	li	$t1	,	0
-	add	$t0	,	$t0	,	$t1
-	sw	$t0	,	268456668($zero)
 	lw	$t0	,	-4($fp)
 	li	$t1	,	0
 	add	$t0	,	$t0	,	$t1
 	sw	$t0	,	268456672($zero)
+	lw	$t0	,	-8($fp)
+	li	$t1	,	0
+	add	$t0	,	$t0	,	$t1
+	sw	$t0	,	268456668($zero)
 	lw	$t0	,	268456668($zero)
 	lw	$t1	,	268456672($zero)
 	sub	$t0	,	$t0	,	$t1
 	bgtz	$t0	,	$label23
 	nop
-	lw	$t0	,	-8($fp)
-	li	$t1	,	0
-	add	$t0	,	$t0	,	$t1
-	sw	$t0	,	268456676($zero)
-	lw	$t0	,	268456676($zero)
-	addi	$t0	,	$t0	,	5038
-	li	$t1	,	4
-	mul	$t0	,	$t0	,	$t1
-	lw	$t0	,	268435856($t0)
-	sw	$t0	,	268456680($zero)
 	lw	$t0	,	-12($fp)
 	li	$t1	,	0
 	add	$t0	,	$t0	,	$t1
@@ -884,6 +874,16 @@ $label22:
 	mul	$t0	,	$t0	,	$t1
 	lw	$t0	,	268435856($t0)
 	sw	$t0	,	268456688($zero)
+	lw	$t0	,	-8($fp)
+	li	$t1	,	0
+	add	$t0	,	$t0	,	$t1
+	sw	$t0	,	268456676($zero)
+	lw	$t0	,	268456676($zero)
+	addi	$t0	,	$t0	,	5038
+	li	$t1	,	4
+	mul	$t0	,	$t0	,	$t1
+	lw	$t0	,	268435856($t0)
+	sw	$t0	,	268456680($zero)
 	lw	$t0	,	268456680($zero)
 	lw	$t1	,	268456688($zero)
 	sub	$t0	,	$t0	,	$t1
@@ -923,14 +923,14 @@ $label22:
 	mul	$t0	,	$t0	,	$t1
 	lw	$t1	,	268456708($zero)
 	sw	$t1	,	268435856($t0)
-	lw	$t0	,	-12($fp)
-	li	$t1	,	0
-	add	$t0	,	$t0	,	$t1
-	sw	$t0	,	268456712($zero)
 	lw	$t0	,	-16($fp)
 	li	$t1	,	0
 	add	$t0	,	$t0	,	$t1
 	sw	$t0	,	268456716($zero)
+	lw	$t0	,	-12($fp)
+	li	$t1	,	0
+	add	$t0	,	$t0	,	$t1
+	sw	$t0	,	268456712($zero)
 	lw	$t1	,	268456712($zero)
 	addi	$t1	,	$t1	,	5038
 	li	$t0	,	4
@@ -975,6 +975,10 @@ $label22:
 	mul	$t0	,	$t0	,	$t1
 	lw	$t1	,	268456736($zero)
 	sw	$t1	,	268435856($t0)
+	lw	$t0	,	-16($fp)
+	li	$t1	,	0
+	add	$t0	,	$t0	,	$t1
+	sw	$t0	,	268456744($zero)
 	lw	$t0	,	-12($fp)
 	li	$t1	,	0
 	add	$t0	,	$t0	,	$t1
@@ -983,28 +987,12 @@ $label22:
 	li	$t1	,	1
 	add	$t0	,	$t0	,	$t1
 	sw	$t0	,	268456740($zero)
-	lw	$t0	,	-16($fp)
-	li	$t1	,	0
-	add	$t0	,	$t0	,	$t1
-	sw	$t0	,	268456744($zero)
 	lw	$t1	,	268456740($zero)
 	addi	$t1	,	$t1	,	5038
 	li	$t0	,	4
 	mul	$t0	,	$t0	,	$t1
 	lw	$t1	,	268456744($zero)
 	sw	$t1	,	268435856($t0)
-	lw	$t0	,	-12($fp)
-	li	$t1	,	0
-	add	$t0	,	$t0	,	$t1
-	sw	$t0	,	268456748($zero)
-	lw	$t0	,	268456748($zero)
-	li	$t1	,	1
-	add	$t0	,	$t0	,	$t1
-	sw	$t0	,	268456748($zero)
-	lw	$t0	,	268456748($zero)
-	li	$t1	,	0
-	add	$t0	,	$t0	,	$t1
-	sw	$t0	,	-12($fp)
 	lw	$t0	,	268456408($zero)
 	li	$t1	,	0
 	add	$t0	,	$t0	,	$t1
@@ -1017,6 +1005,18 @@ $label22:
 	li	$t1	,	0
 	add	$t0	,	$t0	,	$t1
 	sw	$t0	,	268456408($zero)
+	lw	$t0	,	-12($fp)
+	li	$t1	,	0
+	add	$t0	,	$t0	,	$t1
+	sw	$t0	,	268456748($zero)
+	lw	$t0	,	268456748($zero)
+	li	$t1	,	1
+	add	$t0	,	$t0	,	$t1
+	sw	$t0	,	268456748($zero)
+	lw	$t0	,	268456748($zero)
+	li	$t1	,	0
+	add	$t0	,	$t0	,	$t1
+	sw	$t0	,	-12($fp)
 	j	$label25
 	nop
 $label24:
@@ -1205,14 +1205,14 @@ $label27:
 	la	$a0	,	$Message7
 	syscall
 $label28:
-	lw	$t0	,	0($fp)
-	li	$t1	,	0
-	add	$t0	,	$t0	,	$t1
-	sw	$t0	,	268456788($zero)
 	lw	$t0	,	268456412($zero)
 	li	$t1	,	0
 	add	$t0	,	$t0	,	$t1
 	sw	$t0	,	268456792($zero)
+	lw	$t0	,	0($fp)
+	li	$t1	,	0
+	add	$t0	,	$t0	,	$t1
+	sw	$t0	,	268456788($zero)
 	lw	$t0	,	268456788($zero)
 	lw	$t1	,	268456792($zero)
 	sub	$t0	,	$t0	,	$t1
@@ -1222,14 +1222,14 @@ $label28:
 	syscall
 	add	$t0	,	$v0	,	$zero
 	sw	$t0	,	-4($fp)
-	lw	$t0	,	0($fp)
-	li	$t1	,	0
-	add	$t0	,	$t0	,	$t1
-	sw	$t0	,	268456796($zero)
 	lw	$t0	,	-4($fp)
 	li	$t1	,	0
 	add	$t0	,	$t0	,	$t1
 	sw	$t0	,	268456800($zero)
+	lw	$t0	,	0($fp)
+	li	$t1	,	0
+	add	$t0	,	$t0	,	$t1
+	sw	$t0	,	268456796($zero)
 	lw	$t1	,	268456796($zero)
 	addi	$t1	,	$t1	,	5038
 	li	$t0	,	4
@@ -1267,14 +1267,14 @@ $label28:
 	j	$label28
 	nop
 $label29:
-	lw	$t0	,	268456412($zero)
-	li	$t1	,	0
-	add	$t0	,	$t0	,	$t1
-	sw	$t0	,	268456816($zero)
 	li	$t0	,	0
 	li	$t1	,	0
 	add	$t0	,	$t0	,	$t1
 	sw	$t0	,	268456820($zero)
+	lw	$t0	,	268456412($zero)
+	li	$t1	,	0
+	add	$t0	,	$t0	,	$t1
+	sw	$t0	,	268456816($zero)
 	lw	$t0	,	268456820($zero)
 	lw	$t1	,	268456816($zero)
 	sub	$t0	,	$t0	,	$t1
@@ -1476,42 +1476,42 @@ $label35:
 	sub	$t0	,	$t0	,	$t1
 	bgez	$t0	,	$label36
 	nop
-	lw	$t0	,	0($fp)
-	li	$t1	,	0
-	add	$t0	,	$t0	,	$t1
-	sw	$t0	,	268456860($zero)
 	li	$t0	,	97
 	li	$t1	,	0
 	add	$t0	,	$t0	,	$t1
 	sw	$t0	,	268456864($zero)
+	lw	$t0	,	0($fp)
+	li	$t1	,	0
+	add	$t0	,	$t0	,	$t1
+	sw	$t0	,	268456860($zero)
 	lw	$t1	,	268456860($zero)
 	addi	$t1	,	$t1	,	35
 	li	$t0	,	4
 	mul	$t0	,	$t0	,	$t1
 	lw	$t1	,	268456864($zero)
 	sw	$t1	,	268435856($t0)
-	lw	$t0	,	0($fp)
-	li	$t1	,	0
-	add	$t0	,	$t0	,	$t1
-	sw	$t0	,	268456868($zero)
 	li	$t0	,	100
 	li	$t1	,	0
 	add	$t0	,	$t0	,	$t1
 	sw	$t0	,	268456872($zero)
+	lw	$t0	,	0($fp)
+	li	$t1	,	0
+	add	$t0	,	$t0	,	$t1
+	sw	$t0	,	268456868($zero)
 	lw	$t1	,	268456868($zero)
 	addi	$t1	,	$t1	,	4038
 	li	$t0	,	4
 	mul	$t0	,	$t0	,	$t1
 	lw	$t1	,	268456872($zero)
 	sw	$t1	,	268435856($t0)
-	lw	$t0	,	0($fp)
-	li	$t1	,	0
-	add	$t0	,	$t0	,	$t1
-	sw	$t0	,	268456876($zero)
 	li	$t0	,	-1
 	li	$t1	,	0
 	add	$t0	,	$t0	,	$t1
 	sw	$t0	,	268456880($zero)
+	lw	$t0	,	0($fp)
+	li	$t1	,	0
+	add	$t0	,	$t0	,	$t1
+	sw	$t0	,	268456876($zero)
 	lw	$t1	,	268456876($zero)
 	addi	$t1	,	$t1	,	2037
 	li	$t0	,	4
@@ -1962,6 +1962,12 @@ $label36:
 	li	$v0	,	4
 	la	$a0	,	$Message41
 	syscall
+	li	$t0	,	20
+	addi	$t0	,	$t0	,	4038
+	li	$t1	,	4
+	mul	$t0	,	$t0	,	$t1
+	lw	$t0	,	268435856($t0)
+	sw	$t0	,	268456988($zero)
 	lw	$t0	,	268443996($zero)
 	li	$t1	,	0
 	add	$t0	,	$t0	,	$t1
@@ -1976,12 +1982,6 @@ $label36:
 	div	$t0	,	$t1
 	mflo	$t0
 	sw	$t0	,	268456984($zero)
-	li	$t0	,	20
-	addi	$t0	,	$t0	,	4038
-	li	$t1	,	4
-	mul	$t0	,	$t0	,	$t1
-	lw	$t0	,	268435856($t0)
-	sw	$t0	,	268456988($zero)
 	lw	$t0	,	268456984($zero)
 	lw	$t1	,	268456988($zero)
 	mul	$t0	,	$t0	,	$t1
@@ -2297,20 +2297,12 @@ $label36:
 	addi	$sp	,	$sp	,	-4
 	jal	fib
 	nop
-	add	$t0	,	$v0	,	$zero
-	li	$t1	,	0
-	add	$t0	,	$t0	,	$t1
-	sw	$t0	,	268457108($zero)
-	lw	$t0	,	268457108($zero)
+	li	$t0	,	20
 	addi	$t0	,	$t0	,	4038
 	li	$t1	,	4
 	mul	$t0	,	$t0	,	$t1
 	lw	$t0	,	268435856($t0)
-	sw	$t0	,	268457112($zero)
-	li	$t0	,	0
-	lw	$t1	,	268457112($zero)
-	sub	$t0	,	$t0	,	$t1
-	sw	$t0	,	268457112($zero)
+	sw	$t0	,	268457120($zero)
 	lw	$t0	,	268443996($zero)
 	li	$t1	,	0
 	add	$t0	,	$t0	,	$t1
@@ -2325,16 +2317,24 @@ $label36:
 	div	$t0	,	$t1
 	mflo	$t0
 	sw	$t0	,	268457116($zero)
-	li	$t0	,	20
-	addi	$t0	,	$t0	,	4038
-	li	$t1	,	4
-	mul	$t0	,	$t0	,	$t1
-	lw	$t0	,	268435856($t0)
-	sw	$t0	,	268457120($zero)
 	lw	$t0	,	268457116($zero)
 	lw	$t1	,	268457120($zero)
 	mul	$t0	,	$t0	,	$t1
 	sw	$t0	,	268457116($zero)
+	add	$t0	,	$v0	,	$zero
+	li	$t1	,	0
+	add	$t0	,	$t0	,	$t1
+	sw	$t0	,	268457108($zero)
+	lw	$t0	,	268457108($zero)
+	addi	$t0	,	$t0	,	4038
+	li	$t1	,	4
+	mul	$t0	,	$t0	,	$t1
+	lw	$t0	,	268435856($t0)
+	sw	$t0	,	268457112($zero)
+	li	$t0	,	0
+	lw	$t1	,	268457112($zero)
+	sub	$t0	,	$t0	,	$t1
+	sw	$t0	,	268457112($zero)
 	lw	$t0	,	268457112($zero)
 	lw	$t1	,	268457116($zero)
 	add	$t0	,	$t0	,	$t1
@@ -3224,14 +3224,14 @@ main:
 	syscall
 	add	$t0	,	$v0	,	$zero
 	sw	$t0	,	0($fp)
-	lw	$t0	,	0($fp)
-	li	$t1	,	0
-	add	$t0	,	$t0	,	$t1
-	sw	$t0	,	268457440($zero)
 	li	$t0	,	97
 	li	$t1	,	0
 	add	$t0	,	$t0	,	$t1
 	sw	$t0	,	268457444($zero)
+	lw	$t0	,	0($fp)
+	li	$t1	,	0
+	add	$t0	,	$t0	,	$t1
+	sw	$t0	,	268457440($zero)
 	lw	$t0	,	268457444($zero)
 	lw	$t1	,	268457440($zero)
 	sub	$t0	,	$t0	,	$t1

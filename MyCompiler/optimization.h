@@ -4,6 +4,7 @@
 
 typedef struct node{
 	midop op;
+	std::string *mainname;
 	int xindex;
 	int yindex;
 	int parentindex[30];
