@@ -42,8 +42,8 @@ void Compiler:: begin()
 	this->program();
 	this->initOptimize();
 //	this->printBlock();
-	this->DAG();
-	this->smallOptimize();
+//	this->DAG();
+//	this->smallOptimize();
 	this->objectInit();
 	this->generate();
 	this->warningPrint();
