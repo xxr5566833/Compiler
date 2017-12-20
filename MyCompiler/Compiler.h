@@ -267,6 +267,7 @@ private:
 	void initOptimize();
 	void printBlock();
 	void findNodeInTab(ListNode *nodelist[], int length, std::string *name, ListNode **x);
+	void smallOptimize();
 	bool canAdd(bool flag[], Node *x);
 	void DAG();
 	int blockBegin[kMaxBasicBlock];

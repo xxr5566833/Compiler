@@ -778,8 +778,7 @@ void Compiler::handleRarray(midcode *code)
 	this->findAddress(code->op1name, &offset, &global);
 	this->loadWord(code->op2name, new std::string(T0));
 	this->generateOrder(new std::string(ADDI), new std::string(T0), new std::string(T0), offset);
-	this->generateOrder(new std::string(LI), new std::string(T1), 4);
-	this->generateOrder(new std::string(MUL), new std::string(T0), new std::string(T0),new std::string(T1));
+	this->generateOrder(new std::string(SLL), new std::string(T0), new std::string(T0),new std::string("2"));
 	if(global)
 	{
 		//计算好偏移后相对于第一个常量寻址
@@ -927,8 +926,7 @@ void Compiler:: handleLarray(midcode *code)
 	this->findAddress(name, &offset, &global);
 	this->loadWord(index, new std::string(T1));
 	this->generateOrder(new std::string(ADDI), new std::string(T1), new std::string(T1), offset);
-	this->generateOrder(new std::string(LI), new std::string(T0), 4);
-	this->generateOrder(new std::string(MUL), new std::string(T0), new std::string(T0),new std::string(T1));
+	this->generateOrder(new std::string(SLL), new std::string(T0), new std::string(T1),new std::string("2"));
 	this->loadWord(rs, new std::string(T1));
 	if(global)
 	{
@@ -961,7 +959,7 @@ void Compiler:: handleLarray(midcode *code)
 
 void Compiler:: handleScanf(midcode *code)
 {
-	if((*code->op1name)[0] == 'i')
+	if((*code->op2name)[0] == 'i')
 	{
 		//读入一个整数
 		this->generateOrder(new std::string(LI), new std::string(V0), 5);
@@ -1046,9 +1044,9 @@ void Compiler::generate()
 	//加个gotomain
 	this->generateOrder(new std::string(ADD), new std::string(FP), new std::string(SP), new std::string(R0));
 	this->handleGoto(new std::string("main"));
-	for(int i = 0 ; i < this->optimizeMidIndex ; i++)
+	for(int i = 0 ; i < this->midindex ; i++)
 	{
-		midcode *code = this->optimizeCodes[i];
+		midcode *code = this->codes[i];
 		switch(code->op)
 		{
 		case FUNCBEGINOP:

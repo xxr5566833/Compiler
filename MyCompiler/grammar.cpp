@@ -1346,10 +1346,10 @@ void Compiler::scanfStatement()
 		switch(sym->returnType)
 		{
 		case INTRET:
-			this->pushMidCode(SCANFOP, new std::string("int"), new std::string(), sym->name, false);
+			this->pushMidCode(SCANFOP, sym->name, new std::string("int"), sym->name, false);
 			break;
 		case CHARRET:
-			this->pushMidCode(SCANFOP, new std::string("char"), new std::string(), sym->name, false);
+			this->pushMidCode(SCANFOP, sym->name, new std::string("char"), sym->name, false);
 			break;
 		}
 		this->inSym();
@@ -1376,10 +1376,10 @@ void Compiler::scanfStatement()
 			switch(sym->returnType)
 			{
 			case INTRET:
-				this->pushMidCode(SCANFOP, new std::string("int"), new std::string(), sym->name, false);
+				this->pushMidCode(SCANFOP, sym->name, new std::string("int"), sym->name, false);
 				break;
 			case CHARRET:
-				this->pushMidCode(SCANFOP, new std::string("char"), new std::string(), sym->name, false);
+				this->pushMidCode(SCANFOP, sym->name, new std::string("char"), sym->name, false);
 				break;
 			}
 			this->inSym();

@@ -43,6 +43,7 @@ void Compiler:: begin()
 	this->initOptimize();
 //	this->printBlock();
 	this->DAG();
+	this->smallOptimize();
 	this->objectInit();
 	this->generate();
 	this->warningPrint();

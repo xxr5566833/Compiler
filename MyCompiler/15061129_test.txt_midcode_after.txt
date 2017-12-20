@@ -48,10 +48,10 @@ _array_int_fibarray[1] = $t17
 $t18 = 1 + 0
 _array_int_fibarray_temp[1] = $t18
 $t19 = _array_int_fibarray_temp[1]
-$t22 = _array_int_fibarray_temp[1]
-$t23 = _array_int_fibarray[$t22]
 $t20 = _array_int_fibarray[$t19]
 $t21 = _array_int_fibarray_temp[$t20]
+$t22 = _array_int_fibarray_temp[1]
+$t23 = _array_int_fibarray[$t22]
 $t21 = $t21 * $t23
 $t21 = $t21 + 0
 #RET = $t21 + 0
@@ -63,9 +63,9 @@ _array_int_fibarray[0] = $t24
 $t25 = 0 + 0
 _array_int_fibarray_temp[0] = $t25
 $t26 = _array_int_fibarray[0]
+$t27 = _array_int_fibarray_temp[$t26]
 $t28 = _array_int_fibarray_temp[0]
 $t29 = _array_int_fibarray[$t28]
-$t27 = _array_int_fibarray_temp[$t26]
 $t27 = $t27 * $t29
 $t27 = $t27 + 0
 #RET = $t27 + 0
@@ -79,18 +79,18 @@ _int_i = 0 + 0
 $label6:
 $t30 = _int_i + 0
 if $t30 >= 46 then goto $label7
-$t32 = -1 + 0
 $t31 = _int_i + 0
+$t32 = -1 + 0
 _array_int_fibarray_temp[$t31] = $t32
-$t34 = -1 + 0
 $t33 = _int_i + 0
+$t34 = -1 + 0
 _array_int_fibarray[$t33] = $t34
-$t36 = 48 + 0
 $t35 = _int_i + 0
 $t35 = $t35 + 0
+$t36 = 48 + 0
 _array_char_a[$t35] = $t36
-$t38 = 48 + 0
 $t37 = _int_i + 0
+$t38 = 48 + 0
 _array_char_c[$t37] = $t38
 $t39 = _int_i + 0
 $t39 = $t39 + 1
@@ -100,7 +100,7 @@ goto $label6
 $label7:
 _simple_int_num = 0 + 0
 printf 0
-scanf int _simple_int_num
+scanf _simple_int_num _simple_int_num
 $t40 = _simple_int_num + 0
 if $t40 >= 2 then goto $label8
 printf 1
@@ -208,8 +208,8 @@ $t71 = a + 0
 $t72 = b + 0
 $t73 = _array_int_quicksort_[$t72]
 _array_int_quicksort_[$t71] = $t73
-$t75 = tmp + 0
 $t74 = b + 0
+$t75 = tmp + 0
 _array_int_quicksort_[$t74] = $t75
 $t76 = a + 0
 $t77 = _array_int_quicksort_[$t76]
@@ -219,16 +219,16 @@ $t79 = b + 0
 $t79 = $t79 + 1
 $t80 = _array_int_quicksort_[$t79]
 _array_int_quicksort_[$t78] = $t80
-$t82 = tmp + 0
 $t81 = b + 0
 $t81 = $t81 + 1
+$t82 = tmp + 0
 _array_int_quicksort_[$t81] = $t82
-$t84 = _simple_int_count + 0
-$t84 = $t84 + 1
-_simple_int_count = $t84 + 0
 $t83 = b + 0
 $t83 = $t83 + 1
 b = $t83 + 0
+$t84 = _simple_int_count + 0
+$t84 = $t84 + 1
+_simple_int_count = $t84 + 0
 goto $label25
 $label24:
 $label25:
@@ -271,7 +271,7 @@ init main2
 _simple_int_count = 0 + 0
 i = 0 + 0
 printf 6
-scanf int _simple_int_length
+scanf _simple_int_length _simple_int_length
 $t90 = _simple_int_length + 0
 if $t90 == 0 then goto $label26
 $t91 = _simple_int_length + 0
@@ -289,9 +289,9 @@ $label28:
 $t94 = _simple_int_length + 0
 $t93 = i + 0
 if $t93 >= $t94 then goto $label29
-scanf int return1
-$t96 = return1 + 0
+scanf return1 return1
 $t95 = i + 0
+$t96 = return1 + 0
 _array_int_quicksort_[$t95] = $t96
 $t97 = i + 0
 call return999
@@ -368,14 +368,14 @@ i = 0 + 0
 $label35:
 $t110 = i + 0
 if $t110 >= 45 then goto $label36
-$t112 = 97 + 0
 $t111 = i + 0
+$t112 = 97 + 0
 _array_char_a[$t111] = $t112
-$t114 = 100 + 0
 $t113 = i + 0
+$t114 = 100 + 0
 _array_int_a[$t113] = $t114
-$t116 = -1 + 0
 $t115 = i + 0
+$t116 = -1 + 0
 _array_int_fibarray[$t115] = $t116
 $t117 = i + 0
 $t117 = $t117 + 1
@@ -858,8 +858,8 @@ main3$end:
 ret main3
 init main
 printf 51
-scanf char choose
 $t257 = 97 + 0
+scanf choose choose
 $t256 = choose + 0
 if $t257 != $t256 then goto $label38
 call main1

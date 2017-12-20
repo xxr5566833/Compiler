@@ -11,7 +11,6 @@ void Compiler::divideToBlock()
 			//函数开始符号(call的跳转目标)/标号（跳转的目标，其实函数名也是一个标号，但是这里用init 函数名代替了）作为入口语句
 		case FUNCBEGINOP:
 		case LABOP:
-		case SCANFOP:
 		case PRINTFOP:
 		case REALPARAOP:
 			this->blockBegin[this->blockIndex++] = i;
@@ -20,8 +19,7 @@ void Compiler::divideToBlock()
 			this->blockBegin[this->blockIndex++] = i;
 			break;
 		//call的下一句是ret的返回地址/分支语句的下一句也是同理
-		//这里暂定  遇到其他变量给数组赋值 就作为基本块的最后一句
-		case LARRAYOP:
+
 		case RETOP:
 		case CALLOP:
 		case GOTOOP:
@@ -66,6 +64,7 @@ bool Compiler::canAdd(bool flag[],  Node *x)
 	}
 	return choose;
 }
+
 
 void Compiler::DAG()
 {
@@ -112,66 +111,8 @@ void Compiler::DAG()
 			midcode *code = this->codes[j];
 			switch(code->op)
 			{
-			
-			/*case ASSIGNOP:
-				{
-				ListNode *x = 0;
-				this->findNodeInTab(nodetab, tablength, code->op1name, &x);
-				if(x == 0)
-				{
-					Node *newx = new Node();
-					newx->isLeaf = true;
-					newx->index = nodeindex;
-					newx->op = NOTOP;
-					newx->parentnum = 0;
-					newx->yindex = -1;
-					newx->xindex = -1;
-					dag[nodeindex ++] = newx;
-					x = new ListNode();
-					x->name = code->op1name;
-					x->index = newx->index;
-					nodetab[tablength ++] = x;
-				}
 
-				Node *mid = 0;
-				for(int k = 0 ; k < nodeindex ; k++)
-				{
-					Node *node = dag[k];
-					if(!(node->isLeaf) && node->op == code->op && node->xindex == x->index && node->yindex == y->index)
-					{
-						//满足条件
-						mid = node;
-						break;
-					}
-				}
-				if(!mid)
-				{
-					//如果这个中间节点未被创建
-					Node *newz = new Node();
-					newz->index = nodeindex;
-					newz->isLeaf = true;
-					newz->op = code->op;
-					newz->parentnum = 0;
-					newz->xindex = x->index;
-					newz->yindex = y->index;
-					Node *xnode = dag[x->index];
-					Node *ynode = dag[y->index];
-					xnode->parentindex[xnode->parentnum ++] = nodeindex;
-					ynode->parentindex[ynode->parentnum ++] = nodeindex;
-					dag[nodeindex ++] = newz;
-				}
-				//然后在节点表中找z
-				ListNode *z = 0;
-				this->findNodeInTab(nodetab, tablength, code->rstname, &z);
-				if(!z)
-				{
-					//没有找到
-					z = new ListNode();
-					z->name = code->rstname;
-				}
-				z->index = mid->index;
-
-				break;*/
+			case SCANFOP:
 			case ADDOP:
 			case SUBOP:
 			case MULOP:
@@ -411,4 +352,44 @@ void Compiler::initOptimize()
 {
 	this->blockIndex = 0;
 	this->optimizeMidIndex = 0;
+}
+//窥孔优化
+void Compiler::smallOptimize()
+{
+	//最后结果放在codes里
+	this->midindex = 0;
+	//把所有的加0都给去掉，需要满足条件：①一个操作数是0②另一个操作数和目标操作数相同③是加法
+	for(int i = 0 ; i < this->optimizeMidIndex ; i++)
+	{
+		midcode *code = this->optimizeCodes[i];
+		std::string *op1name = code->op1name;
+		std::string *op2name = code->op2name;
+		std::string *rstname = code->rstname;
+		switch(code->op)
+		{
+		case ADDOP:
+			if((this->isIdEqual(*op1name, std::string("0")) && this->isIdEqual(*op2name, *rstname)) || 
+				(this->isIdEqual(*op2name, std::string("0")) && this->isIdEqual(*op1name, *rstname)))
+			{
+				std::cout << "少了一个" << std::endl;
+				this->writeMidCode(code, true, false, false);
+			}
+			else{
+				this->codes[this->midindex++] = code;
+			}
+			break;
+		case SUBOP:
+			if(!(this->isIdEqual(*op1name, *rstname) && this->isIdEqual(*op2name, std::string("0"))))
+			{
+				this->codes[this->midindex++] = code;
+			}
+			else{
+				std::cout << "少了一个" << std::endl;
+				this->writeMidCode(code, true, false, false);
+			}
+			break;
+		default:
+			this->codes[this->midindex++] = code;
+		}
+	}
 }

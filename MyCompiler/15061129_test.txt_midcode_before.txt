@@ -100,7 +100,7 @@ goto $label6
 $label7:
 _simple_int_num = 0 + 0
 printf 0
-scanf int _simple_int_num
+scanf _simple_int_num _simple_int_num
 $t40 = _simple_int_num + 0
 if $t40 >= 2 then goto $label8
 printf 1
@@ -271,7 +271,7 @@ init main2
 _simple_int_count = 0 + 0
 i = 0 + 0
 printf 6
-scanf int _simple_int_length
+scanf _simple_int_length _simple_int_length
 $t90 = _simple_int_length + 0
 if $t90 == 0 then goto $label26
 $t91 = _simple_int_length + 0
@@ -289,7 +289,7 @@ $label28:
 $t93 = i + 0
 $t94 = _simple_int_length + 0
 if $t93 >= $t94 then goto $label29
-scanf int return1
+scanf return1 return1
 $t95 = i + 0
 $t96 = return1 + 0
 _array_int_quicksort_[$t95] = $t96
@@ -858,7 +858,7 @@ main3$end:
 ret main3
 init main
 printf 51
-scanf char choose
+scanf choose choose
 $t256 = choose + 0
 $t257 = 97 + 0
 if $t257 != $t256 then goto $label38
