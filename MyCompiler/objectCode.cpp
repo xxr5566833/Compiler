@@ -222,6 +222,14 @@ void Compiler::generateOrder(std::string *order)
 	this->objectFile << "\t" << *order << std::endl;
 }
 
+void Compiler::genMipsLabel(std::string *label)
+{
+	std::string *newlab = new std::string();
+	this->str2Lower(label, newlab);
+	//std::cout << *newlab << ":" << std::endl;
+	this->objectFile << *newlab << ":" << std::endl;
+}
+
 void Compiler::initConstAndVar(symbol *sym, int initaddress)
 {
 	//表示是全局的常量
@@ -257,14 +265,6 @@ void Compiler::initConstAndVar(symbol *sym, int initaddress)
 		}
 		
 	}
-}
-
-void Compiler::genMipsLabel(std::string *label)
-{
-	std::string *newlab = new std::string();
-	this->str2Lower(label, newlab);
-	//std::cout << *newlab << ":" << std::endl;
-	this->objectFile << *newlab << ":" << std::endl;
 }
 
 void Compiler::funcBegin(std::string *name)
@@ -391,13 +391,7 @@ void Compiler::loadWord(std::string *rs, std::string *reg)
 	{
 		this->generateOrder(new std::string(LI), reg, atoi(rs->c_str()));
 	}
-	else if((*rs)[0] == '$')
-	{
-		//这里offset就是相对于全局变量区的偏移
-		int offset = atoi(rs->substr(2).c_str());
-		//临时变量也存在全局区，所以它的地址需要偏移 字符串 全局变量和常量的地址
-		this->generateOrder(new std::string(LW), reg, this->strAddress + (this->address + offset) * 4, new std::string(R0));
-	}
+	//bug : 临时变量不能作为全局的来使用，只能作为局部的！直接把他当做一个标识符
 	else if((*rs)[0] == '#')
 	{
 		this->generateOrder(new std::string(ADD), reg, new std::string(V0), new std::string(R0));
@@ -422,10 +416,6 @@ void Compiler::storeWord(std::string *rd)
 	int offset = 0;
 	switch((*rd)[0])
 	{
-	case '$':
-		offset = atoi(rd->substr(2).c_str());
-		this->generateOrder(new std::string(SW), new std::string(T0), this->strAddress + (offset + this->address) * 4, new std::string(R0));
-		break;
 	case '#':
 		this->generateOrder(new std::string(ADD), new std::string(V0), new std::string(T0), new std::string(R0));
 		break;

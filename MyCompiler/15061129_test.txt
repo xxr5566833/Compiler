@@ -17,6 +17,21 @@ int _simple_int_e, _array_int_fibarray[1000], _array_int_fibarray_temp[1000], _s
 int _array_int_quicksort_[100], _simple_int_count;
 int _simple_int_length;
 
+int fibo(int num)
+{
+	if(num <= 0)	return (0);	else ;
+	if(num == 1)	return (1);	else ;
+	if(num >= 2)	return (fibo(num - 1) + fibo(num - 2));	else;
+}
+
+void main4
+{
+	int num;
+	scanf(num);
+	printf(fibo(num));
+	return ;
+}
+
 int fib(int _simple_int_num)
 {
 	int _int_temp, fib1, fib2;
@@ -370,6 +385,7 @@ void main()
 	case 'a' : main1;
 	case 'b' : main2;
 	case 'c' : main3;
+	case 'd' : main4;
 	default: printf("out of range");
 	}
 	return;

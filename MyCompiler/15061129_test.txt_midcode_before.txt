@@ -1,253 +1,298 @@
-init fib
-$t0 = _simple_int_num + 0
-$t0 = 0 - $t0
-if $t0 >= -1 then goto $label0
-$t1 = _simple_int_num + 0
-$t1 = $t1 - 1
-$t2 = _array_int_fibarray[$t1]
-if $t2 > -1 then goto $label2
-$t3 = _simple_int_num + 0
-$t3 = $t3 - 1
-push $t3
-call fib
-$t4 = #RET + 0
-fib1 = $t4 + 0
-goto $label3
-$label2:
-$t5 = _simple_int_num + 0
-$t5 = $t5 - 1
-$t6 = _array_int_fibarray[$t5]
-fib1 = $t6 + 0
-$label3:
-$t7 = _simple_int_num + 0
-$t7 = $t7 - 2
-$t8 = _array_int_fibarray[$t7]
-fib2 = $t8 + 0
-$t9 = fib1 + 0
-$t10 = fib2 + 0
-$t9 = $t9 + $t10
-_int_temp = $t9 + 0
-$t11 = _simple_int_num + 0
-$t12 = _int_temp + 0
-_array_int_fibarray[$t11] = $t12
-$t13 = _int_temp + 0
-#RET = $t13 + 0
-goto fib$end
+init fibo
+$t0 = num + 0
+if $t0 > 0 then goto $label0
+#RET = 0 + 0
+goto fibo$end
 goto $label1
 $label0:
-$t14 = _simple_int_num + 0
-$t15 = _simple_int_num + 0
-$t15 = $t15 + 1
-$t14 = $t14 * $t15
-$t16 = _simple_int_num + 0
-$t16 = $t16 + 1
-$t14 = $t14 \ $t16
-if $t14 == 0 then goto $label4
-$t17 = 1 + 0
-_array_int_fibarray[1] = $t17
-$t18 = 1 + 0
-_array_int_fibarray_temp[1] = $t18
-$t19 = _array_int_fibarray_temp[1]
-$t20 = _array_int_fibarray[$t19]
-$t21 = _array_int_fibarray_temp[$t20]
-$t22 = _array_int_fibarray_temp[1]
-$t23 = _array_int_fibarray[$t22]
-$t21 = $t21 * $t23
-$t21 = $t21 + 0
-#RET = $t21 + 0
-goto fib$end
+$label1:
+$t1 = num + 0
+if $t1 != 1 then goto $label2
+#RET = 1 + 0
+goto fibo$end
+goto $label3
+$label2:
+$label3:
+$t2 = num + 0
+if $t2 < 2 then goto $label4
+$t3 = num + 0
+$t3 = $t3 - 1
+push $t3
+call fibo
+$t4 = #RET + 0
+$t5 = num + 0
+$t5 = $t5 - 2
+push $t5
+call fibo
+$t6 = #RET + 0
+$t4 = $t4 + $t6
+#RET = $t4 + 0
+goto fibo$end
 goto $label5
 $label4:
-$t24 = 0 + 0
-_array_int_fibarray[0] = $t24
-$t25 = 0 + 0
-_array_int_fibarray_temp[0] = $t25
-$t26 = _array_int_fibarray[0]
-$t27 = _array_int_fibarray_temp[$t26]
-$t28 = _array_int_fibarray_temp[0]
-$t29 = _array_int_fibarray[$t28]
-$t27 = $t27 * $t29
-$t27 = $t27 + 0
-#RET = $t27 + 0
-goto fib$end
 $label5:
-$label1:
+fibo$end:
+ret fibo
+init main4
+scanf num num
+$t7 = num + 0
+push $t7
+call fibo
+$t8 = #RET + 0
+printf $t8
+goto main4$end
+main4$end:
+ret main4
+init fib
+$t9 = _simple_int_num + 0
+$t9 = 0 - $t9
+if $t9 >= -1 then goto $label6
+$t10 = _simple_int_num + 0
+$t10 = $t10 - 1
+$t11 = _array_int_fibarray[$t10]
+if $t11 > -1 then goto $label8
+$t12 = _simple_int_num + 0
+$t12 = $t12 - 1
+push $t12
+call fib
+$t13 = #RET + 0
+fib1 = $t13 + 0
+goto $label9
+$label8:
+$t14 = _simple_int_num + 0
+$t14 = $t14 - 1
+$t15 = _array_int_fibarray[$t14]
+fib1 = $t15 + 0
+$label9:
+$t16 = _simple_int_num + 0
+$t16 = $t16 - 2
+$t17 = _array_int_fibarray[$t16]
+fib2 = $t17 + 0
+$t18 = fib1 + 0
+$t19 = fib2 + 0
+$t18 = $t18 + $t19
+_int_temp = $t18 + 0
+$t20 = _simple_int_num + 0
+$t21 = _int_temp + 0
+_array_int_fibarray[$t20] = $t21
+$t22 = _int_temp + 0
+#RET = $t22 + 0
+goto fib$end
+goto $label7
+$label6:
+$t23 = _simple_int_num + 0
+$t24 = _simple_int_num + 0
+$t24 = $t24 + 1
+$t23 = $t23 * $t24
+$t25 = _simple_int_num + 0
+$t25 = $t25 + 1
+$t23 = $t23 \ $t25
+if $t23 == 0 then goto $label10
+$t26 = 1 + 0
+_array_int_fibarray[1] = $t26
+$t27 = 1 + 0
+_array_int_fibarray_temp[1] = $t27
+$t28 = _array_int_fibarray_temp[1]
+$t29 = _array_int_fibarray[$t28]
+$t30 = _array_int_fibarray_temp[$t29]
+$t31 = _array_int_fibarray_temp[1]
+$t32 = _array_int_fibarray[$t31]
+$t30 = $t30 * $t32
+$t30 = $t30 + 0
+#RET = $t30 + 0
+goto fib$end
+goto $label11
+$label10:
+$t33 = 0 + 0
+_array_int_fibarray[0] = $t33
+$t34 = 0 + 0
+_array_int_fibarray_temp[0] = $t34
+$t35 = _array_int_fibarray[0]
+$t36 = _array_int_fibarray_temp[$t35]
+$t37 = _array_int_fibarray_temp[0]
+$t38 = _array_int_fibarray[$t37]
+$t36 = $t36 * $t38
+$t36 = $t36 + 0
+#RET = $t36 + 0
+goto fib$end
+$label11:
+$label7:
 fib$end:
 ret fib
 init main1
 _int_i = 0 + 0
-$label6:
-$t30 = _int_i + 0
-if $t30 >= 46 then goto $label7
-$t31 = _int_i + 0
-$t32 = -1 + 0
-_array_int_fibarray_temp[$t31] = $t32
-$t33 = _int_i + 0
-$t34 = -1 + 0
-_array_int_fibarray[$t33] = $t34
-$t35 = _int_i + 0
-$t35 = $t35 + 0
-$t36 = 48 + 0
-_array_char_a[$t35] = $t36
-$t37 = _int_i + 0
-$t38 = 48 + 0
-_array_char_c[$t37] = $t38
+$label12:
 $t39 = _int_i + 0
-$t39 = $t39 + 1
-$t39 = $t39 - 0
-_int_i = $t39 + 0
-goto $label6
-$label7:
+if $t39 >= 46 then goto $label13
+$t40 = _int_i + 0
+$t41 = -1 + 0
+_array_int_fibarray_temp[$t40] = $t41
+$t42 = _int_i + 0
+$t43 = -1 + 0
+_array_int_fibarray[$t42] = $t43
+$t44 = _int_i + 0
+$t44 = $t44 + 0
+$t45 = 48 + 0
+_array_char_a[$t44] = $t45
+$t46 = _int_i + 0
+$t47 = 48 + 0
+_array_char_c[$t46] = $t47
+$t48 = _int_i + 0
+$t48 = $t48 + 1
+$t48 = $t48 - 0
+_int_i = $t48 + 0
+goto $label12
+$label13:
 _simple_int_num = 0 + 0
 printf 0
 scanf _simple_int_num _simple_int_num
-$t40 = _simple_int_num + 0
-if $t40 >= 2 then goto $label8
-printf 1
-goto $label9
-$label8:
-$t41 = _simple_int_num + 0
-if $t41 <= 45 then goto $label10
-printf 2
-goto $label11
-$label10:
-$t42 = _simple_int_num + 0
-push 0
-call fib
-$t43 = #RET + 0
-$t42 = $t42 + $t43
-push 1
-call fib
-$t44 = #RET + 0
-$t42 = $t42 - $t44
-push 2
-call fib
-$t45 = #RET + 0
-$t42 = $t42 + $t45
-push $t42
-call fib
-$label12:
-$t46 = _simple_int_num + 0
-if $t46 < 0 then goto $label13
-$t47 = _simple_int_num + 0
-$t48 = _array_int_fibarray[$t47]
-$t48 = 0 - $t48
-$t48 = 0 - $t48
-printf $t48
 $t49 = _simple_int_num + 0
-$t50 = _array_int_fibarray_temp[$t49]
-if $t50 == -1 then goto $label14
-printf 3
+if $t49 >= 2 then goto $label14
+printf 1
 goto $label15
 $label14:
-$label15:
-printf 4
+$t50 = _simple_int_num + 0
+if $t50 <= 45 then goto $label16
+printf 2
+goto $label17
+$label16:
 $t51 = _simple_int_num + 0
-$t51 = $t51 - 1
-_simple_int_num = $t51 + 0
-goto $label12
-$label13:
-$label11:
-$label9:
+push 0
+call fib
+$t52 = #RET + 0
+$t51 = $t51 + $t52
+push 1
+call fib
+$t53 = #RET + 0
+$t51 = $t51 - $t53
+push 2
+call fib
+$t54 = #RET + 0
+$t51 = $t51 + $t54
+push $t51
+call fib
+$label18:
+$t55 = _simple_int_num + 0
+if $t55 < 0 then goto $label19
+$t56 = _simple_int_num + 0
+$t57 = _array_int_fibarray[$t56]
+$t57 = 0 - $t57
+$t57 = 0 - $t57
+printf $t57
+$t58 = _simple_int_num + 0
+$t59 = _array_int_fibarray_temp[$t58]
+if $t59 == -1 then goto $label20
+printf 3
+goto $label21
+$label20:
+$label21:
+printf 4
+$t60 = _simple_int_num + 0
+$t60 = $t60 - 1
+_simple_int_num = $t60 + 0
+goto $label18
+$label19:
+$label17:
+$label15:
 main1$end:
 ret main1
 init printArray
 A = 1 + 0
-$t52 = _simple_int_length + 0
-if $t52 < 1 then goto $label16
-$t53 = _array_int_quicksort_[0]
-printf $t53
-goto $label17
-$label16:
+$t61 = _simple_int_length + 0
+if $t61 < 1 then goto $label22
+$t62 = _array_int_quicksort_[0]
+printf $t62
+goto $label23
+$label22:
 #RET = -1 + 0
 goto printArray$end
-$label17:
-$label18:
-$t54 = A + 0
-$t55 = _simple_int_length + 0
-if $t54 >= $t55 then goto $label19
+$label23:
+$label24:
+$t63 = A + 0
+$t64 = _simple_int_length + 0
+if $t63 >= $t64 then goto $label25
 printf 5
-$t56 = A + 0
-$t57 = _array_int_quicksort_[$t56]
-printf $t57
-$t58 = A + 0
-$t58 = $t58 + 1
-A = $t58 + 0
-goto $label18
-$label19:
+$t65 = A + 0
+$t66 = _array_int_quicksort_[$t65]
+printf $t66
+$t67 = A + 0
+$t67 = $t67 + 1
+A = $t67 + 0
+goto $label24
+$label25:
 #RET = 0 + 0
 goto printArray$end
 printArray$end:
 ret printArray
 init quickSort
-$t59 = head + 0
-$t60 = tail + 0
-if $t59 < $t60 then goto $label20
+$t68 = head + 0
+$t69 = tail + 0
+if $t68 < $t69 then goto $label26
 goto quickSort$end
-goto $label21
-$label20:
-$label21:
-$t61 = head + 0
-$t61 = $t61 + 1
-a = $t61 + 0
-$t62 = head + 0
-b = $t62 + 0
-$label22:
-$t63 = a + 0
-$t64 = tail + 0
-if $t63 > $t64 then goto $label23
-$t65 = a + 0
-$t66 = _array_int_quicksort_[$t65]
-$t67 = b + 0
-$t68 = _array_int_quicksort_[$t67]
-if $t66 >= $t68 then goto $label24
-$t69 = a + 0
-$t70 = _array_int_quicksort_[$t69]
-tmp = $t70 + 0
-$t71 = a + 0
-$t72 = b + 0
-$t73 = _array_int_quicksort_[$t72]
-_array_int_quicksort_[$t71] = $t73
-$t74 = b + 0
-$t75 = tmp + 0
-_array_int_quicksort_[$t74] = $t75
-$t76 = a + 0
+goto $label27
+$label26:
+$label27:
+$t70 = head + 0
+$t70 = $t70 + 1
+a = $t70 + 0
+$t71 = head + 0
+b = $t71 + 0
+$label28:
+$t72 = a + 0
+$t73 = tail + 0
+if $t72 > $t73 then goto $label29
+$t74 = a + 0
+$t75 = _array_int_quicksort_[$t74]
+$t76 = b + 0
 $t77 = _array_int_quicksort_[$t76]
-tmp = $t77 + 0
+if $t75 >= $t77 then goto $label30
 $t78 = a + 0
-$t79 = b + 0
-$t79 = $t79 + 1
-$t80 = _array_int_quicksort_[$t79]
-_array_int_quicksort_[$t78] = $t80
+$t79 = _array_int_quicksort_[$t78]
+tmp = $t79 + 0
+$t80 = a + 0
 $t81 = b + 0
-$t81 = $t81 + 1
-$t82 = tmp + 0
-_array_int_quicksort_[$t81] = $t82
+$t82 = _array_int_quicksort_[$t81]
+_array_int_quicksort_[$t80] = $t82
 $t83 = b + 0
-$t83 = $t83 + 1
-b = $t83 + 0
-$t84 = _simple_int_count + 0
-$t84 = $t84 + 1
-_simple_int_count = $t84 + 0
-goto $label25
-$label24:
-$label25:
+$t84 = tmp + 0
+_array_int_quicksort_[$t83] = $t84
 $t85 = a + 0
-$t85 = $t85 + 1
-a = $t85 + 0
-goto $label22
-$label23:
-$t86 = head + 0
-push $t86
-$t87 = b + 0
-$t87 = $t87 - 1
-push $t87
-call quickSort
+$t86 = _array_int_quicksort_[$t85]
+tmp = $t86 + 0
+$t87 = a + 0
 $t88 = b + 0
 $t88 = $t88 + 1
-push $t88
-$t89 = tail + 0
-push $t89
+$t89 = _array_int_quicksort_[$t88]
+_array_int_quicksort_[$t87] = $t89
+$t90 = b + 0
+$t90 = $t90 + 1
+$t91 = tmp + 0
+_array_int_quicksort_[$t90] = $t91
+$t92 = b + 0
+$t92 = $t92 + 1
+b = $t92 + 0
+$t93 = _simple_int_count + 0
+$t93 = $t93 + 1
+_simple_int_count = $t93 + 0
+goto $label31
+$label30:
+$label31:
+$t94 = a + 0
+$t94 = $t94 + 1
+a = $t94 + 0
+goto $label28
+$label29:
+$t95 = head + 0
+push $t95
+$t96 = b + 0
+$t96 = $t96 - 1
+push $t96
+call quickSort
+$t97 = b + 0
+$t97 = $t97 + 1
+push $t97
+$t98 = tail + 0
+push $t98
 call quickSort
 goto quickSort$end
 quickSort$end:
@@ -272,73 +317,73 @@ _simple_int_count = 0 + 0
 i = 0 + 0
 printf 6
 scanf _simple_int_length _simple_int_length
-$t90 = _simple_int_length + 0
-if $t90 == 0 then goto $label26
-$t91 = _simple_int_length + 0
-$t92 = _simple_int_length + 0
-$t92 = $t92 * _simple_int_length
-$t91 = $t91 + $t92
-$t91 = $t91 \ _simple_int_length
-$t91 = $t91 - 1
-_simple_int_length = $t91 + 0
-goto $label27
-$label26:
-$label27:
-printf 7
-$label28:
-$t93 = i + 0
-$t94 = _simple_int_length + 0
-if $t93 >= $t94 then goto $label29
-scanf return1 return1
-$t95 = i + 0
-$t96 = return1 + 0
-_array_int_quicksort_[$t95] = $t96
-$t97 = i + 0
-call return999
-$t98 = #RET + 0
-$t97 = $t97 + $t98
-call returnminus998
-$t99 = #RET + 0
-$t97 = $t97 + $t99
-i = $t97 + 0
-goto $label28
-$label29:
+$t99 = _simple_int_length + 0
+if $t99 == 0 then goto $label32
 $t100 = _simple_int_length + 0
-$t101 = 0 + 0
-if $t101 != $t100 then goto $label31
-call printArray
-goto $label30
-$label31:
-$t102 = 1 + 0
-if $t102 != $t100 then goto $label32
-call printArray
-goto $label30
+$t101 = _simple_int_length + 0
+$t101 = $t101 * _simple_int_length
+$t100 = $t100 + $t101
+$t100 = $t100 \ _simple_int_length
+$t100 = $t100 - 1
+_simple_int_length = $t100 + 0
+goto $label33
 $label32:
-$t103 = _simple_int_length + 0
-if $t103 >= 0 then goto $label33
-printf 8
-goto main2$end
-goto $label34
 $label33:
+printf 7
+$label34:
+$t102 = i + 0
+$t103 = _simple_int_length + 0
+if $t102 >= $t103 then goto $label35
+scanf return1 return1
+$t104 = i + 0
+$t105 = return1 + 0
+_array_int_quicksort_[$t104] = $t105
+$t106 = i + 0
 call return999
-$t104 = #RET + 0
-$t104 = $t104 - 999
-push $t104
-$t105 = _simple_int_length + 0
-call return999
-$t106 = #RET + 0
-call returnminus998
 $t107 = #RET + 0
 $t106 = $t106 + $t107
-$t105 = $t105 - $t106
-push $t105
+call returnminus998
+$t108 = #RET + 0
+$t106 = $t106 + $t108
+i = $t106 + 0
+goto $label34
+$label35:
+$t109 = _simple_int_length + 0
+$t110 = 0 + 0
+if $t110 != $t109 then goto $label37
+call printArray
+goto $label36
+$label37:
+$t111 = 1 + 0
+if $t111 != $t109 then goto $label38
+call printArray
+goto $label36
+$label38:
+$t112 = _simple_int_length + 0
+if $t112 >= 0 then goto $label39
+printf 8
+goto main2$end
+goto $label40
+$label39:
+call return999
+$t113 = #RET + 0
+$t113 = $t113 - 999
+push $t113
+$t114 = _simple_int_length + 0
+call return999
+$t115 = #RET + 0
+call returnminus998
+$t116 = #RET + 0
+$t115 = $t115 + $t116
+$t114 = $t114 - $t115
+push $t114
 call quickSort
 call printArray
-$label34:
-$label30:
+$label40:
+$label36:
 printf 9
-$t108 = _simple_int_count + 0
-printf $t108
+$t117 = _simple_int_count + 0
+printf $t117
 goto main2$end
 main2$end:
 ret main2
@@ -358,52 +403,52 @@ goto returnStar$end
 returnStar$end:
 ret returnStar
 init returnChar
-$t109 = c + 0
-#RET = $t109 + 0
+$t118 = c + 0
+#RET = $t118 + 0
 goto returnChar$end
 returnChar$end:
 ret returnChar
 init main3
 i = 0 + 0
-$label35:
-$t110 = i + 0
-if $t110 >= 45 then goto $label36
-$t111 = i + 0
-$t112 = 97 + 0
-_array_char_a[$t111] = $t112
-$t113 = i + 0
-$t114 = 100 + 0
-_array_int_a[$t113] = $t114
-$t115 = i + 0
-$t116 = -1 + 0
-_array_int_fibarray[$t115] = $t116
-$t117 = i + 0
-$t117 = $t117 + 1
-i = $t117 + 0
-goto $label35
-$label36:
+$label41:
+$t119 = i + 0
+if $t119 >= 45 then goto $label42
+$t120 = i + 0
+$t121 = 97 + 0
+_array_char_a[$t120] = $t121
+$t122 = i + 0
+$t123 = 100 + 0
+_array_int_a[$t122] = $t123
+$t124 = i + 0
+$t125 = -1 + 0
+_array_int_fibarray[$t124] = $t125
+$t126 = i + 0
+$t126 = $t126 + 1
+i = $t126 + 0
+goto $label41
+$label42:
 i = 0 + 0
 printf 10
 printf 95
 _simple_char_t = 65 + 0
 printf 11
-$t118 = _simple_char_t + 0
-printf $t118
+$t127 = _simple_char_t + 0
+printf $t127
 printf 12
 printf 43
 printf 13
-$t119 = _array_char_a[1]
-printf $t119
+$t128 = _array_char_a[1]
+printf $t128
 printf 14
-$t120 = _array_char_a[5]
-push $t120
+$t129 = _array_char_a[5]
+push $t129
 call returnChar
-$t121 = #RET + 0
-printf $t121
+$t130 = #RET + 0
+printf $t130
 printf 15
 call returna
-$t122 = #RET + 0
-printf $t122
+$t131 = #RET + 0
+printf $t131
 printf 16
 printf 34545
 printf 17
@@ -419,462 +464,467 @@ printf -888
 printf 22
 printf 456
 printf 23
-$t123 = _array_int_a[20]
-printf $t123
+$t132 = _array_int_a[20]
+printf $t132
 printf 24
-$t124 = _array_int_a[1]
-printf $t124
+$t133 = _array_int_a[1]
+printf $t133
 printf 25
 push 0
 call fib
-$t125 = #RET + 0
-printf $t125
+$t134 = #RET + 0
+printf $t134
 printf 26
 push 1
 call fib
-$t126 = #RET + 0
-printf $t126
+$t135 = #RET + 0
+printf $t135
 printf 27
 push 5
 call fib
-$t127 = #RET + 0
-printf $t127
+$t136 = #RET + 0
+printf $t136
 printf 28
 printf 100
 printf 29
-$t128 = _array_int_a[20]
-printf $t128
+$t137 = _array_int_a[20]
+printf $t137
 printf 30
 push 5
 call fib
-$t129 = #RET + 0
-printf $t129
+$t138 = #RET + 0
+printf $t138
 printf 31
-$t130 = _simple_char_t + 0
-$t130 = 95 * $t130
-printf $t130
+$t139 = _simple_char_t + 0
+$t139 = 95 * $t139
+printf $t139
 printf 32
-$t131 = _array_char_a[1]
-$t131 = 43 \ $t131
-printf $t131
+$t140 = _array_char_a[1]
+$t140 = 43 \ $t140
+printf $t140
 printf 33
-$t132 = _array_char_a[1]
-$t132 = $t132 \ -400
-printf $t132
+$t141 = _array_char_a[1]
+$t141 = $t141 \ -400
+printf $t141
 printf 34
 push 47
 call returnChar
-$t133 = #RET + 0
+$t142 = #RET + 0
 push 1
 call fib
-$t133 = $t133 * #RET
-printf $t133
+$t142 = $t142 * #RET
+printf $t142
 printf 35
 printf 355200
 printf 36
 push 5
 call fib
-$t134 = #RET + 0
-$t134 = 1000 \ $t134
-printf $t134
+$t143 = #RET + 0
+$t143 = 1000 \ $t143
+printf $t143
 printf 37
-$t135 = _simple_char_t + 0
-$t135 = 95 \ $t135
+$t144 = _simple_char_t + 0
+$t144 = 95 \ $t144
 push 1
 call fib
-$t135 = $t135 * #RET
-printf $t135
+$t144 = $t144 * #RET
+printf $t144
 printf 38
 push 0
 call fib
-$t136 = #RET + 0
-$t136 = 355200 * $t136
-printf $t136
-printf 39
-$t137 = _simple_char_t + 0
-$t137 = 355200 \ $t137
-printf $t137
-printf 40
-$t138 = _array_char_a[5]
-push $t138
-call returnChar
-$t139 = #RET + 0
-$t140 = _array_char_a[5]
-push $t140
-call returnChar
-$t139 = $t139 * #RET
-$t141 = _array_char_a[5]
-push $t141
-call returnChar
-$t139 = $t139 * #RET
-printf $t139
-printf 41
-$t142 = _simple_char_t + 0
-$t142 = 355200 \ $t142
-$t142 = $t142 \ 355200
-$t143 = _array_int_a[20]
-$t142 = $t142 * $t143
-printf $t142
-printf 42
-$t144 = _array_char_a[5]
-push $t144
-call returnChar
 $t145 = #RET + 0
-$t146 = _array_char_a[5]
-push $t146
-call returnChar
-$t145 = $t145 * #RET
+$t145 = 355200 * $t145
+printf $t145
+printf 39
+$t146 = _simple_char_t + 0
+$t146 = 355200 \ $t146
+printf $t146
+printf 40
 $t147 = _array_char_a[5]
 push $t147
 call returnChar
-$t145 = $t145 * #RET
-$t145 = 95 * $t145
-printf $t145
+$t148 = #RET + 0
+$t149 = _array_char_a[5]
+push $t149
+call returnChar
+$t148 = $t148 * #RET
+$t150 = _array_char_a[5]
+push $t150
+call returnChar
+$t148 = $t148 * #RET
+printf $t148
+printf 41
+$t151 = _simple_char_t + 0
+$t151 = 355200 \ $t151
+$t151 = $t151 \ 355200
+$t152 = _array_int_a[20]
+$t151 = $t151 * $t152
+printf $t151
+printf 42
+$t153 = _array_char_a[5]
+push $t153
+call returnChar
+$t154 = #RET + 0
+$t155 = _array_char_a[5]
+push $t155
+call returnChar
+$t154 = $t154 * #RET
+$t156 = _array_char_a[5]
+push $t156
+call returnChar
+$t154 = $t154 * #RET
+$t154 = 95 * $t154
+printf $t154
 printf 43
 push 6
 call fib
-$t148 = #RET + 0
-push $t148
+$t157 = #RET + 0
+push $t157
 call fib
-$t149 = #RET + 0
+$t158 = #RET + 0
 push 5
 call fib
-$t150 = #RET + 0
-$t149 = $t149 - $t150
-push $t149
+$t159 = #RET + 0
+$t158 = $t158 - $t159
+push $t158
 call fib
-$t151 = #RET + 0
-printf $t151
+$t160 = #RET + 0
+printf $t160
 printf 44
 push 0
 call fib
-$t152 = #RET + 0
-push $t152
-call fib
-$t153 = #RET + 0
-push $t153
-call fib
-$t154 = #RET + 0
-$t155 = _array_int_a[$t154]
-$t156 = _array_int_a[0]
-$t157 = _array_int_a[0]
-$t156 = $t156 \ $t157
-push $t156
-call fib
-$t158 = #RET + 0
-push $t158
-call fib
-$t159 = #RET + 0
-$t160 = _array_int_a[$t159]
-$t155 = $t155 - $t160
-push $t155
-call fib
 $t161 = #RET + 0
-$t162 = _array_int_a[$t161]
-printf $t162
+push $t161
+call fib
+$t162 = #RET + 0
+push $t162
+call fib
+$t163 = #RET + 0
+$t164 = _array_int_a[$t163]
+$t165 = _array_int_a[0]
+$t166 = _array_int_a[0]
+$t165 = $t165 \ $t166
+push $t165
+call fib
+$t167 = #RET + 0
+push $t167
+call fib
+$t168 = #RET + 0
+$t169 = _array_int_a[$t168]
+$t164 = $t164 - $t169
+push $t164
+call fib
+$t170 = #RET + 0
+$t171 = _array_int_a[$t170]
+printf $t171
 printf 45
 printf -888
 printf 46
 call returna
-$t163 = #RET + 0
-$t163 = 0 - $t163
-printf $t163
+$t172 = #RET + 0
+$t172 = 0 - $t172
+printf $t172
 printf 47
 push 0
 call fib
-$t164 = #RET + 0
-push $t164
-call fib
-$t165 = #RET + 0
-push $t165
-call fib
-$t166 = #RET + 0
-$t167 = _array_int_a[$t166]
-$t168 = _array_int_a[0]
-$t169 = _array_int_a[0]
-$t168 = $t168 \ $t169
-push $t168
-call fib
-$t170 = #RET + 0
-push $t170
-call fib
-$t171 = #RET + 0
-$t172 = _array_int_a[$t171]
-$t167 = $t167 - $t172
-push $t167
-call fib
 $t173 = #RET + 0
-$t174 = _array_int_a[$t173]
-$t174 = 0 - $t174
-$t175 = _simple_char_t + 0
-$t175 = 355200 \ $t175
-$t175 = $t175 \ 355200
-$t176 = _array_int_a[20]
-$t175 = $t175 * $t176
-$t174 = $t174 + $t175
-printf $t174
+push $t173
+call fib
+$t174 = #RET + 0
+push $t174
+call fib
+$t175 = #RET + 0
+$t176 = _array_int_a[$t175]
+$t177 = _array_int_a[0]
+$t178 = _array_int_a[0]
+$t177 = $t177 \ $t178
+push $t177
+call fib
+$t179 = #RET + 0
+push $t179
+call fib
+$t180 = #RET + 0
+$t181 = _array_int_a[$t180]
+$t176 = $t176 - $t181
+push $t176
+call fib
+$t182 = #RET + 0
+$t183 = _array_int_a[$t182]
+$t183 = 0 - $t183
+$t184 = _simple_char_t + 0
+$t184 = 355200 \ $t184
+$t184 = $t184 \ 355200
+$t185 = _array_int_a[20]
+$t184 = $t184 * $t185
+$t183 = $t183 + $t184
+printf $t183
 printf 48
 push 0
 call fib
-$t177 = #RET + 0
-push $t177
-call fib
-$t178 = #RET + 0
-push $t178
-call fib
-$t179 = #RET + 0
-$t180 = _array_int_a[$t179]
-$t181 = _array_int_a[0]
-$t182 = _array_int_a[0]
-$t181 = $t181 \ $t182
-push $t181
-call fib
-$t183 = #RET + 0
-push $t183
-call fib
-$t184 = #RET + 0
-$t185 = _array_int_a[$t184]
-$t180 = $t180 - $t185
-push $t180
-call fib
 $t186 = #RET + 0
-$t187 = _array_int_a[$t186]
-$t188 = _array_char_a[5]
-push $t188
-call returnChar
-$t189 = #RET + 0
-$t190 = _array_char_a[5]
+push $t186
+call fib
+$t187 = #RET + 0
+push $t187
+call fib
+$t188 = #RET + 0
+$t189 = _array_int_a[$t188]
+$t190 = _array_int_a[0]
+$t191 = _array_int_a[0]
+$t190 = $t190 \ $t191
 push $t190
-call returnChar
-$t189 = $t189 * #RET
-$t191 = _array_char_a[5]
-push $t191
-call returnChar
-$t189 = $t189 * #RET
-$t189 = 95 * $t189
-$t187 = $t187 - $t189
-printf $t187
-printf 49
-push 0
 call fib
 $t192 = #RET + 0
 push $t192
 call fib
 $t193 = #RET + 0
-push $t193
+$t194 = _array_int_a[$t193]
+$t189 = $t189 - $t194
+push $t189
 call fib
-$t194 = #RET + 0
-$t195 = _array_int_a[$t194]
-$t196 = _array_int_a[0]
-$t197 = _array_int_a[0]
-$t196 = $t196 \ $t197
-push $t196
-call fib
+$t195 = #RET + 0
+$t196 = _array_int_a[$t195]
+$t197 = _array_char_a[5]
+push $t197
+call returnChar
 $t198 = #RET + 0
-push $t198
-call fib
-$t199 = #RET + 0
-$t200 = _array_int_a[$t199]
-$t195 = $t195 - $t200
-push $t195
+$t199 = _array_char_a[5]
+push $t199
+call returnChar
+$t198 = $t198 * #RET
+$t200 = _array_char_a[5]
+push $t200
+call returnChar
+$t198 = $t198 * #RET
+$t198 = 95 * $t198
+$t196 = $t196 - $t198
+printf $t196
+printf 49
+push 0
 call fib
 $t201 = #RET + 0
-$t202 = _array_int_a[$t201]
-$t203 = _array_char_a[5]
-push $t203
-call returnChar
-$t204 = #RET + 0
-$t205 = _array_char_a[5]
+push $t201
+call fib
+$t202 = #RET + 0
+push $t202
+call fib
+$t203 = #RET + 0
+$t204 = _array_int_a[$t203]
+$t205 = _array_int_a[0]
+$t206 = _array_int_a[0]
+$t205 = $t205 \ $t206
 push $t205
-call returnChar
-$t204 = $t204 * #RET
-$t206 = _array_char_a[5]
-push $t206
-call returnChar
-$t204 = $t204 * #RET
-$t204 = 95 * $t204
-$t202 = $t202 - $t204
-push 6
 call fib
 $t207 = #RET + 0
 push $t207
 call fib
 $t208 = #RET + 0
-push 5
-call fib
-$t209 = #RET + 0
-$t208 = $t208 - $t209
-push $t208
+$t209 = _array_int_a[$t208]
+$t204 = $t204 - $t209
+push $t204
 call fib
 $t210 = #RET + 0
-$t210 = 0 - $t210
-$t202 = $t202 - $t210
-push 0
+$t211 = _array_int_a[$t210]
+$t212 = _array_char_a[5]
+push $t212
+call returnChar
+$t213 = #RET + 0
+$t214 = _array_char_a[5]
+push $t214
+call returnChar
+$t213 = $t213 * #RET
+$t215 = _array_char_a[5]
+push $t215
+call returnChar
+$t213 = $t213 * #RET
+$t213 = 95 * $t213
+$t211 = $t211 - $t213
+push 6
 call fib
-$t211 = #RET + 0
-$t211 = 355200 * $t211
-$t202 = $t202 + $t211
-printf $t202
-printf 50
+$t216 = #RET + 0
+push $t216
+call fib
+$t217 = #RET + 0
 push 5
 call fib
-$t212 = #RET + 0
-$t212 = 1000 \ $t212
-$t212 = $t212 - 200
-push 0
-call fib
-$t213 = #RET + 0
-push $t213
-call fib
-$t214 = #RET + 0
-push $t214
-call fib
-$t215 = #RET + 0
-$t216 = _array_int_a[$t215]
-$t217 = _array_int_a[0]
-$t218 = _array_int_a[0]
-$t217 = $t217 \ $t218
+$t218 = #RET + 0
+$t217 = $t217 - $t218
 push $t217
 call fib
 $t219 = #RET + 0
-push $t219
+$t219 = 0 - $t219
+$t211 = $t211 - $t219
+push 0
 call fib
 $t220 = #RET + 0
-$t221 = _array_int_a[$t220]
-$t216 = $t216 - $t221
-push $t216
-call fib
-$t222 = #RET + 0
-$t223 = _array_int_a[$t222]
-$t224 = _array_char_a[5]
-push $t224
-call returnChar
-$t225 = #RET + 0
-$t226 = _array_char_a[5]
-push $t226
-call returnChar
-$t225 = $t225 * #RET
-$t227 = _array_char_a[5]
-push $t227
-call returnChar
-$t225 = $t225 * #RET
-$t225 = 95 * $t225
-$t223 = $t223 - $t225
+$t220 = 355200 * $t220
+$t211 = $t211 + $t220
+printf $t211
+printf 50
 push 5
 call fib
+$t221 = #RET + 0
+$t221 = 1000 \ $t221
+$t221 = $t221 - 200
+push 0
+call fib
+$t222 = #RET + 0
+push $t222
+call fib
+$t223 = #RET + 0
+push $t223
+call fib
+$t224 = #RET + 0
+$t225 = _array_int_a[$t224]
+$t226 = _array_int_a[0]
+$t227 = _array_int_a[0]
+$t226 = $t226 \ $t227
+push $t226
+call fib
 $t228 = #RET + 0
-$t228 = 3 + $t228
 push $t228
 call fib
 $t229 = #RET + 0
-push 5
-call fib
-$t230 = #RET + 0
-$t229 = $t229 - $t230
-push $t229
+$t230 = _array_int_a[$t229]
+$t225 = $t225 - $t230
+push $t225
 call fib
 $t231 = #RET + 0
-push $t231
-call fib
-$t232 = #RET + 0
-$t232 = 0 - $t232
-$t223 = $t223 - $t232
-push 0
-call fib
-$t233 = #RET + 0
-$t233 = 355200 * $t233
-$t223 = $t223 + $t233
-push 0
-call fib
+$t232 = _array_int_a[$t231]
+$t233 = _array_char_a[5]
+push $t233
+call returnChar
 $t234 = #RET + 0
-push $t234
-call fib
-$t235 = #RET + 0
+$t235 = _array_char_a[5]
 push $t235
+call returnChar
+$t234 = $t234 * #RET
+$t236 = _array_char_a[5]
+push $t236
+call returnChar
+$t234 = $t234 * #RET
+$t234 = 95 * $t234
+$t232 = $t232 - $t234
+push 5
 call fib
-$t236 = #RET + 0
-$t237 = _array_int_a[$t236]
-$t238 = _array_int_a[0]
-$t239 = _array_int_a[0]
-$t238 = $t238 \ $t239
+$t237 = #RET + 0
+$t237 = 3 + $t237
+push $t237
+call fib
+$t238 = #RET + 0
+push 5
+call fib
+$t239 = #RET + 0
+$t238 = $t238 - $t239
 push $t238
 call fib
 $t240 = #RET + 0
 push $t240
 call fib
 $t241 = #RET + 0
-$t242 = _array_int_a[$t241]
-$t237 = $t237 - $t242
-push $t237
+$t241 = 0 - $t241
+$t232 = $t232 - $t241
+push 0
+call fib
+$t242 = #RET + 0
+$t242 = 355200 * $t242
+$t232 = $t232 + $t242
+push 0
 call fib
 $t243 = #RET + 0
-$t244 = _array_int_a[$t243]
-$t245 = _array_char_a[5]
-push $t245
-call returnChar
-$t246 = #RET + 0
-$t247 = _array_char_a[5]
+push $t243
+call fib
+$t244 = #RET + 0
+push $t244
+call fib
+$t245 = #RET + 0
+$t246 = _array_int_a[$t245]
+$t247 = _array_int_a[0]
+$t248 = _array_int_a[0]
+$t247 = $t247 \ $t248
 push $t247
-call returnChar
-$t246 = $t246 * #RET
-$t248 = _array_char_a[5]
-push $t248
-call returnChar
-$t246 = $t246 * #RET
-$t246 = 95 * $t246
-$t244 = $t244 - $t246
-$t244 = 0 - $t244
-push 5
 call fib
 $t249 = #RET + 0
-$t249 = 3 + $t249
 push $t249
 call fib
 $t250 = #RET + 0
-push 5
-call fib
-$t251 = #RET + 0
-$t250 = $t250 - $t251
-push $t250
+$t251 = _array_int_a[$t250]
+$t246 = $t246 - $t251
+push $t246
 call fib
 $t252 = #RET + 0
-push $t252
-call fib
-$t253 = #RET + 0
+$t253 = _array_int_a[$t252]
+$t254 = _array_char_a[5]
+push $t254
+call returnChar
+$t255 = #RET + 0
+$t256 = _array_char_a[5]
+push $t256
+call returnChar
+$t255 = $t255 * #RET
+$t257 = _array_char_a[5]
+push $t257
+call returnChar
+$t255 = $t255 * #RET
+$t255 = 95 * $t255
+$t253 = $t253 - $t255
 $t253 = 0 - $t253
-$t244 = $t244 - $t253
+push 5
+call fib
+$t258 = #RET + 0
+$t258 = 3 + $t258
+push $t258
+call fib
+$t259 = #RET + 0
+push 5
+call fib
+$t260 = #RET + 0
+$t259 = $t259 - $t260
+push $t259
+call fib
+$t261 = #RET + 0
+push $t261
+call fib
+$t262 = #RET + 0
+$t262 = 0 - $t262
+$t253 = $t253 - $t262
 push 0
 call fib
-$t254 = #RET + 0
-$t254 = 355200 * $t254
-$t244 = $t244 + $t254
-$t223 = $t223 \ $t244
-$t212 = $t212 + $t223
-push $t212
+$t263 = #RET + 0
+$t263 = 355200 * $t263
+$t253 = $t253 + $t263
+$t232 = $t232 \ $t253
+$t221 = $t221 + $t232
+push $t221
 call fib
-$t255 = #RET + 0
-printf $t255
+$t264 = #RET + 0
+printf $t264
 main3$end:
 ret main3
 init main
 printf 51
 scanf choose choose
-$t256 = choose + 0
-$t257 = 97 + 0
-if $t257 != $t256 then goto $label38
+$t265 = choose + 0
+$t266 = 97 + 0
+if $t266 != $t265 then goto $label44
 call main1
-goto $label37
-$label38:
-$t258 = 98 + 0
-if $t258 != $t256 then goto $label39
+goto $label43
+$label44:
+$t267 = 98 + 0
+if $t267 != $t265 then goto $label45
 call main2
-goto $label37
-$label39:
-$t259 = 99 + 0
-if $t259 != $t256 then goto $label40
+goto $label43
+$label45:
+$t268 = 99 + 0
+if $t268 != $t265 then goto $label46
 call main3
-goto $label37
-$label40:
+goto $label43
+$label46:
+$t269 = 100 + 0
+if $t269 != $t265 then goto $label47
+call main4
+goto $label43
+$label47:
 printf 52
-$label37:
+$label43:
 exit 

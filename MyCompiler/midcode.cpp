@@ -214,6 +214,8 @@ void Compiler:: genTemp(std::string *temp)
 	ss << tempid;
 	ss << this->temp++;
 	*temp = ss.str();
+	//这里顺便把这个临时变量给push到相应的符号表里
+	this->push(temp, INTRET, SIMPLESYM, -1, this->lineCount);
 }
 
 void Compiler:: genLabel(std::string *lab)
