@@ -1,0 +1,78 @@
+init fibo
+$t0 = x + 0
+if $t0 > 1 then goto $label0
+#RET = 1 + 0
+goto fibo$end
+goto $label1
+$label0:
+$t1 = x + 0
+$t1 = $t1 - 1
+push $t1
+call fibo
+$t2 = #RET + 0
+$t3 = x + 0
+$t3 = $t3 - 2
+push $t3
+call fibo
+$t4 = #RET + 0
+$t2 = $t2 + $t4
+#RET = $t2 + 0
+goto fibo$end
+$label1:
+fibo$end:
+ret fibo
+init echo123
+#RET = 123 + 0
+goto echo123$end
+echo123$end:
+ret echo123
+init print234
+echo123 = 234 + 0
+$t5 = echo123 + 0
+printf $t5
+print234$end:
+ret print234
+init change_z
+$t6 = x + 0
+z = $t6 + 0
+change_z$end:
+ret change_z
+init show_z
+$t7 = z + 0
+printf $t7
+$t8 = z + 0
+#RET = $t8 + 0
+goto show_z$end
+show_z$end:
+ret show_z
+init show_param
+$t9 = z + 0
+printf $t9
+show_param$end:
+ret show_param
+init main
+a = 97 + 0
+b = 98 + 0
+push 4
+call fibo
+$t10 = #RET + 0
+printf $t10
+$t11 = a + 0
+printf $t11
+$t12 = b + 0
+$t12 = $t12 + 1
+$t12 = $t12 - 1
+printf $t12
+z = 10 + 0
+$t13 = z + 0
+push $t13
+call change_z
+call show_z
+call print234
+push 9527
+call show_param
+call show_z
+$t14 = #RET + 0
+printf 0
+printf $t14
+exit 

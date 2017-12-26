@@ -1,0 +1,48 @@
+const int x = -99, y = +99;
+int z;
+
+int fibo(int x) {
+	if(x <= 1)
+		return (1);
+	else 
+		return (fibo(x - 1) + fibo(x - 2));
+}
+
+int echo123{
+	return (123);
+}
+
+void print234{
+	int echo123;
+	echo123 = 234;
+	printf(echo123);
+}
+
+void change_z (int x) {
+	z = x;
+}
+
+int show_z{
+	printf(z);
+	return (z);
+}
+
+void show_param(int z) {
+	printf(z);
+}
+
+void main() {
+	int x, y, z;
+	char a, b, c;
+	a = 'a';
+	b = 'b';
+	printf((fibo((((4))))));;;;;;
+	printf(((((((((a)))))))));
+	printf((((((b + 1 - ((((((1))))))))))));
+	z = 10;
+	change_z(z);
+	show_z;
+	print234;
+	show_param(9527);
+	printf("show z:", show_z);
+}

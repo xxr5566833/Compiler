@@ -1401,6 +1401,8 @@ void Compiler::scanfStatement()
 void Compiler:: printfStatement()
 {
 	//std::cout << "进入 <写语句>" << std::endl;
+	std::string *num = 0;
+	//num既保存要输出的字符串的下标，还保存是不是有字符串输出
 	this->inSym();
 	if(this->tok.id == LPARENT)
 	{
@@ -1413,9 +1415,8 @@ void Compiler:: printfStatement()
 	{
 		//写字符串
 		this->pushString(this->tok.val.str);
-		std::string *num = new std::string();
+		num = new std::string();
 		this->int2string(num, this->stringNum - 1);
-		this->pushMidCode(PRINTFOP, new std::string(), new std::string(), num, false);
 		this->inSym();
 		if(this->tok.id == COMMA)
 		{
@@ -1429,6 +1430,8 @@ void Compiler:: printfStatement()
 			else{
 				this->errorHandle(NOTRPARENT);
 			}
+			//当确认后面没有表达式输出后，才输出字符串
+			this->pushMidCode(PRINTFOP, new std::string(), new std::string(), num, false);
 			std::cout << "这是一个 <写语句>" << std::endl;
 			return ;
 		}
@@ -1436,6 +1439,12 @@ void Compiler:: printfStatement()
 	eRetType rettype = NOTTYPE;
 	std::string *temp = new std::string();
 	this->expression(&rettype, temp);
+	//这时产生表达式的四元式已经生成，其中包括可能的函数调用
+	if(num)
+	{
+		//如果num不是0，那么说明需要输出字符串
+		this->pushMidCode(PRINTFOP, new std::string(), new std::string(), num, false);
+	}
 	switch(rettype)
 	{
 	case INTRET:
