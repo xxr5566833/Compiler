@@ -1,68 +1,85 @@
 init fibo
+第0个基本块
 $t0 = num + 0
 if $t0 > 0 then goto $label0
+第1个基本块
 #RET = 0 + 0
-goto fibo$end
-goto $label1
+goto $label4
+第2个基本块
 $label0:
-$label1:
 $t1 = num + 0
 if $t1 != 1 then goto $label2
+第3个基本块
 #RET = 1 + 0
-goto fibo$end
-goto $label3
+goto $label4
+第4个基本块
 $label2:
-$label3:
 $t2 = num + 0
 if $t2 < 2 then goto $label4
+第5个基本块
 $t3 = num + 0
 $t3 = $t3 - 1
+第6个基本块
 push $t3
 call fibo
+第7个基本块
 $t4 = #RET + 0
 $t5 = num + 0
 $t5 = $t5 - 2
+第8个基本块
 push $t5
 call fibo
+第9个基本块
 $t6 = #RET + 0
 $t4 = $t4 + $t6
 #RET = $t4 + 0
-goto fibo$end
-goto $label5
+goto $label4
+第10个基本块
 $label4:
-$label5:
-fibo$end:
 ret fibo
+第11个基本块
 init main4
+第12个基本块
 scanf num int num
 $t7 = num + 0
+第13个基本块
 push $t7
 call fibo
+第14个基本块
 $t8 = #RET + 0
+第15个基本块
 printf $t8
-goto main4$end
+第16个基本块
 main4$end:
 ret main4
+第17个基本块
 init fib
+第18个基本块
 $t9 = _simple_int_num + 0
 $t9 = 0 - $t9
 if $t9 >= -1 then goto $label6
+第19个基本块
 $t10 = _simple_int_num + 0
 $t10 = $t10 - 1
 $t11 = _array_int_fibarray[$t10]
 if $t11 > -1 then goto $label8
+第20个基本块
 $t12 = _simple_int_num + 0
 $t12 = $t12 - 1
+第21个基本块
 push $t12
 call fib
+第22个基本块
 $t13 = #RET + 0
 fib1 = $t13 + 0
 goto $label9
+第23个基本块
 $label8:
 $t14 = _simple_int_num + 0
 $t14 = $t14 - 1
 $t15 = _array_int_fibarray[$t14]
 fib1 = $t15 + 0
+第24个基本块
 $label9:
 $t16 = _simple_int_num + 0
 $t16 = $t16 - 2
@@ -75,10 +92,11 @@ _int_temp = $t18 + 0
 $t20 = _simple_int_num + 0
 $t21 = _int_temp + 0
 _array_int_fibarray[$t20] = $t21
+第25个基本块
 $t22 = _int_temp + 0
 #RET = $t22 + 0
-goto fib$end
-goto $label7
+goto $label11
+第26个基本块
 $label6:
 $t23 = _simple_int_num + 0
 $t24 = _simple_int_num + 0
@@ -88,164 +106,202 @@ $t25 = _simple_int_num + 0
 $t25 = $t25 + 1
 $t23 = $t23 \ $t25
 if $t23 == 0 then goto $label10
+第27个基本块
 $t26 = 1 + 0
 _array_int_fibarray[1] = $t26
+第28个基本块
 $t27 = 1 + 0
 _array_int_fibarray_temp[1] = $t27
+第29个基本块
 $t28 = _array_int_fibarray_temp[1]
 $t29 = _array_int_fibarray[$t28]
 $t30 = _array_int_fibarray_temp[$t29]
 $t31 = _array_int_fibarray_temp[1]
 $t32 = _array_int_fibarray[$t31]
 $t30 = $t30 * $t32
-$t30 = $t30 + 0
 #RET = $t30 + 0
-goto fib$end
 goto $label11
+第30个基本块
 $label10:
 $t33 = 0 + 0
 _array_int_fibarray[0] = $t33
+第31个基本块
 $t34 = 0 + 0
 _array_int_fibarray_temp[0] = $t34
+第32个基本块
 $t35 = _array_int_fibarray[0]
 $t36 = _array_int_fibarray_temp[$t35]
 $t37 = _array_int_fibarray_temp[0]
 $t38 = _array_int_fibarray[$t37]
 $t36 = $t36 * $t38
-$t36 = $t36 + 0
 #RET = $t36 + 0
-goto fib$end
+goto $label11
+第33个基本块
 $label11:
-$label7:
-fib$end:
 ret fib
+第34个基本块
 init main1
+第35个基本块
 _int_i = 0 + 0
+第36个基本块
 $label12:
 $t39 = _int_i + 0
 if $t39 >= 46 then goto $label13
+第37个基本块
 $t40 = _int_i + 0
 $t41 = -1 + 0
 _array_int_fibarray_temp[$t40] = $t41
+第38个基本块
 $t42 = _int_i + 0
 $t43 = -1 + 0
 _array_int_fibarray[$t42] = $t43
+第39个基本块
 $t44 = _int_i + 0
-$t44 = $t44 + 0
 $t45 = 48 + 0
 _array_char_a[$t44] = $t45
+第40个基本块
 $t46 = _int_i + 0
 $t47 = 48 + 0
 _array_char_c[$t46] = $t47
+第41个基本块
 $t48 = _int_i + 0
 $t48 = $t48 + 1
-$t48 = $t48 - 0
 _int_i = $t48 + 0
 goto $label12
+第42个基本块
 $label13:
 _simple_int_num = 0 + 0
+第43个基本块
 printf 0
 scanf _simple_int_num int _simple_int_num
 $t49 = _simple_int_num + 0
 if $t49 >= 2 then goto $label14
+第44个基本块
 printf 1
-goto $label15
+goto $label19
+第45个基本块
 $label14:
 $t50 = _simple_int_num + 0
 if $t50 <= 45 then goto $label16
+第46个基本块
 printf 2
-goto $label17
+goto $label19
+第47个基本块
 $label16:
 $t51 = _simple_int_num + 0
+第48个基本块
 push 0
 call fib
+第49个基本块
 $t52 = #RET + 0
 $t51 = $t51 + $t52
+第50个基本块
 push 1
 call fib
+第51个基本块
 $t53 = #RET + 0
 $t51 = $t51 - $t53
+第52个基本块
 push 2
 call fib
+第53个基本块
 $t54 = #RET + 0
 $t51 = $t51 + $t54
+第54个基本块
 push $t51
 call fib
+第55个基本块
 $label18:
 $t55 = _simple_int_num + 0
 if $t55 < 0 then goto $label19
+第56个基本块
 $t56 = _simple_int_num + 0
 $t57 = _array_int_fibarray[$t56]
 $t57 = 0 - $t57
 $t57 = 0 - $t57
+第57个基本块
 printf $t57
 $t58 = _simple_int_num + 0
 $t59 = _array_int_fibarray_temp[$t58]
 if $t59 == -1 then goto $label20
+第58个基本块
 printf 3
-goto $label21
+goto $label20
+第59个基本块
 $label20:
-$label21:
+第60个基本块
 printf 4
 $t60 = _simple_int_num + 0
 $t60 = $t60 - 1
 _simple_int_num = $t60 + 0
 goto $label18
+第61个基本块
 $label19:
-$label17:
-$label15:
-main1$end:
 ret main1
+第62个基本块
 init printArray
+第63个基本块
 A = 1 + 0
 $t61 = _simple_int_length + 0
 if $t61 < 1 then goto $label22
+第64个基本块
 $t62 = _array_int_quicksort_[0]
+第65个基本块
 printf $t62
 goto $label23
+第66个基本块
 $label22:
 #RET = -1 + 0
 goto printArray$end
+第67个基本块
 $label23:
-$label24:
 $t63 = A + 0
 $t64 = _simple_int_length + 0
 if $t63 >= $t64 then goto $label25
+第68个基本块
 $t65 = A + 0
 $t66 = _array_int_quicksort_[$t65]
+第69个基本块
 printf 5
+第70个基本块
 printf $t66
 $t67 = A + 0
 $t67 = $t67 + 1
 A = $t67 + 0
-goto $label24
+goto $label23
+第71个基本块
 $label25:
 #RET = 0 + 0
-goto printArray$end
+第72个基本块
 printArray$end:
 ret printArray
+第73个基本块
 init quickSort
+第74个基本块
 $t68 = head + 0
 $t69 = tail + 0
 if $t68 < $t69 then goto $label26
+第75个基本块
 goto quickSort$end
-goto $label27
+第76个基本块
 $label26:
-$label27:
 $t70 = head + 0
 $t70 = $t70 + 1
 a = $t70 + 0
 $t71 = head + 0
 b = $t71 + 0
+第77个基本块
 $label28:
 $t72 = a + 0
 $t73 = tail + 0
 if $t72 > $t73 then goto $label29
+第78个基本块
 $t74 = a + 0
 $t75 = _array_int_quicksort_[$t74]
 $t76 = b + 0
 $t77 = _array_int_quicksort_[$t76]
 if $t75 >= $t77 then goto $label30
+第79个基本块
 $t78 = a + 0
 $t79 = _array_int_quicksort_[$t78]
 tmp = $t79 + 0
@@ -253,9 +309,11 @@ $t80 = a + 0
 $t81 = b + 0
 $t82 = _array_int_quicksort_[$t81]
 _array_int_quicksort_[$t80] = $t82
+第80个基本块
 $t83 = b + 0
 $t84 = tmp + 0
 _array_int_quicksort_[$t83] = $t84
+第81个基本块
 $t85 = a + 0
 $t86 = _array_int_quicksort_[$t85]
 tmp = $t86 + 0
@@ -264,61 +322,79 @@ $t88 = b + 0
 $t88 = $t88 + 1
 $t89 = _array_int_quicksort_[$t88]
 _array_int_quicksort_[$t87] = $t89
+第82个基本块
 $t90 = b + 0
 $t90 = $t90 + 1
 $t91 = tmp + 0
 _array_int_quicksort_[$t90] = $t91
+第83个基本块
 $t92 = b + 0
 $t92 = $t92 + 1
 b = $t92 + 0
 $t93 = _simple_int_count + 0
 $t93 = $t93 + 1
 _simple_int_count = $t93 + 0
-goto $label31
+goto $label30
+第84个基本块
 $label30:
-$label31:
 $t94 = a + 0
 $t94 = $t94 + 1
 a = $t94 + 0
 goto $label28
+第85个基本块
 $label29:
 $t95 = head + 0
+第86个基本块
 push $t95
 $t96 = b + 0
 $t96 = $t96 - 1
+第87个基本块
 push $t96
 call quickSort
+第88个基本块
 $t97 = b + 0
 $t97 = $t97 + 1
+第89个基本块
 push $t97
 $t98 = tail + 0
+第90个基本块
 push $t98
 call quickSort
-goto quickSort$end
+第91个基本块
 quickSort$end:
 ret quickSort
+第92个基本块
 init return1
+第93个基本块
 #RET = 1 + 0
-goto return1$end
+第94个基本块
 return1$end:
 ret return1
+第95个基本块
 init return999
+第96个基本块
 #RET = 999 + 0
-goto return999$end
+第97个基本块
 return999$end:
 ret return999
+第98个基本块
 init returnminus998
+第99个基本块
 #RET = -998 + 0
-goto returnminus998$end
+第100个基本块
 returnminus998$end:
 ret returnminus998
+第101个基本块
 init main2
+第102个基本块
 _simple_int_count = 0 + 0
 i = 0 + 0
+第103个基本块
 printf 6
 scanf _simple_int_length int _simple_int_length
 $t99 = _simple_int_length + 0
 if $t99 == 0 then goto $label32
+第104个基本块
 $t100 = _simple_int_length + 0
 $t101 = _simple_int_length + 0
 $t101 = $t101 * _simple_int_length
@@ -326,328 +402,507 @@ $t100 = $t100 + $t101
 $t100 = $t100 \ _simple_int_length
 $t100 = $t100 - 1
 _simple_int_length = $t100 + 0
-goto $label33
+goto $label32
+第105个基本块
 $label32:
-$label33:
+第106个基本块
 printf 7
+第107个基本块
 $label34:
 $t102 = i + 0
 $t103 = _simple_int_length + 0
 if $t102 >= $t103 then goto $label35
+第108个基本块
 scanf return1 int return1
 $t104 = i + 0
 $t105 = return1 + 0
 _array_int_quicksort_[$t104] = $t105
+第109个基本块
 $t106 = i + 0
 call return999
+第110个基本块
 $t107 = #RET + 0
 $t106 = $t106 + $t107
 call returnminus998
+第111个基本块
 $t108 = #RET + 0
 $t106 = $t106 + $t108
 i = $t106 + 0
 goto $label34
+第112个基本块
 $label35:
 $t109 = _simple_int_length + 0
 $t110 = 0 + 0
 if $t110 != $t109 then goto $label37
+第113个基本块
 call printArray
-goto $label36
+第114个基本块
+goto $label40
+第115个基本块
 $label37:
 $t111 = 1 + 0
 if $t111 != $t109 then goto $label38
+第116个基本块
 call printArray
-goto $label36
+第117个基本块
+goto $label40
+第118个基本块
 $label38:
 $t112 = _simple_int_length + 0
 if $t112 >= 0 then goto $label39
+第119个基本块
 printf 8
 goto main2$end
-goto $label40
+第120个基本块
 $label39:
 call return999
+第121个基本块
 $t113 = #RET + 0
 $t113 = $t113 - 999
+第122个基本块
 push $t113
 $t114 = _simple_int_length + 0
 call return999
+第123个基本块
 $t115 = #RET + 0
 call returnminus998
+第124个基本块
 $t116 = #RET + 0
 $t115 = $t115 + $t116
 $t114 = $t114 - $t115
+第125个基本块
 push $t114
 call quickSort
+第126个基本块
 call printArray
+第127个基本块
 $label40:
-$label36:
 $t117 = _simple_int_count + 0
+第128个基本块
 printf 9
+第129个基本块
 printf $t117
-goto main2$end
+第130个基本块
 main2$end:
 ret main2
+第131个基本块
 init returna
+第132个基本块
 #RET = 97 + 0
-goto returna$end
+第133个基本块
 returna$end:
 ret returna
+第134个基本块
 init returnplus
+第135个基本块
 #RET = 43 + 0
-goto returnplus$end
+第136个基本块
 returnplus$end:
 ret returnplus
+第137个基本块
 init returnStar
+第138个基本块
 #RET = 42 + 0
-goto returnStar$end
+第139个基本块
 returnStar$end:
 ret returnStar
+第140个基本块
 init returnChar
+第141个基本块
 $t118 = c + 0
 #RET = $t118 + 0
-goto returnChar$end
+第142个基本块
 returnChar$end:
 ret returnChar
+第143个基本块
 init main3
+第144个基本块
 i = 0 + 0
+第145个基本块
 $label41:
 $t119 = i + 0
 if $t119 >= 45 then goto $label42
+第146个基本块
 $t120 = i + 0
 $t121 = 97 + 0
 _array_char_a[$t120] = $t121
+第147个基本块
 $t122 = i + 0
 $t123 = 100 + 0
 _array_int_a[$t122] = $t123
+第148个基本块
 $t124 = i + 0
 $t125 = -1 + 0
 _array_int_fibarray[$t124] = $t125
+第149个基本块
 $t126 = i + 0
 $t126 = $t126 + 1
 i = $t126 + 0
 goto $label41
+第150个基本块
 $label42:
 i = 0 + 0
+第151个基本块
 printf 10
+第152个基本块
 printf 95
 _simple_char_t = 65 + 0
+第153个基本块
 printf 11
 $t127 = _simple_char_t + 0
+第154个基本块
 printf $t127
+第155个基本块
 printf 12
+第156个基本块
 printf 43
+第157个基本块
 printf 13
 $t128 = _array_char_a[1]
+第158个基本块
 printf $t128
+第159个基本块
 printf 14
 $t129 = _array_char_a[5]
+第160个基本块
 push $t129
 call returnChar
+第161个基本块
 $t130 = #RET + 0
+第162个基本块
 printf $t130
+第163个基本块
 printf 15
 call returna
+第164个基本块
 $t131 = #RET + 0
+第165个基本块
 printf $t131
+第166个基本块
 printf 16
+第167个基本块
 printf 34545
+第168个基本块
 printf 17
+第169个基本块
 printf -400
+第170个基本块
 printf 18
+第171个基本块
 printf -1563
+第172个基本块
 printf 19
+第173个基本块
 printf 1000
+第174个基本块
 printf 20
+第175个基本块
 printf 0
+第176个基本块
 printf 21
+第177个基本块
 printf -888
+第178个基本块
 printf 22
+第179个基本块
 printf 456
+第180个基本块
 printf 23
 $t132 = _array_int_a[20]
+第181个基本块
 printf $t132
+第182个基本块
 printf 24
 $t133 = _array_int_a[1]
+第183个基本块
 printf $t133
+第184个基本块
 printf 25
+第185个基本块
 push 0
 call fib
+第186个基本块
 $t134 = #RET + 0
+第187个基本块
 printf $t134
+第188个基本块
 printf 26
+第189个基本块
 push 1
 call fib
+第190个基本块
 $t135 = #RET + 0
+第191个基本块
 printf $t135
+第192个基本块
 printf 27
+第193个基本块
 push 5
 call fib
+第194个基本块
 $t136 = #RET + 0
+第195个基本块
 printf $t136
+第196个基本块
 printf 28
+第197个基本块
 printf 100
+第198个基本块
 printf 29
 $t137 = _array_int_a[20]
+第199个基本块
 printf $t137
+第200个基本块
 printf 30
+第201个基本块
 push 5
 call fib
+第202个基本块
 $t138 = #RET + 0
+第203个基本块
 printf $t138
+第204个基本块
 printf 31
 $t139 = _simple_char_t + 0
 $t139 = 95 * $t139
+第205个基本块
 printf $t139
+第206个基本块
 printf 32
 $t140 = _array_char_a[1]
 $t140 = 43 \ $t140
+第207个基本块
 printf $t140
+第208个基本块
 printf 33
 $t141 = _array_char_a[1]
 $t141 = $t141 \ -400
+第209个基本块
 printf $t141
+第210个基本块
 printf 34
+第211个基本块
 push 47
 call returnChar
+第212个基本块
 $t142 = #RET + 0
+第213个基本块
 push 1
 call fib
+第214个基本块
 $t142 = $t142 * #RET
+第215个基本块
 printf $t142
+第216个基本块
 printf 35
+第217个基本块
 printf 355200
+第218个基本块
 printf 36
+第219个基本块
 push 5
 call fib
+第220个基本块
 $t143 = #RET + 0
 $t143 = 1000 \ $t143
+第221个基本块
 printf $t143
+第222个基本块
 printf 37
 $t144 = _simple_char_t + 0
 $t144 = 95 \ $t144
+第223个基本块
 push 1
 call fib
+第224个基本块
 $t144 = $t144 * #RET
+第225个基本块
 printf $t144
+第226个基本块
 printf 38
+第227个基本块
 push 0
 call fib
+第228个基本块
 $t145 = #RET + 0
 $t145 = 355200 * $t145
+第229个基本块
 printf $t145
+第230个基本块
 printf 39
 $t146 = _simple_char_t + 0
 $t146 = 355200 \ $t146
+第231个基本块
 printf $t146
+第232个基本块
 printf 40
 $t147 = _array_char_a[5]
+第233个基本块
 push $t147
 call returnChar
+第234个基本块
 $t148 = #RET + 0
 $t149 = _array_char_a[5]
+第235个基本块
 push $t149
 call returnChar
+第236个基本块
 $t148 = $t148 * #RET
 $t150 = _array_char_a[5]
+第237个基本块
 push $t150
 call returnChar
+第238个基本块
 $t148 = $t148 * #RET
+第239个基本块
 printf $t148
+第240个基本块
 printf 41
 $t151 = _simple_char_t + 0
 $t151 = 355200 \ $t151
 $t151 = $t151 \ 355200
 $t152 = _array_int_a[20]
 $t151 = $t151 * $t152
+第241个基本块
 printf $t151
+第242个基本块
 printf 42
 $t153 = _array_char_a[5]
+第243个基本块
 push $t153
 call returnChar
+第244个基本块
 $t154 = #RET + 0
 $t155 = _array_char_a[5]
+第245个基本块
 push $t155
 call returnChar
+第246个基本块
 $t154 = $t154 * #RET
 $t156 = _array_char_a[5]
+第247个基本块
 push $t156
 call returnChar
+第248个基本块
 $t154 = $t154 * #RET
 $t154 = 95 * $t154
+第249个基本块
 printf $t154
+第250个基本块
 printf 43
+第251个基本块
 push 6
 call fib
+第252个基本块
 $t157 = #RET + 0
+第253个基本块
 push $t157
 call fib
+第254个基本块
 $t158 = #RET + 0
+第255个基本块
 push 5
 call fib
+第256个基本块
 $t159 = #RET + 0
 $t158 = $t158 - $t159
+第257个基本块
 push $t158
 call fib
+第258个基本块
 $t160 = #RET + 0
+第259个基本块
 printf $t160
+第260个基本块
 printf 44
+第261个基本块
 push 0
 call fib
+第262个基本块
 $t161 = #RET + 0
+第263个基本块
 push $t161
 call fib
+第264个基本块
 $t162 = #RET + 0
+第265个基本块
 push $t162
 call fib
+第266个基本块
 $t163 = #RET + 0
 $t164 = _array_int_a[$t163]
 $t165 = _array_int_a[0]
 $t166 = _array_int_a[0]
 $t165 = $t165 \ $t166
+第267个基本块
 push $t165
 call fib
+第268个基本块
 $t167 = #RET + 0
+第269个基本块
 push $t167
 call fib
+第270个基本块
 $t168 = #RET + 0
 $t169 = _array_int_a[$t168]
 $t164 = $t164 - $t169
+第271个基本块
 push $t164
 call fib
+第272个基本块
 $t170 = #RET + 0
 $t171 = _array_int_a[$t170]
+第273个基本块
 printf $t171
+第274个基本块
 printf 45
+第275个基本块
 printf -888
+第276个基本块
 printf 46
 call returna
+第277个基本块
 $t172 = #RET + 0
 $t172 = 0 - $t172
+第278个基本块
 printf $t172
+第279个基本块
 printf 47
+第280个基本块
 push 0
 call fib
+第281个基本块
 $t173 = #RET + 0
+第282个基本块
 push $t173
 call fib
+第283个基本块
 $t174 = #RET + 0
+第284个基本块
 push $t174
 call fib
+第285个基本块
 $t175 = #RET + 0
 $t176 = _array_int_a[$t175]
 $t177 = _array_int_a[0]
 $t178 = _array_int_a[0]
 $t177 = $t177 \ $t178
+第286个基本块
 push $t177
 call fib
+第287个基本块
 $t179 = #RET + 0
+第288个基本块
 push $t179
 call fib
+第289个基本块
 $t180 = #RET + 0
 $t181 = _array_int_a[$t180]
 $t176 = $t176 - $t181
+第290个基本块
 push $t176
 call fib
+第291个基本块
 $t182 = #RET + 0
 $t183 = _array_int_a[$t182]
 $t183 = 0 - $t183
@@ -657,76 +912,410 @@ $t184 = $t184 \ 355200
 $t185 = _array_int_a[20]
 $t184 = $t184 * $t185
 $t183 = $t183 + $t184
+第292个基本块
 printf $t183
+第293个基本块
 printf 48
+第294个基本块
 push 0
 call fib
+第295个基本块
 $t186 = #RET + 0
+第296个基本块
 push $t186
 call fib
+第297个基本块
 $t187 = #RET + 0
+第298个基本块
 push $t187
 call fib
+第299个基本块
 $t188 = #RET + 0
 $t189 = _array_int_a[$t188]
 $t190 = _array_int_a[0]
 $t191 = _array_int_a[0]
 $t190 = $t190 \ $t191
+第300个基本块
 push $t190
 call fib
+第301个基本块
 $t192 = #RET + 0
+第302个基本块
 push $t192
 call fib
+第303个基本块
 $t193 = #RET + 0
 $t194 = _array_int_a[$t193]
 $t189 = $t189 - $t194
+第304个基本块
 push $t189
 call fib
+第305个基本块
 $t195 = #RET + 0
 $t196 = _array_int_a[$t195]
 $t197 = _array_char_a[5]
+第306个基本块
 push $t197
 call returnChar
+第307个基本块
 $t198 = #RET + 0
 $t199 = _array_char_a[5]
+第308个基本块
 push $t199
 call returnChar
+第309个基本块
 $t198 = $t198 * #RET
 $t200 = _array_char_a[5]
+第310个基本块
 push $t200
 call returnChar
+第311个基本块
 $t198 = $t198 * #RET
 $t198 = 95 * $t198
 $t196 = $t196 - $t198
+第312个基本块
 printf $t196
+第313个基本块
 printf 49
+第314个基本块
 push 0
 call fib
+第315个基本块
 $t201 = #RET + 0
+第316个基本块
 push $t201
 call fib
+第317个基本块
 $t202 = #RET + 0
+第318个基本块
 push $t202
 call fib
+第319个基本块
 $t203 = #RET + 0
 $t204 = _array_int_a[$t203]
 $t205 = _array_int_a[0]
 $t206 = _array_int_a[0]
 $t205 = $t205 \ $t206
+第320个基本块
 push $t205
 call fib
+第321个基本块
 $t207 = #RET + 0
+第322个基本块
 push $t207
 call fib
+第323个基本块
 $t208 = #RET + 0
 $t209 = _array_int_a[$t208]
 $t204 = $t204 - $t209
+第324个基本块
 push $t204
 call fib
+第325个基本块
 $t210 = #RET + 0
 $t211 = _array_int_a[$t210]
 $t212 = _array_char_a[5]
+第326个基本块
 push $t212
 call returnChar
+第327个基本块
 $t213 = #RET + 0
-$t214 = _array
+$t214 = _array_char_a[5]
+第328个基本块
+push $t214
+call returnChar
+第329个基本块
+$t213 = $t213 * #RET
+$t215 = _array_char_a[5]
+第330个基本块
+push $t215
+call returnChar
+第331个基本块
+$t213 = $t213 * #RET
+$t213 = 95 * $t213
+$t211 = $t211 - $t213
+第332个基本块
+push 6
+call fib
+第333个基本块
+$t216 = #RET + 0
+第334个基本块
+push $t216
+call fib
+第335个基本块
+$t217 = #RET + 0
+第336个基本块
+push 5
+call fib
+第337个基本块
+$t218 = #RET + 0
+$t217 = $t217 - $t218
+第338个基本块
+push $t217
+call fib
+第339个基本块
+$t219 = #RET + 0
+$t219 = 0 - $t219
+$t211 = $t211 - $t219
+第340个基本块
+push 0
+call fib
+第341个基本块
+$t220 = #RET + 0
+$t220 = 355200 * $t220
+$t211 = $t211 + $t220
+第342个基本块
+printf $t211
+第343个基本块
+printf 50
+第344个基本块
+push 5
+call fib
+第345个基本块
+$t221 = #RET + 0
+$t221 = 1000 \ $t221
+$t221 = $t221 - 200
+第346个基本块
+push 0
+call fib
+第347个基本块
+$t222 = #RET + 0
+第348个基本块
+push $t222
+call fib
+第349个基本块
+$t223 = #RET + 0
+第350个基本块
+push $t223
+call fib
+第351个基本块
+$t224 = #RET + 0
+$t225 = _array_int_a[$t224]
+$t226 = _array_int_a[0]
+$t227 = _array_int_a[0]
+$t226 = $t226 \ $t227
+第352个基本块
+push $t226
+call fib
+第353个基本块
+$t228 = #RET + 0
+第354个基本块
+push $t228
+call fib
+第355个基本块
+$t229 = #RET + 0
+$t230 = _array_int_a[$t229]
+$t225 = $t225 - $t230
+第356个基本块
+push $t225
+call fib
+第357个基本块
+$t231 = #RET + 0
+$t232 = _array_int_a[$t231]
+$t233 = _array_char_a[5]
+第358个基本块
+push $t233
+call returnChar
+第359个基本块
+$t234 = #RET + 0
+$t235 = _array_char_a[5]
+第360个基本块
+push $t235
+call returnChar
+第361个基本块
+$t234 = $t234 * #RET
+$t236 = _array_char_a[5]
+第362个基本块
+push $t236
+call returnChar
+第363个基本块
+$t234 = $t234 * #RET
+$t234 = 95 * $t234
+$t232 = $t232 - $t234
+第364个基本块
+push 5
+call fib
+第365个基本块
+$t237 = #RET + 0
+$t237 = 3 + $t237
+第366个基本块
+push $t237
+call fib
+第367个基本块
+$t238 = #RET + 0
+第368个基本块
+push 5
+call fib
+第369个基本块
+$t239 = #RET + 0
+$t238 = $t238 - $t239
+第370个基本块
+push $t238
+call fib
+第371个基本块
+$t240 = #RET + 0
+第372个基本块
+push $t240
+call fib
+第373个基本块
+$t241 = #RET + 0
+$t241 = 0 - $t241
+$t232 = $t232 - $t241
+第374个基本块
+push 0
+call fib
+第375个基本块
+$t242 = #RET + 0
+$t242 = 355200 * $t242
+$t232 = $t232 + $t242
+第376个基本块
+push 0
+call fib
+第377个基本块
+$t243 = #RET + 0
+第378个基本块
+push $t243
+call fib
+第379个基本块
+$t244 = #RET + 0
+第380个基本块
+push $t244
+call fib
+第381个基本块
+$t245 = #RET + 0
+$t246 = _array_int_a[$t245]
+$t247 = _array_int_a[0]
+$t248 = _array_int_a[0]
+$t247 = $t247 \ $t248
+第382个基本块
+push $t247
+call fib
+第383个基本块
+$t249 = #RET + 0
+第384个基本块
+push $t249
+call fib
+第385个基本块
+$t250 = #RET + 0
+$t251 = _array_int_a[$t250]
+$t246 = $t246 - $t251
+第386个基本块
+push $t246
+call fib
+第387个基本块
+$t252 = #RET + 0
+$t253 = _array_int_a[$t252]
+$t254 = _array_char_a[5]
+第388个基本块
+push $t254
+call returnChar
+第389个基本块
+$t255 = #RET + 0
+$t256 = _array_char_a[5]
+第390个基本块
+push $t256
+call returnChar
+第391个基本块
+$t255 = $t255 * #RET
+$t257 = _array_char_a[5]
+第392个基本块
+push $t257
+call returnChar
+第393个基本块
+$t255 = $t255 * #RET
+$t255 = 95 * $t255
+$t253 = $t253 - $t255
+$t253 = 0 - $t253
+第394个基本块
+push 5
+call fib
+第395个基本块
+$t258 = #RET + 0
+$t258 = 3 + $t258
+第396个基本块
+push $t258
+call fib
+第397个基本块
+$t259 = #RET + 0
+第398个基本块
+push 5
+call fib
+第399个基本块
+$t260 = #RET + 0
+$t259 = $t259 - $t260
+第400个基本块
+push $t259
+call fib
+第401个基本块
+$t261 = #RET + 0
+第402个基本块
+push $t261
+call fib
+第403个基本块
+$t262 = #RET + 0
+$t262 = 0 - $t262
+$t253 = $t253 - $t262
+第404个基本块
+push 0
+call fib
+第405个基本块
+$t263 = #RET + 0
+$t263 = 355200 * $t263
+$t253 = $t253 + $t263
+$t232 = $t232 \ $t253
+$t221 = $t221 + $t232
+第406个基本块
+push $t221
+call fib
+第407个基本块
+$t264 = #RET + 0
+第408个基本块
+printf $t264
+第409个基本块
+main3$end:
+ret main3
+第410个基本块
+init main
+第411个基本块
+printf 51
+scanf choose char choose
+$t265 = choose + 0
+$t266 = 97 + 0
+if $t266 != $t265 then goto $label44
+第412个基本块
+call main1
+第413个基本块
+goto $label43
+第414个基本块
+$label44:
+$t267 = 98 + 0
+if $t267 != $t265 then goto $label45
+第415个基本块
+call main2
+第416个基本块
+goto $label43
+第417个基本块
+$label45:
+$t268 = 99 + 0
+if $t268 != $t265 then goto $label46
+第418个基本块
+call main3
+第419个基本块
+goto $label43
+第420个基本块
+$label46:
+$t269 = 100 + 0
+if $t269 != $t265 then goto $label47
+第421个基本块
+call main4
+第422个基本块
+goto $label43
+第423个基本块
+$label47:
+第424个基本块
+printf 52
+第425个基本块
+$label43:
+第426个基本块
+exit 
+第427个基本块

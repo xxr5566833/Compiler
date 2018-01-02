@@ -45,12 +45,25 @@ symbol* Compiler:: push(std::string *name, eRetType returntype, eSymType symbolt
 	sym->useLine = new std::vector<int>();
 	sym->link = link;
 	sym->address = this->address;
+	//-1 表示尚未分配
+	sym->regIndex = -1;
 	switch(symboltype)
 	{
 	case CONSTSYM :
+		this->address ++;
+		break;
 	case SIMPLESYM:
 	case PARASYM:
-		this->address ++;
+		//简单变量和参数变量还需要初始化使用情况
+		{
+			this->address ++;
+			for(int i = 0 ; i < kMaxBasicBlock ; i++)
+			{
+				//预先初始化为false，表示未被使用
+				sym->flag[i] = false;
+			}
+		}
+		
 		break;
 	case ARRAYSYM:
 		this->address += sym->feature;

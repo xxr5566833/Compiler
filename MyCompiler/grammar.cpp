@@ -130,7 +130,7 @@ void Compiler:: int_(int *value)
 		this->inSym();
 	}
 	*value = flag ? result : - result;
-	std::cout << "这是一个 <整数>" <<std::endl;
+	//std::cout << "这是一个 <整数>" <<std::endl;
 }
 
 void Compiler:: constDef()
@@ -225,7 +225,7 @@ void Compiler:: constDef()
 	else{
 		this->errorHandle(NOTINTORCHAR);
 	}
-	std::cout << "这是一个 <常量定义>" << std::endl;
+	//std::cout << "这是一个 <常量定义>" << std::endl;
 }
 
 void Compiler:: constState()
@@ -243,7 +243,7 @@ void Compiler:: constState()
 		}
 	}while(this->tok.id == CONST);
 
-	std::cout << "这是一个 <常量说明>" << std::endl;
+	//std::cout << "这是一个 <常量说明>" << std::endl;
 }
 
 void Compiler:: constant(int *value, eRetType *rettype)
@@ -263,7 +263,7 @@ void Compiler:: constant(int *value, eRetType *rettype)
 		this->int_(value);
 	}
 
-	std::cout << "这是一个 <常量>" << std::endl;
+	//std::cout << "这是一个 <常量>" << std::endl;
 }
 
 void Compiler:: varParaList(symbol *sym)
@@ -310,7 +310,7 @@ void Compiler:: varParaList(symbol *sym)
 	{
 		this->errorHandle(PARANUMDISMATCH);
 	}
-	std::cout << "这是一个 <值参数表>" << std::endl;
+	//std::cout << "这是一个 <值参数表>" << std::endl;
 }
 
 void Compiler::factor(eRetType *resulttype, std::string *operand)
@@ -451,7 +451,7 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 	}
 	*operand = *resultoperand;
 
-	std::cout<< "这是一个 <因子>" << std::endl;
+	//std::cout<< "这是一个 <因子>" << std::endl;
 }
 
 void Compiler:: term(eRetType *resulttype, std::string *operand)
@@ -531,7 +531,7 @@ void Compiler:: term(eRetType *resulttype, std::string *operand)
 
 	}
 	*operand = *resultoperand;
-	std::cout << "这是一个 <项>" << std::endl;
+	//std::cout << "这是一个 <项>" << std::endl;
 }
 
 void Compiler:: expression(eRetType *resulttype, std::string *operand)
@@ -600,7 +600,7 @@ void Compiler:: expression(eRetType *resulttype, std::string *operand)
 		}
 	}
 	*operand = *termoperand1;
-	std::cout << "这是一个 <表达式>" << std::endl;
+	//std::cout << "这是一个 <表达式>" << std::endl;
 }
 
 void Compiler:: varDef(eRetType rettype, std::string *name)
@@ -618,7 +618,7 @@ void Compiler:: varDef(eRetType rettype, std::string *name)
 		//处理之前的简单变量标识符
 		this->push(name, rettype, SIMPLESYM, -1, this->lineCount);
 		this->inSym();
-		std::cout << "这是一个 <变量定义处理>" << std::endl; ;
+		//std::cout << "这是一个 <变量定义处理>" << std::endl; ;
 		return ;
 	}
 	else if(this->tok.id == LBRACKET)
@@ -707,7 +707,7 @@ void Compiler:: varDef(eRetType rettype, std::string *name)
 	else{
 		this->errorHandle(NOTSEMI);
 	}
-	std::cout << "这是一个 <变量处理定义>" << std::endl;
+	//std::cout << "这是一个 <变量处理定义>" << std::endl;
 }
 
 void Compiler:: decHead(eRetType *rettype, std::string **name)
@@ -735,7 +735,7 @@ void Compiler:: decHead(eRetType *rettype, std::string **name)
 	else{
 		this->errorHandle(NOTID);
 	}
-	std::cout << "这是一个 <声明头部>" << std::endl;
+	//std::cout << "这是一个 <声明头部>" << std::endl;
 
 }
 
@@ -776,7 +776,7 @@ void Compiler:: para(symbol *sym)
 		}
 	}
 
-	std::cout << "这是一个 <参数>" << std::endl;
+	//std::cout << "这是一个 <参数>" << std::endl;
 }
 
 void Compiler:: noParaFuncDef(symbol *sym)
@@ -814,7 +814,7 @@ void Compiler:: noParaFuncDef(symbol *sym)
 	ss << *(sym->name) << "$end";
 	this->pushMidCode(LABOP, new std::string(), new std::string(), &(ss.str()), false);
 	this->pushMidCode(RETOP, new std::string(), new std::string(), sym->name, false);
-	std::cout << "这是一个 <无参函数定义处理>" << std::endl;
+	//std::cout << "这是一个 <无参函数定义处理>" << std::endl;
 }
 
 void Compiler:: haveParaFuncDef(symbol *sym)
@@ -830,7 +830,7 @@ void Compiler:: haveParaFuncDef(symbol *sym)
 		this->errorHandle(NOTRPARENT);
 	}
 	this->noParaFuncDef(sym);
-	std::cout << "这是一个 <有参函数定义处理>" << std::endl;
+	//std::cout << "这是一个 <有参函数定义处理>" << std::endl;
 }
 
 
@@ -860,7 +860,7 @@ void Compiler:: notMainVoidFuncDef()
 		this->noParaFuncDef(sym);
 	}
 	this->pop();
-	std::cout << "这是一个 <普通无返回值函数定义>" << std::endl;
+	//std::cout << "这是一个 <普通无返回值函数定义>" << std::endl;
 }
 
 void Compiler:: mainDef()
@@ -906,7 +906,7 @@ void Compiler:: mainDef()
 	if(this->tok.id == RBRACE)
 	{
 		this->pop();
-		std::cout << "这是一个 <主函数定义>" << std::endl;
+		//std::cout << "这是一个 <主函数定义>" << std::endl;
 
 		this->pushMidCode(EXITOP, new std::string(), new std::string(), new std::string(), false);
 		return ;
@@ -963,7 +963,7 @@ void Compiler:: beginWithFunc()
 		this->beginWithFunc();
 	}
 
-	std::cout << "这是一个  <可能以函数定义开始的程序>" << std::endl;
+	//std::cout << "这是一个  <可能以函数定义开始的程序>" << std::endl;
 }
 
 void Compiler:: beginWithVar()
@@ -1025,7 +1025,7 @@ void Compiler:: beginWithVar()
 			this->beginWithFunc();
 		}
 	}
-	std::cout << "这是一个 <可能以变量定义开始的程序>" << std::endl;
+	//std::cout << "这是一个 <可能以变量定义开始的程序>" << std::endl;
 
 }
 
@@ -1041,7 +1041,7 @@ void Compiler:: program()
 	}
 	this->beginWithVar();
 
-	std::cout << "这是一个 <程序>" << std::endl;
+	//std::cout << "这是一个 <程序>" << std::endl;
 
 }
 
@@ -1090,7 +1090,7 @@ void Compiler:: condition(std::string *label)
 		this->pushMidCode(EQUOP, tempoperand1, new std::string("0"), label, false);
 	}
 	
-	std::cout << "这是一个 <条件>" << std::endl;
+	//std::cout << "这是一个 <条件>" << std::endl;
 }
 
 void Compiler:: ifStatement(bool *returnflag, eRetType returntype, std::string *name)
@@ -1140,7 +1140,7 @@ void Compiler:: ifStatement(bool *returnflag, eRetType returntype, std::string *
 		this->errorHandle(NOTSTATEMENT);
 	}
 	this->pushMidCode(LABOP, new std::string(), new std::string(), endlabel, false);
-	std::cout << "这是一个 <条件语句>" << std::endl;
+	//std::cout << "这是一个 <条件语句>" << std::endl;
 }
 
 void Compiler:: caseStatement(eRetType switchtype, std::string *switchtemp, bool *returnflag, eRetType returntype, std::string *donelab, std::string *nextlab, int *caseconst, std::string *name)
@@ -1184,7 +1184,7 @@ void Compiler:: caseStatement(eRetType switchtype, std::string *switchtemp, bool
 		this->errorHandle(NOTSTATEMENT);
 	}
 	this->pushMidCode(GOTOOP, new std::string(), new std::string(), donelab, false);
-	std::cout << "这是一个 <情况子语句>" << std::endl;
+	//std::cout << "这是一个 <情况子语句>" << std::endl;
 }
 
 void Compiler:: caseTab(eRetType switchtype, std::string *switchtemp, bool *returnflag, eRetType returntype, std::string *donelab, std::string *name)
@@ -1217,7 +1217,7 @@ void Compiler:: caseTab(eRetType switchtype, std::string *switchtemp, bool *retu
 	else{
 		this->errorHandle(NOTCASE);
 	}
-	std::cout << "这是一个 <情况表>" << std::endl;
+	//std::cout << "这是一个 <情况表>" << std::endl;
 }
 
 void Compiler:: switchStatement(bool *returnflag, eRetType returntype, std::string *name)
@@ -1278,7 +1278,7 @@ void Compiler:: switchStatement(bool *returnflag, eRetType returntype, std::stri
 	else{
 		this->errorHandle(NOTRBRACE);
 	}
-	std::cout << "这是一个 <情况语句>" << std::endl;
+	//std::cout << "这是一个 <情况语句>" << std::endl;
 }
 
 void Compiler:: whileStatement(bool *returnflag, eRetType returntype, std::string *name)
@@ -1314,7 +1314,7 @@ void Compiler:: whileStatement(bool *returnflag, eRetType returntype, std::strin
 	}
 	this->pushMidCode(GOTOOP, new std::string(), new std::string(), whilelab, false);
 	this->pushMidCode(LABOP, new std::string(), new std::string(), endlab, false);
-	std::cout << "这是一个 <循环语句>" << std::endl;
+	//std::cout << "这是一个 <循环语句>" << std::endl;
 }
 
 void Compiler::scanfStatement()
@@ -1395,7 +1395,7 @@ void Compiler::scanfStatement()
 	else{
 		this->errorHandle(NOTRPARENT);
 	}
-	std::cout << "这是一个 <读语句>" << std::endl;
+	//std::cout << "这是一个 <读语句>" << std::endl;
 }
 
 void Compiler:: printfStatement()
@@ -1432,7 +1432,7 @@ void Compiler:: printfStatement()
 			}
 			//当确认后面没有表达式输出后，才输出字符串
 			this->pushMidCode(PRINTFOP, new std::string(), new std::string(), num, false);
-			std::cout << "这是一个 <写语句>" << std::endl;
+			//std::cout << "这是一个 <写语句>" << std::endl;
 			return ;
 		}
 	}
@@ -1461,7 +1461,7 @@ void Compiler:: printfStatement()
 	else{
 		this->errorHandle(NOTRPARENT);
 	}
-	std::cout << "这是一个 <写语句>" << std::endl;
+	//std::cout << "这是一个 <写语句>" << std::endl;
 }
 
 void Compiler:: returnStatement(bool *returnflag, eRetType returntype, std::string *name)
@@ -1511,7 +1511,7 @@ void Compiler:: returnStatement(bool *returnflag, eRetType returntype, std::stri
 	//bug:注意这里main函数不需要返回！这里其他函数的return才有效，main函数因为根本不需要main的结束标号
 	if(!this->isIdEqual(std::string("main"), *name))
 		this->pushMidCode(GOTOOP, new std::string(), new std::string(), &(ss.str()), false);
-	std::cout << "这是一个 <返回语句>" << std::endl;
+	//std::cout << "这是一个 <返回语句>" << std::endl;
 }
 
 void Compiler:: statement(bool *returnflag, eRetType returntype, std::string *funcname)
@@ -1708,12 +1708,12 @@ void Compiler:: statement(bool *returnflag, eRetType returntype, std::string *fu
 		}
 		break;
 	case SEMI:
-		std::cout << "这是一个 <空>语句" << std::endl;
+		//std::cout << "这是一个 <空>语句" << std::endl;
 		this->inSym();
 		break;
 
 	}
-	std::cout << "这是一个 <语句>" << std::endl;
+	//std::cout << "这是一个 <语句>" << std::endl;
 }
 
 void Compiler:: statementList(bool *returnflag, eRetType returntype, std::string *name)
@@ -1723,7 +1723,7 @@ void Compiler:: statementList(bool *returnflag, eRetType returntype, std::string
 	{
 		this->statement(returnflag, returntype, name);
 	}
-	std::cout << "这是一个 <语句列>" << std::endl;
+	//std::cout << "这是一个 <语句列>" << std::endl;
 }
 
 void Compiler:: varState()
@@ -1756,7 +1756,7 @@ void Compiler:: varState()
 			this->errorHandle(NOTVARDEF);
 		}
 	}
-	std::cout << "这是一个 <变量说明>" << std::endl;
+	//std::cout << "这是一个 <变量说明>" << std::endl;
 }
 
 void Compiler:: comStatement(bool *returnflag, eRetType returntype, std::string *name)
@@ -1772,5 +1772,5 @@ void Compiler:: comStatement(bool *returnflag, eRetType returntype, std::string 
 	}
 	this->statementList(returnflag, returntype, name);
 
-	std::cout << "这是一个 <复合语句>" << std::endl;
+	//std::cout << "这是一个 <复合语句>" << std::endl;
 }

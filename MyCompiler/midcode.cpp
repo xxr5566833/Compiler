@@ -104,13 +104,98 @@ void Compiler:: pushMidCode(midop op,std::string *operand1, std::string *operand
 		this->optimizeCodes[this->optimizeMidIndex++] = code;
 	else
 		this->codes[this->midindex ++] = code;
-	this->writeMidCode(code, true, true, optimize);
 }
 
 
+void Compiler:: writeMidCodetoFile(std::fstream &tofile)
+{
+	for(int i = 0 ; i < this->midindex ; i++)
+	{
+		midcode *code = this->codes[i];
+		this->writeMidCode(code, tofile);
+	}
+}
 
+void Compiler:: writeMidCode(midcode *code, std::fstream &tofile)
+{
+	std::stringstream ss = std::stringstream();
+	std::string rst = *(code->rstname);
+	std::string op1name = *(code->op1name);
+	std::string op2name = *(code->op2name);
+	switch(code->op)
+	{
+	case REALPARAOP:
+		ss << midrealpara << " " << rst;
+		break;
+	case RARRAYOP:
+		ss << rst << " " << "=" << " " << op1name << "[" << op2name << "]";
+		break;
+	case CALLOP:
+		ss << midcall << " " << rst;
+		break;
+	case GOTOOP:
+		ss << midgoto << " " << rst;
+		break;
+	case FUNCBEGINOP:
+		ss<< midinit << " " << rst;
+		break;
+	case RETOP:
+		ss << midret << " " << rst;
+		break;
+	case MULOP:
+		ss << rst << " " << midassign << " " << op1name << " " << midmul << " " << op2name;
+		break;
+	case DIVOP:
+		ss << rst << " " << midassign << " " << op1name << " " << middiv << " " << op2name;
+		break;
+	case ADDOP:
+		ss << rst << " " << midassign << " " << op1name << " " << midadd << " " << op2name;
+		break;
+	case SUBOP:
+		ss << rst << " " << midassign << " " << op1name << " " << midsub << " " << op2name;
+		break;
+	case EQUOP:
+		ss << "if" << " " << op1name << " " << midequ << " " << op2name << " " << "then goto" << " " << rst;
+		break;
+	case NEQUOP:
+		ss << "if" << " " << op1name << " " << midnequ << " " << op2name << " " << "then goto" << " " << rst;
+		break;
+	case MOREOP:
+		ss << "if" << " " << op1name << " " << midmore << " " << op2name << " " << "then goto" << " " << rst;
+		break;
+	case MOREEQUOP:
+		ss << "if" << " " << op1name << " " << midmoreequ << " " << op2name << " " << "then goto" << " " << rst;
+		break;
+	case LESSOP:
+		ss << "if" << " " << op1name << " " << midless << " " << op2name << " " << "then goto" << " " << rst;
+		break;
+	case LESSEQUOP:
+		ss << "if" << " " << op1name << " " << midlessequ << " " << op2name << " " << "then goto" << " " << rst;
+		break;
+	case SCANFOP:
+		ss << midscanf << " " << op1name << " " << op2name << " " << rst;
+		break;
+	case PRINTFOP:
+		ss << midprintf << " " << rst;
+		break;
+	case LARRAYOP:
+		ss << rst << "[" <<	op2name << "]" << " " << midassign << " " << op1name;
+		break;
+	case EXITOP:
+		ss << midexit << " ";
+		break;
+	//这里忘了写生成标号的情况了！
+	case LABOP :
+		ss << rst << ":";
+	
+	}
+	ss << "\n"; 
+	tofile << ss.str();
+		
 
-void Compiler:: writeMidCode(midcode *code, bool stdflag, bool fileflag, bool optimize)
+}
+
+void Compiler:: writeMidCode(midcode *code)
 {
 	std::stringstream ss = std::stringstream();
 	std::string rst = *(code->rstname);
@@ -184,19 +269,9 @@ void Compiler:: writeMidCode(midcode *code, bool stdflag, bool fileflag, bool op
 	
 	}
 	ss << "\n"; 
-	if(fileflag)
-	{
-		if(!optimize)
-		{
-			this->midFile << ss.str();
-		}
-		else{
-			this->optimizeFile << ss.str();
-		}
-	}
+	std::cout << ss.str() ;
 		
-	if(stdflag)
-		std::cout << ss.str();
+
 }
 
 void Compiler::initMidCode()

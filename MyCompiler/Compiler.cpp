@@ -10,6 +10,9 @@ Compiler::Compiler(char *path)
 		exit(0);
 	}
 	std::stringstream ss = std::stringstream();
+	ss << path << "_block.txt";
+	this->blockFile = std::fstream(ss.str(), std::ios::out);
+	ss.str("");
 	ss << path << "_midcode_before.txt";
 	this->midFile = std::fstream(ss.str(), std::ios::out);
 	ss.str("");
@@ -40,10 +43,19 @@ void Compiler:: begin()
 	this->initWordArray();
 	int i = 0;
 	this->program();
+	this->writeMidCodetoFile(this->midFile);
 	this->initOptimize();
-//	this->printBlock();
+	this->smallOptimize();
+	this->divideToBlock();
+	this->printBlock();
+	this->initBlockConnect();
+//	this->printBlockConnect();
+
+	this->dataFlowAnalysis();
+
 //	this->DAG();
-//	this->smallOptimize();
+
+	this->writeMidCodetoFile(this->optimizeFile);
 	this->objectInit();
 	this->generate();
 	this->warningPrint();

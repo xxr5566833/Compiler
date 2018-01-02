@@ -32,7 +32,7 @@ const int kMaxTemp = 1000;
 
 //标识符的类型  与种类分开
 enum eRetType {INTRET = 7, CHARRET, VOIDRET, NOTTYPE };
-//标识符的种类，分别是常量，简单变量，数组变量，函数，形式参数类型
+//标识符的种类，分别是常量，简单变量，数组变量，函数，参数类型
 enum eSymType {CONSTSYM, SIMPLESYM, ARRAYSYM, FUNCSYM, PARASYM};
 
 
@@ -56,6 +56,10 @@ typedef struct
 	eRetType paraList[kMaxParaNum];
 	//所处的地址
 	int address;
+	//记录下这个局部变量在这个函数的每个基本块里的使用情况
+	bool flag[kMaxBasicBlock];
+	//记录下这个标识符对应的寄存器，仅仅对临时变量和简单变量以及参数变量有效
+	int regIndex;
 }symbol;
 
 unsigned int BKDRHash(char *str);
@@ -214,7 +218,7 @@ private:
 	void pop();
 	//为了以后便于生成目标代码，这里必须要把编译完的函数的符号信息记录下来
 	symbol **funcSymTab[kMaxFuncSymbol];
-	//记录编译完的分函数的符号个数，这里分函数不包括最后的main
+	//记录编译完的分函数的符号个数
 	int funcSymNum[kMaxFuncNum];
 	//记录分函数的所需最大地址
 	int funcMaxAddress[kMaxFuncNum];
@@ -238,7 +242,11 @@ private:
 	void genMessage(std::string *str, int num);
 
 	//四元式相关
-	void writeMidCode(midcode *code, bool stdflag, bool fileflag, bool optimize);
+	void writeMidCode(midcode *code, std::fstream &tofile);
+	//专门作为控制台输出
+	void writeMidCode(midcode *code);
+	//把整个四元式写入文件
+	void writeMidCodetoFile(std::fstream &tofile);
 	//四元式文件
 	std::fstream midFile;
 	//四元式数组
@@ -262,16 +270,37 @@ private:
 	int optimizeMidIndex;
 
 	//优化相关
+	//分成基本块
 	void divideToBlock();
+	//每个基本块的数据结构
+	Block* blockArray[kMaxBasicBlock];
+	//根据label，返回其所在的基本块index
+	void findLabel(std::string *label, int *index);
 	//优化一开始的初始化
 	void initOptimize();
 	void printBlock();
-	void findNodeInTab(ListNode *nodelist[], int length, std::string *name, ListNode **x);
+	//一些小的优化
 	void smallOptimize();
+	//初始化基本块之间的连接关系
+	void initBlockConnect();
+	//输出连接关系
+	void printBlockConnect();
+	//数据流分析
+	void dataFlowAnalysis();
+	//需要一个记录每个函数的基本块开始情况的数据结构
+	int funcBlockBegin[kMaxFuncNum];
+	//需要一个方法得到这个局部变量在函数表中的下标
+	void getIndexInTab(int *index, int funcref, std::string *name);
+	void findNodeInTab(ListNode *nodelist[], int length, std::string *name, ListNode **x);
+	
 	bool canAdd(bool flag[], Node *x);
 	void DAG();
+
+	bool blockBeginFlag[kMaxBasicBlock];
 	int blockBegin[kMaxBasicBlock];
 	int blockIndex;
+	//划分基本块后的情况的输出文件
+	std::fstream blockFile;
 	int tempMap[kMaxTemp];
 
 
