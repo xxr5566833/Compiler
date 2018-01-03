@@ -1,5 +1,5 @@
 #include"Compiler.h"
-//划分基本块，同时维护函数基本块的信息
+//划分基本块，同时维护函数基本块的信息，同时给outData集合的每个元素初始化好空间
 void Compiler::divideToBlock()
 {
 	//第一条语句属于入口语句
@@ -106,6 +106,7 @@ void Compiler::divideToBlock()
 		}
 
 	}
+	this->outData = new bool*[this->blockIndex];
 }
 
 void Compiler::findLabel(std::string *label, int *index)
@@ -252,13 +253,30 @@ void Compiler::DAG()
 	this->midindex = 0;
 	for(int i = 0 ; i < this->blockIndex ; i++)
 	{
+		int blockindex = i;
 		int begin = this->blockBegin[i];
 		int end = i + 1 >= this->blockIndex ? this->midindex : this->blockBegin[i + 1];
 		int tablength = 0;
 		int nodeindex = 0;
 		ListNode *nodetab[kMaxNodeNum];
 		Node *dag[kMaxNodeNum];
+		//这里还得根据当前blockindex判断在哪个函数里。。
+		int funcref = -1;
+		for(int k = 0 ; k < this->funcNum ; k++)
+		{
+			if(k == this->funcNum - 1)
+			{
+				funcref = k;
+				break;
+			}
+			else if(this->funcBlockBegin[k] <= blockindex && this->funcBlockBegin[k + 1] > blockindex)
+			{
+				funcref = k;
+				break;
+			}
+		}
 		midcode *firstcode = this->codes[begin];
+
 		//基本块的第一句话需要特殊对待，因为它的类型是不确定的可能是：①init②运算③标号④goto⑤printf⑥scanf
 		//除了赋值以外的其他类型全部原样输出
 		if(firstcode->op != ADDOP && firstcode->op != SUBOP && firstcode->op != MULOP && firstcode->op != DIVOP)
@@ -269,7 +287,7 @@ void Compiler::DAG()
 		//如果此时基本块结束了，那么就直接continue
 		if(end == begin)
 			continue;
-		//如果此时这个基本块就只剩下一句话没有处理了，那么直接处理这剩下的跳转语句，直接continue
+		//如果此时这个基本块就只剩下一句话没有处理了，那么直接处理这剩下的跳转语句或者是exit或者是函数开始语句，直接continue
 		if(end - 1 == begin)
 		{
 			firstcode = this->codes[begin];
@@ -453,15 +471,16 @@ void Compiler::DAG()
 			}
 
 		}
-		//最后中间节点队列的逆序就是我们想要的计算顺序，这里还需要建立优化前中间
-		//代码和优化后中间代码之间的映射关系，很明显，临时变量的个数一定会减少，而临时变量也是很重要的，
-		//所以我们主要需要建立临时变量的映射和一些重要的补偿性质的赋值语句
-		//这里我们遍历中间节点队列里的每一个
+		/*最后中间节点队列的逆序就是我们想要的计算顺序，这里还需要建立优化前中间
+		  代码和优化后中间代码之间的映射关系，很明显，临时变量的个数可能会减少，所以这里采取的映射方法是：如果这个临时变量在之后的基本块还活跃，那么不能删它，如果
+		  不活跃，那么就可以删了
+		  这里我们遍历中间节点队列里的每一个
+		*/
 		for(int j = queuelength - 1 ; j >= 0 ; j--)
 		{
 			Node *midnode = queue[j];
 			std::string *mid = new std::string();
-			//经过修改，是一定有主名字的
+			//经过修改，是一定有主名字的,主名字是一定会被保留下来的
 
 			//如果已经有 主名字，那么这里直接用这个主名字，如果还没有主名字， 那么这里选择和这个节点相同的index 的一个名字作为主名字
 			/*if(!midnode->mainname)
@@ -490,14 +509,44 @@ void Compiler::DAG()
 
 			//这时就可以生成新的中间代码
 			this->pushMidCode(midnode->op, op1name, op2name, mid, false);
-			//同时这时还需要把和这个节点的index相同的 标识符 #RET 临时变量 都生成相应的赋值操作，因为无法判断之后这些变量是否还活跃
+			//同时这时还需要把和这个节点的index相同的 标识符 #RET 临时变量 都生成相应的赋值操作，其中临时变量是需要检查它还活不活跃，即看这个基本块的out集合里有没有它
 			for(int k = 0 ; k < tablength ; k++)
 			{
 				ListNode *listnode = nodetab[k];
 				if(listnode->index == midnode->index && !this->isIdEqual(*listnode->name, *mid))
 				{
 					//赋值语句，就是让当前中间节点的值给 和这个节点index相同的变量
-					this->pushMidCode(ADDOP, mid, new std::string("0"), listnode->name, false);
+					//如果是临时变量或者局部标识符还需要判断out集合
+					if(this->isOperandTemp(listnode->name))
+					{
+						//首先获得它在符号表中的index
+						int index = -1;
+						this->getIndexInTab(&index, funcref, listnode->name);
+						//如果基本块出口还活跃，那么需要给它一个赋值补偿语句
+						if(this->outData[blockindex][index])
+						{
+							this->pushMidCode(ADDOP, mid, new std::string("0"), listnode->name, false);
+						}
+					}
+					//不是临时变量，那么先判断是不是标识符，这里还得判断它是不是一个全局变量，如果是全局变量或者是接下来还活跃，那么就需要有补偿性的赋值语句
+					else if(this->isOperandId(listnode->name))
+					{
+						int index = -1;
+						this->getIndexInTab(&index, funcref, listnode->name);
+						if(index == -1)
+						{
+							this->pushMidCode(ADDOP, mid, new std::string("0"), listnode->name, false);
+						}
+						else{
+							if(this->outData[blockindex][index])
+							{
+								this->pushMidCode(ADDOP, mid, new std::string("0"), listnode->name, false);
+							}
+						}
+					}
+					//然后只有可能是#RET了
+					else
+						this->pushMidCode(ADDOP, mid, new std::string("0"), listnode->name, false);
 				}
 			}
 		}
@@ -551,6 +600,7 @@ void Compiler:: getIndexInTab(int *index, int funcref, std::string *name)
 //数据流分析，以每一个函数作为一个大块分析
 void Compiler:: dataFlowAnalysis()
 {
+
 	//既然是以函数作为块来分析，那么需要先按函数分
 	for(int i = 0 ; i < this->funcNum ; i++)
 	{
@@ -581,6 +631,8 @@ void Compiler:: dataFlowAnalysis()
 			int begin = this->blockBegin[j];
 			int end = j + 1 >= this->blockIndex ? this->midindex : this->blockBegin[j + 1];
 			
+
+
 			for(int k = 0 ; k < symnum ; k++)
 			{
 				in[j][k] = false;
@@ -882,9 +934,16 @@ void Compiler:: dataFlowAnalysis()
 			}
 			std::cout << std::endl;
 
-
+			this->outData[blockindex] = new bool[symnum];
+			//把out集合记录下来
+			for(int k = 0 ; k < symnum ; k++)
+			{
+				this->outData[blockindex][k] = out[blockindex][k];
+			}
 		}
 		std::cout << "活跃变量分析完毕" << std::endl;
+
+
 		//开始构建冲突图，给每个局部的临时变量和简单变量分配属于它们的寄存器
 		//目前定义：变量的活跃范围：以基本块为单位，1.该基本块的def集合有这个变量，那么这个基本块中该变量活跃2.该基本块的in集合内有这个变量，这个基本块
 		//中该变量活跃
@@ -1037,7 +1096,8 @@ void Compiler:: dataFlowAnalysis()
 			//这里按照这个节点是否被标记为不分配全局寄存器讨论
 			if(noallocflag[nodeindex])
 			{
-				
+				//不分配全局寄存器，那么直接把它加入图中即可
+				//好像什么都不用做就可以了
 			}
 			else{
 				//通过所有与它相连且已经被加入到这个图中的结点的分配情况来决定它的分配
@@ -1065,11 +1125,16 @@ void Compiler:: dataFlowAnalysis()
 					{
 						//找到了第一个
 						regalloc[nodeindex] = k;
+						//这里把这个临时变量对应的寄存器编号给记到相应的符号表项里，便于生成目标代码时使用
+						int symindex = node2sym[nodeindex];
+						symbol *sym = this->funcSymTab[funcref][symindex];
+						sym->regIndex = k;
 						break;
 					}
 				}
 			}
 		}
+		//到这里好像就分配完毕咯！
 
 		//释放空间
 		delete[] regalloc;

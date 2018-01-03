@@ -293,6 +293,10 @@ private:
 	void getIndexInTab(int *index, int funcref, std::string *name);
 	void findNodeInTab(ListNode *nodelist[], int length, std::string *name, ListNode **x);
 	
+
+	//这里设置一个成员变量，用于记录每个基本块的out集合，便于dag图删去不需要的临时变量
+	//这个在活跃变量分析时设置
+	bool **outData;
 	bool canAdd(bool flag[], Node *x);
 	void DAG();
 
