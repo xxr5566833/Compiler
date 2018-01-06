@@ -227,7 +227,7 @@ void Compiler::findNodeInTab(ListNode *nodelist[], int length, std::string *name
 	}
 }
 
-bool Compiler::canAdd(bool flag[],  Node *x, Node* midqueue[], int length)
+bool Compiler::canAdd(bool flag[],  Node *x, Node* midqueue[], int length, Node *dag[])
 {
 	if(flag[x->index] || x->isLeaf)
 	{
@@ -249,9 +249,10 @@ bool Compiler::canAdd(bool flag[],  Node *x, Node* midqueue[], int length)
 		{
 			//对于所有中间节点
 			Node *midnode = midqueue[i];
-			if(midnode->index > x->index && midnode->op == RARRAYOP)
+			Node *arraynode = dag[midnode->xindex];
+			if(midnode->index > x->index && midnode->op == RARRAYOP && this->isIdEqual(*arraynode->mainname, *x->mainname))
 			{
-				//如果index比当前的index大，（表示这个节点本来就该在当前结点之后执行），且op是数组取值
+				//如果index比当前的index大，（表示这个节点本来就该在当前结点之后执行），且op是数组取值，且数组的名字一样
 				//那么必须要在这些结点都被加入后，才能加入当前结点！
 				choose = choose && flag[midnode->index];
 			}
@@ -263,7 +264,8 @@ bool Compiler::canAdd(bool flag[],  Node *x, Node* midqueue[], int length)
 		{
 			//对于所有中间节点
 			Node *midnode = midqueue[i];
-			if(midnode->index > x->index && midnode->op == LARRAYOP)
+			Node *arraynode = dag[x->xindex];
+			if(midnode->index > x->index && midnode->op == LARRAYOP && this->isIdEqual(*arraynode->mainname, *midnode->mainname))
 			{
 				//如果index比当前的index大，（表示这个节点本来就该在当前结点之后执行），且op是给数组赋值
 				//那么必须要在这些结点都被加入后，才能加入当前结点！
@@ -517,7 +519,7 @@ void Compiler::DAG()
 			for(int j = midlength - 1 ; j >= 0 ; j--)
 			{
 				Node *node = midqueue[j];
-				if(this->canAdd(flag, node, midqueue, midlength))
+				if(this->canAdd(flag, node, midqueue, midlength, dag))
 				{
 					//说明这个中间节点可以被添加
 					n = node;
@@ -531,7 +533,7 @@ void Compiler::DAG()
 			while(1)
 			{
 				Node *child = dag[n->xindex];
-				if(this->canAdd(flag, child, midqueue, midlength))
+				if(this->canAdd(flag, child, midqueue, midlength, dag))
 				{
 					n = child;
 					queue[queuelength++] = n;

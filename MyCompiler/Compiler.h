@@ -301,7 +301,7 @@ private:
 	//这里设置一个成员变量，用于记录每个基本块的out集合，便于dag图删去不需要的临时变量
 	//这个在活跃变量分析时设置
 	bool **outData;
-	bool canAdd(bool flag[], Node *x, Node* midqueue[], int length);
+	bool canAdd(bool flag[], Node *x, Node* midqueue[], int length, Node *dag[]);
 	void DAG();
 
 	bool blockBeginFlag[kMaxBasicBlock];

@@ -352,10 +352,6 @@ $label6:
 	sw	$t6	,	-244($fp)
 	li	$t6	,	1
 	li	$t8	,	1
-	addi	$t7	,	$t8	,	2037
-	sll	$t7	,	$t7	,	2
-	sw	$t6	,	268435856($t7)
-	li	$t8	,	1
 	addi	$t7	,	$t8	,	4
 	sll	$t7	,	$t7	,	2
 	sub	$t7	,	$fp	,	$t7
@@ -366,6 +362,10 @@ $label6:
 	sw	$t4	,	-252($fp)
 	sub	$t9	,	$fp	,	$t9
 	lw	$t4	,	0($t9)
+	li	$t8	,	1
+	addi	$t7	,	$t8	,	2037
+	sll	$t7	,	$t7	,	2
+	sw	$t6	,	268435856($t7)
 	addi	$t9	,	$t4	,	2037
 	sll	$t9	,	$t9	,	2
 	sw	$t3	,	-256($fp)
@@ -383,11 +383,6 @@ $label10:
 	sw	$t5	,	-248($fp)
 	li	$t5	,	0
 	li	$t8	,	0
-	addi	$t7	,	$t8	,	4
-	sll	$t7	,	$t7	,	2
-	sub	$t7	,	$fp	,	$t7
-	sw	$t5	,	0($t7)
-	li	$t8	,	0
 	addi	$t7	,	$t8	,	2037
 	sll	$t7	,	$t7	,	2
 	sw	$t5	,	268435856($t7)
@@ -396,6 +391,11 @@ $label10:
 	sll	$t9	,	$t9	,	2
 	sw	$t3	,	-296($fp)
 	lw	$t3	,	268435856($t9)
+	li	$t8	,	0
+	addi	$t7	,	$t8	,	4
+	sll	$t7	,	$t7	,	2
+	sub	$t7	,	$fp	,	$t7
+	sw	$t5	,	0($t7)
 	li	$t8	,	0
 	addi	$t9	,	$t8	,	4
 	sll	$t9	,	$t9	,	2

@@ -74,9 +74,9 @@ $t23 = $t25 * $t24
 $t23 = $t23 / $t24
 if $t23 == 0 then goto $label10
 $t26 = 1 + 0
-_array_int_fibarray[1] = $t26
 _array_int_fibarray_temp[1] = $t26
 $t28 = _array_int_fibarray_temp[1]
+_array_int_fibarray[1] = $t26
 $t29 = _array_int_fibarray[$t28]
 $t30 = _array_int_fibarray_temp[$t29]
 $t30 = $t30 * $t29
@@ -84,9 +84,9 @@ $t30 = $t30 * $t29
 goto $label11
 $label10:
 $t33 = 0 + 0
-_array_int_fibarray_temp[0] = $t33
 _array_int_fibarray[0] = $t33
 $t35 = _array_int_fibarray[0]
+_array_int_fibarray_temp[0] = $t33
 $t37 = _array_int_fibarray_temp[0]
 $t38 = _array_int_fibarray[$t37]
 $t36 = _array_int_fibarray_temp[$t35]
