@@ -144,6 +144,49 @@ bool Compiler:: find(std::string *name, symbol **sym, bool local)
 	return false;
 }
 
+void Compiler::writeSymtoFile()
+{
+	this->symtabFile << "序号" << "\t" << "标识符名称" << "\t" << "标识符声明行数" << "\t" << "标识符种类" << "\t" "数组长度或函数参数个数或常量值" << "\t"
+		<< "所处地址" << "\t" << "对应的寄存器" << "\t" << std::endl;
+	std::stringstream ss = std::stringstream();
+	for(int i = 0 ; i < this->funcNum ; i++)
+	{
+		symbol **tab = this->funcSymTab[i];
+		int length = this->funcSymNum[i];
+		for(int j = 0 ; j < length ; j++)
+		{
+			symbol *sym = tab[j];
+			ss << j << "\t";
+			ss << *(sym->name) << "\t";
+			ss << sym->decLine + 1 << "\t";
+			ss << sym->symbolType << "\t";
+			ss << sym->returnType << "\t";
+			ss << sym->feature << "\t";
+			ss << sym->address << "\t";
+			ss << sym->regIndex << "\t";
+			ss << std::endl;
+		}
+		ss << "该函数表打印完毕" << std::endl;
+	}
+	ss << "接下来打印全局函数表" << std::endl;
+	for(int j = 0 ; j < this->top ; j++)
+	{
+		symbol *sym = this->symTab[j];
+		ss << j << "\t";
+		ss << *(sym->name) << "\t";
+		ss << sym->decLine + 1 << "\t";
+		ss << sym->symbolType << "\t";
+		ss << sym->returnType << "\t";
+		ss << sym->feature << "\t";
+		ss << sym->address << "\t";
+		ss << sym->regIndex << "\t";
+		ss << std::endl;
+	}
+	ss << "符号表打印完毕" << std::endl;
+	this->symtabFile << ss.str();
+	
+}
+
 void Compiler:: printSym(symbol *sym)
 {
 	std::cout.setf(std::ios::left);

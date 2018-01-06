@@ -3,125 +3,93 @@
 const int baseAddress = 0x10000000 / 4;
 
 //mips保留字
-const char *SW = "sw";
+std::string *SW = new std::string("sw");
 
-const char *LW = "lw";
+std::string *LW = new std::string("lw");
 
-const char *LI = "li";
+std::string *LI = new std::string("li");
 
-const char *ADD = "add";
+std::string *ADD = new std::string("add");
 
-const char *ADDI = "addi";
+std::string *ADDI = new std::string("addi");
 
-const char *SUB = "sub";
+std::string *SUBI = new std::string("subi");
 
-const char *BEQ = "beq";
+std::string *SUB = new std::string("sub");
 
-const char *BNE = "bne";
+std::string *BEQ = new std::string("beq");
 
-const char *BGEZ = "bgez";
+std::string *BNE = new std::string("bne");
 
-const char *BGTZ = "bgtz";
+std::string *BGEZ = new std::string("bgez");
 
-const char *BLEZ = "blez";
+std::string *BGTZ = new std::string("bgtz");
 
-const char *BLTZ = "bltz";
+std::string *BLEZ = new std::string("blez");
 
-const char *J = "j";
+std::string *BLTZ = new std::string("bltz");
 
-const char *JAL = "jal";
+std::string *J = new std::string("j");
 
-const char *JR = "jr";
+std::string *JAL = new std::string("jal");
 
-const char *MUL ="mul";
+std::string *JR = new std::string("jr");
 
-const char *DIVIDE = "div";
+std::string *MULOBJ = new std::string("mul");
 
-const char *MFLO = "mflo";
+std::string *DIVOBJ = new std::string("div");
 
-const char *SYSCALL = "syscall";
+std::string *MFLO = new std::string("mflo");
 
-const char *LA = "la";
+std::string *SYSCALL = new std::string("syscall");
 
-const char *NOP = "nop";
+std::string *LA = new std::string("la");
 
-const char *SB = "sb";
+std::string *NOP = new std::string("nop");
 
-const char *SLL = "sll";
+std::string *SLL = new std::string("sll");
 
-
-const char *SP = "$sp";
-
-const char *FP = "$fp";
-
-const char *RA = "$ra";
-
-const char *T0 = "$t0";
-
-//t9统一作为临时寄存器
-
-const char *T9 = "$t9";
-
-//t8专门作为全局变量的存取运算寄存器
-
-const char *T8 = "$t8";
-
-const char *T1 = "$t1";
-
-const char *V0 = "$v0";
-
-const char *A0 = "$a0";
-
-const char *R0 = "$zero";
+std::string *MOVE = new std::string("move");
 
 
-//一些限制
 
-const int maxTempReg = 8;
+std::string *SP = new std::string("$sp");
 
-const int maxSymReg = 8;
+std::string *FP = new std::string("$fp");
+
+std::string *RA = new std::string("$ra");
+
+//t9统一作为操作数1使用的默认寄存器
+
+std::string *T9 = new std::string("$t9");
+
+//t8专门作为操作数2使用的默认寄存器
+
+std::string *T8 = new std::string("$t8");
+
+//t7统一作为操作数3使用的默认寄存器
+
+std::string *T7 = new std::string("$t7");
+
+std::string *V0 = new std::string("$v0");
+
+std::string *A0 = new std::string("$a0");
+
+std::string *R0 = new std::string("$zero");
+
+
+const int kMaxTempReg = 10;
+
+const int kMaxSymReg = 8;
+
 
 void Compiler::objectInit()
 {
 
-	for(int i = 0 ; i < maxTempReg ; i ++)
+	for(int i = 0 ; i < kMaxRegAvailable ; i++)
 	{
-		this->tempReg[i] = -1;
+		this->allReg[i] = 0;
 	}
-	for(int i = 0 ; i < maxSymReg ; i++)
-	{
-		this->symReg[i] = 0;
-	}
-	this->tempRegIndex = 0;
-	this->symRegIndex = 0;
-}
-
-void Compiler::stackPop()
-{
-	//寄存器栈恢复
-	//恢复之前同样需要做的就是，把之前全局变量的改变情况写回内存里，并写回原来会用到它的寄存器里
-
-	for(int i = 0 ; i < maxSymReg ; i++)
-	{
-		std::string *name = this->symReg[i];
-		if(name)
-		{
-			bool global = false;
-			int offset = 0;
-			std::stringstream ss = std::stringstream();
-			ss << "$s" << i;
-			this->findAddress(name, &offset, &global);
-			if(global)
-			{
-				//是一个全局变量，那么此时需要把它写回内存,并把它写回到最新寄存器里
-				this->generateOrder(new std::string(SW), &(ss.str()), this->strAddress + offset * 4, new std::string(R0));
-				int address = 2 + maxSymReg - i;
-				this->generateOrder(new std::string(SW), &(ss.str()), address * 4, new std::string(SP));
-			}
-		}
-	}
-
-	this->objectInit();
 }
 
 void Compiler::initAscii()
@@ -133,7 +101,7 @@ void Compiler::initAscii()
 	{
 		std::string *str = this->stringTab[i];
 		std::stringstream ss = std::stringstream();
-		ss << "$Message" << i << ":" << ".asciiz" << "\"" << *str << "\"";
+		ss << "$Message" << i << ":" << ".asciiz" << "\"" << *str << "\"" ;
 		this->generateOrder(&(ss.str()));
 	}
 	this->strAddress = baseAddress * 4;
@@ -143,91 +111,68 @@ void Compiler::initAscii()
 	this->mipsAddress = this->strAddress;
 }
 
-/*void Compiler::initAscii()
+void Compiler::printOrder(std::string *order)
 {
-	this->objectFile << "#初始化字符串\n";
-	//strAddress 是当前的字符串地址  按字节记的
-	this->strAddress = baseAddress * 4;
-	for(int i = 0 ; i < this->stringNum ; i++)
-	{
-		std::string *str = this->stringTab[i];
-		this->stringAddress[i] = this->strAddress; 
-		for(int j = 0 ; j < str->length() ; j++)
-		{
-			char c = (*str)[j];
-			this->generateOrder(new std::string(LI), new std::string(T9), c);
-			this->generateOrder(new std::string(SB), new std::string(T9), this->strAddress, new std::string(R0));
-			this->strAddress ++;
-		}
-		this->generateOrder(new std::string(SB), new std::string(R0), this->strAddress, new std::string(R0));
-		this->strAddress ++;
-	}
-	//最后怕strAddress不是4的倍数，需要向上取整
-	this->strAddress = this->strAddress % 4 == 0 ? this->strAddress : (this->strAddress / 4 + 1) * 4;
-	//当前mipsAddress 就是当前字符串存好后的地址
-	this->mipsAddress = this->strAddress;
-}*/
+	//std::cout << *order;
+	this->objectFile << *order;
+}
 
 void Compiler::generateOrder(std::string *order, std::string *rs, int num)
 {
 	std::stringstream ss = std::stringstream();
 	ss << "\t" << *order << "\t" << *rs << "\t,\t" << num << std::endl;
-	//std::cout << ss.str();
-	this->objectFile << ss.str();
+	this->printOrder(&ss.str());
 }
 
 void Compiler::generateOrder(std::string *order, std::string *rs, int num, std::string *rt)
 {
 	std::stringstream ss = std::stringstream();
 	ss << "\t" << *order << "\t" << *rs << "\t,\t" << num << "(" << *rt << ")" << std::endl;
-	//std::cout << ss.str();
-	this->objectFile << ss.str();
+	this->printOrder(&ss.str());
 }
 
 void Compiler::generateOrder(std::string *order, std::string *rd, std::string *rt, int imme)
 {
 	std::stringstream ss = std::stringstream();
 	ss << "\t" << *order << "\t" << *rd << "\t,\t" << *rt << "\t,\t" << imme << std::endl;
-	//std::cout << ss.str();
-	this->objectFile << ss.str();
+	this->printOrder(&ss.str());
 }
 
 void Compiler::generateOrder(std::string *order, std::string *rd, std::string *rs, std::string *rt)
 {
 	std::stringstream ss = std::stringstream();
 	ss << "\t" << *order << "\t" << *rd << "\t,\t" << *rs << "\t,\t" << *rt << std::endl;
-	//std::cout << ss.str();
-	this->objectFile << ss.str();
+	this->printOrder(&ss.str());
 }
 
 void Compiler:: generateOrder(std::string *order, std::string *rs, std::string *label)
 {
 	std::stringstream ss = std::stringstream();
 	ss << "\t" << *order << "\t" << *rs << "\t,\t" << *label << std::endl;
-	//std::cout << ss.str();
-	this->objectFile << ss.str();
+	this->printOrder(&ss.str());
 }
 
 void Compiler::generateOrder(std::string *order, std::string *target)
 {
 	std::stringstream ss = std::stringstream();
 	ss << "\t" << *order << "\t" << *target << std::endl;
-	//std::cout << ss.str();
-	this->objectFile << ss.str();
+	this->printOrder(&ss.str());
 }
 
 void Compiler::generateOrder(std::string *order)
 {
-	//std::cout << "\t" << *order << std::endl;;
-	this->objectFile << "\t" << *order << std::endl;
+	std::stringstream ss = std::stringstream();
+	ss << "\t" << *order << std::endl;
+	this->printOrder(&ss.str());
 }
 
 void Compiler::genMipsLabel(std::string *label)
 {
 	std::string *newlab = new std::string();
 	this->str2Lower(label, newlab);
-	//std::cout << *newlab << ":" << std::endl;
-	this->objectFile << *newlab << ":" << std::endl;
+	*newlab = *newlab + ":\n";
+	this->printOrder(newlab);
+	delete newlab;
 }
 
 void Compiler::initConstAndVar(symbol *sym, int initaddress)
@@ -241,9 +186,9 @@ void Compiler::initConstAndVar(symbol *sym, int initaddress)
 			switch(sym->symbolType)
 			{
 			case CONSTSYM:
-				this->generateOrder(new std::string(LI), new std::string(T9), sym->feature);
+				this->generateOrder(LI, T9, sym->feature);
 				//这里需要相对于第一个常量的起始地址偏移
-				this->generateOrder(new std::string(SW), new std::string(T9), sym->address * 4 + this->strAddress, new std::string(R0));
+				this->generateOrder(SW, T9, sym->address * 4 + this->strAddress, R0);
 				break;
 			}
 		}
@@ -259,8 +204,8 @@ void Compiler::initConstAndVar(symbol *sym, int initaddress)
 			switch(sym->symbolType)
 			{
 			case CONSTSYM:
-				this->generateOrder(new std::string(LI), new std::string(T9), sym->feature);
-				this->generateOrder(new std::string(SW), new std::string(T9), initaddress - sym->address * 4, new std::string(SP));
+				this->generateOrder(LI, T9, sym->feature);
+				this->generateOrder(LI, T9, initaddress - sym->address * 4, SP);
 			}
 		}
 		
@@ -278,37 +223,32 @@ void Compiler::funcBegin(std::string *name)
 	//currentaddress 存储需要分配的空间大小
 	int currentaddress = this->funcMaxAddress[sym->ref];
 	int paranum = sym->feature;
-	this->generateOrder(new std::string(ADDI), new std::string(SP), new std::string(SP), paranum * 4);
+	this->generateOrder(ADDI, SP, SP, paranum * 4);
 
-	/*//寄存器压栈
+	//寄存器压栈
 
-	for(int i = 0 ; i < maxTempReg ; i ++)
+	for(int i = 0 ; i < kMaxRegAvailable ; i ++)
 	{
 		std::stringstream ss = std::stringstream();
-		ss << "$t" << i;
-		this->generateOrder(new std::string(SW), &(ss.str()), - currentaddress * 4, new std::string(SP));
+		int index = i % (kMaxRegAvailable / 2);
+		char *sym = i >= (kMaxRegAvailable / 2) ? "$s" : "$t"; 
+		ss << sym << index;
+		this->generateOrder(SW, &(ss.str()), - currentaddress * 4, SP);
 		currentaddress += 1;
 	}
-	for(int i = 0 ; i < maxSymReg ; i ++)
-	{
-		std::stringstream ss = std::stringstream();
-		ss << "$s" << i;
-		this->generateOrder(new std::string(SW), &(ss.str()), -currentaddress * 4 , new std::string(SP));
-		currentaddress += 1;
-	}*/
 
 	//先保存帧指针
-	this->generateOrder(new std::string(SW), new std::string(FP), - currentaddress * 4, new std::string(SP));
+	this->generateOrder(SW, FP, - currentaddress * 4, SP);
 	//保存返回地址
 	currentaddress += 1;
-	this->generateOrder(new std::string(SW), new std::string(RA), - currentaddress * 4, new std::string(SP));
+	this->generateOrder(SW, RA, - currentaddress * 4, SP);
 	currentaddress += 1;
 	//保存常量
 	this->initConstAndVar(sym, 0);
 	//当前帧指针等于之前栈指针
-	this->generateOrder(new std::string(ADD), new std::string(FP), new std::string(SP), new std::string(R0));
+	this->generateOrder(ADD, FP, SP, R0);
 	//当前栈指针修改
-	this->generateOrder(new std::string(ADDI), new std::string(SP), new std::string(SP) , - currentaddress * 4);
+	this->generateOrder(ADDI, SP, SP , - currentaddress * 4);
 
 }
 
@@ -320,41 +260,35 @@ void Compiler::handleRet(std::string *name)
 	//如果有返回值已经在赋值中考虑过了， 这里就只考虑运行栈的维护
 	//更新返回地址
 	int currentaddress = 1;
-	this->generateOrder(new std::string(LW), new std::string(RA), currentaddress * 4, new std::string(SP));
+	this->generateOrder(LW, RA, currentaddress * 4, SP);
 	//更新当前帧指针
 	currentaddress += 1;
-	this->generateOrder(new std::string(LW), new std::string(FP), currentaddress * 4, new std::string(SP));
+	this->generateOrder(LW, FP, currentaddress * 4, SP);
 	currentaddress += 1;
 
-	/*//寄存器使用情况可以恢复了
-	this->stackPop();
+	this->objectInit();
 	//更新每一个寄存器
-	for(int i = maxSymReg - 1 ; i >= 0 ; i--)
+	for(int i = kMaxRegAvailable - 1 ; i >= 0 ; i--)
 	{
 		std::stringstream ss = std::stringstream();
-		ss << "$s" << i;
-		this->generateOrder(new std::string(LW), &(ss.str()), currentaddress * 4, new std::string(SP));
+		int index = i % (kMaxRegAvailable / 2);
+		char *sym = i >= (kMaxRegAvailable / 2) ? "$s" : "$t"; 
+		ss << sym << index;
+		this->generateOrder(LW, &(ss.str()), currentaddress * 4, SP);
 		currentaddress += 1;
 	}
-	for(int i = maxTempReg - 1 ; i >= 0 ; i--)
-	{
-		std::stringstream ss = std::stringstream();
-		ss << "$t" << i;
-		this->generateOrder(new std::string(LW), &(ss.str()), currentaddress * 4, new std::string(SP));
-		currentaddress += 1;
-	}*/
 
 	//更新栈指针
 	currentaddress += (this->funcMaxAddress[sym->ref] - 1);
-	this->generateOrder(new std::string(ADDI), new std::string(SP), new std::string(SP), currentaddress * 4);
+	this->generateOrder(ADDI, SP, SP, currentaddress * 4);
 	//跳转回去
-	this->generateOrder(new std::string(JR), new std::string(RA));
-	this->generateOrder(new std::string(NOP));
+	this->generateOrder(JR, RA);
+	this->generateOrder(NOP);
 }
 
 //offset是相对于字符串区的偏移地址  或者是相对于fp的减少地址  注意这里是按字记的
 //而且因为如果局部变量和全局变量重名，那么就是局部变量
-void Compiler::findAddress(std::string *name, int *offset, bool *global)
+void Compiler::findSym(std::string *name, symbol **resultsym, bool *global)
 {
 	symbol **symtab = this->funcSymTab[this->currentRef];
 	int length = this->funcSymNum[this->currentRef];
@@ -364,7 +298,7 @@ void Compiler::findAddress(std::string *name, int *offset, bool *global)
 		//bug：这里一开始为什么没有用isIdEqual()?
 		if(this->isIdEqual(*name, *(sym->name)))
 		{
-			*offset = sym->address;
+			*resultsym = sym;
 			*global = false;
 			return ;
 		}
@@ -374,7 +308,7 @@ void Compiler::findAddress(std::string *name, int *offset, bool *global)
 		symbol *sym = this->symTab[i];
 		if(this->isIdEqual(*name, *(sym->name)))
 		{
-			*offset = sym->address;
+			*resultsym = sym;
 			*global = true;
 			return ;
 		}
@@ -383,312 +317,212 @@ void Compiler::findAddress(std::string *name, int *offset, bool *global)
 }
 
 
-//控制四元式操作数 -> 寄存器
-void Compiler::loadWord(std::string *rs, std::string *reg)
+//转化要使用的操作数为对应的寄存器
+void Compiler::loadReg(std::string *rs, std::string *reg)
 {
-	//注意整数也可能返回 以负号开始的数字
-	if((*rs)[0] >= '0' && (*rs)[0] <= '9' || (*rs)[0] == '-')
-	{
-		this->generateOrder(new std::string(LI), reg, atoi(rs->c_str()));
-	}
 	//bug : 临时变量不能作为全局的来使用，只能作为局部的！直接把他当做一个标识符
-	else if((*rs)[0] == '#')
+	//reg 传入的是，如果这个变量没有相应的寄存器，那么该变量对应的默认寄存器是什么
+	if(this->isOperandRet(rs))
 	{
-		this->generateOrder(new std::string(ADD), reg, new std::string(V0), new std::string(R0));
+		*reg = *V0;
+	}
+	else if(this->isOperandNumber(rs))
+	{
+		this->generateOrder(LI, reg, rs);
 	}
 	else{
+		//这里是标识符或者是临时变量
 		bool global = false;
-		int offset = 0;
-		this->findAddress(rs, &offset, &global);
-		if(global)
+		symbol *sym = 0;
+		this->findSym(rs, &sym, &global);
+		int regindex = sym->regIndex;
+		if(regindex == -1)
 		{
-			//全局变量是需要相对于字符串区偏移的
-			this->generateOrder(new std::string(LW), reg, this->strAddress + 4 * offset, new std::string(R0));		
-		}
-		else{
-			this->generateOrder(new std::string(LW), reg, - offset * 4, new std::string(FP));
-		}
-	}
-}
-//控制临时寄存器 -> 四元式操作数对应的存储空间上，默认寄存器为t0
-void Compiler::storeWord(std::string *rd)
-{
-	int offset = 0;
-	switch((*rd)[0])
-	{
-	case '#':
-		this->generateOrder(new std::string(ADD), new std::string(V0), new std::string(T0), new std::string(R0));
-		break;
-	default:
-		bool global = false;
-		offset = 0;
-		this->findAddress(rd, &offset, &global);
-		if(global)
-		{
-			this->generateOrder(new std::string(SW), new std::string(T0), this->strAddress + offset * 4, new std::string(R0));
-
-		}
-		else{
-			this->generateOrder(new std::string(SW), new std::string(T0), - offset * 4, new std::string(FP));
-		}
-
-	}
-}
-
-void Compiler::allocReg(std::string *operand, std::string *reg)
-{
-	//根据operand的性质分配寄存器，可能有三种情况：v0，标识符或者是临时变量
-	if(this->isOperandRet(operand))
-	{
-		*reg = std::string(V0);
-	}
-	else if(this->isOperandTemp(operand))
-	{
-		//是一个临时变量
-		int temp = atoi(operand->substr(2).c_str());
-		//先扫描一遍看是不是已经被分配好了
-		for(int i = 0 ; i < maxTempReg ; i++)
-		{
-			if(this->tempReg[i] == temp)
-			{
-				std::stringstream ss = std::stringstream();
-				ss << "$t" << i;
-				*reg = ss.str();
-				return ;
-			}
-		}
-		//再扫描一遍，看有没有可以用的寄存器
-		for(int i = 0 ; i < maxTempReg ; i ++)
-		{
-			if(this->tempReg[i] == -1)
-			{
-				std::stringstream ss = std::stringstream();
-				ss << "$t" << i ;
-				*reg = ss.str();
-				//然后需要把相应地址上的值取好放在这个寄存器里
-				//这里offset就是相对于全局变量区的偏移
-				int offset = temp;
-				//临时变量也存在全局区，所以它的地址需要偏移 字符串 全局变量和常量的地址
-				this->generateOrder(new std::string(LW), reg, this->strAddress + (this->address + offset) * 4, new std::string(R0));
-				this->tempReg[i] = temp;
-				return ;
-			}
-		}
-		//然后就得把原来被使用的给存好，然后把新的加进来，不如采用最近最长时间未被使用的原则。。
-		//首先存好要被取代的
-		int oldtemp = this->tempReg[this->tempRegIndex];
-		int offset = oldtemp;
-		std::stringstream regss = std::stringstream();
-		regss << "$t" << this->tempRegIndex;
-		this->generateOrder(new std::string(SW), &(regss.str()), this->strAddress + (this->address + offset) * 4, new std::string(R0));
-		//然后取出要用的
-		offset = temp;
-		this->tempReg[this->tempRegIndex] = temp;
-		this->generateOrder(new std::string(LW), &(regss.str()), this->strAddress + (this->address + offset) * 4, new std::string(R0));
-		*reg = regss.str();
-		this->tempRegIndex = (this->tempRegIndex + 1) % maxTempReg;
-
-
-	}
-	else{
-		//说明是一个标识符了
-
-
-		bool global = false;
-		int offset = 0;
-		this->findAddress(operand, &offset, &global);
-		//先扫描一遍看是否被分配好
-		for(int i = 0 ; i < maxSymReg ; i++)
-		{
-			//bug：这里一开始没有判断symReg的这个元素是不是有效
-			if(this->symReg[i] && this->isIdEqual(*(this->symReg[i]), *operand))
-			{
-				std::stringstream ss = std::stringstream();
-				ss << "$s" << i;
-				*reg = ss.str();
-				return ;
-			}
-		}
-		for(int i = 0 ; i < maxSymReg ; i++)
-		{
-			if(!this->symReg[i])
-			{
-				std::stringstream ss = std::stringstream();
-				ss << "$s" << i;
-				*reg = ss.str();
-				this->symReg[i] = operand;
-				//bug: 全局变量不分配寄存器，直接lw sw，不在这里处理，在这里处理的都是局部变量
-				this->generateOrder(new std::string(LW), &(ss.str()), -offset * 4, new std::string(FP));
-				return ;
-			}
-		}
-		//接下来就需要先存好原来的，再取出最新的
-		std::string *oldname = this->symReg[this->symRegIndex];
-		this->findAddress(oldname, &offset, &global);
-		std::stringstream ss = std::stringstream();
-		ss << "$s" << this->symRegIndex;
-		this->generateOrder(new std::string(SW), &(ss.str()), -offset * 4, new std::string(FP));
-
-		this->findAddress(operand, &offset, &global);
-		this->symReg[this->symRegIndex] = operand;
-		this->generateOrder(new std::string(LW), &(ss.str()), -offset * 4, new std::string(FP));
-		*reg = ss.str();
-		this->tempRegIndex = (this->tempRegIndex + 1) % maxTempReg;
-
-	}
-
-}
-
-//尚未修改完
-/*void Compiler::handleAssign(midcode *code)
-{
-	std::string *rs = code->op1name;
-	std::string *rt = code->rstname;
-
-	if(this->isOperandNumber(rs))
-	{
-		//整数的赋值对象可能有三种，标识符，临时变量和v0
-		std::string *reg = new std::string();
-		//所以allocReg这里需要把v0也考虑进去
-		if(this->isOperandId(rt))
-		{
-			bool global = false;
-			int offset = 0;
-			this->findAddress(rt, &offset, &global);
+			//说明没有相应的寄存器给它，直接从它的地址上的值load到相应的reg寄存器里
+			int offset = sym->address;
 			if(global)
 			{
-				//如果是一个全局标识符，那么直接sw就行
-				this->generateOrder(new std::string(LI), new std::string(T8), atoi(rs->c_str()));
-				this->generateOrder(new std::string(SW), new std::string(T8), this->strAddress + offset * 4, new std::string(R0));
+				//全局变量是需要相对于字符串区偏移的
+				this->generateOrder(LW, reg, this->strAddress + 4 * offset, R0);		
+			}
+			else{
+				this->generateOrder(LW, reg, - offset * 4, FP);
 			}
 		}
 		else{
-			//非全局的标识符/v0/临时变量
-			this->allocReg(rt, reg);
-			//生成LI  表示整数赋值,注意这里LI的参数是数字
-			this->generateOrder(new std::string(LI), reg, atoi(rs->c_str()));
-		}
-	}
-	else 
-	{
-		std::string *rsreg = new std::string();
-		std::string *rtreg = new std::string();
-		//右操作数除了可能是整数，还可能是标识符/临时变量/v0 
-		if(this->isOperandId(rs))
-		{
-			bool global = false;
-			int offset = 0;
-			this->findAddress(rs, &offset, &global);
-			if(global)
+			//说明有相应的寄存器给它，那么此时先检查当前相应的寄存器有没有被使用
+			std::string *old = this->allReg[regindex];
+			std::stringstream ss = std::stringstream();
+			ss << (regindex < (kMaxRegAvailable / 2) ? "$t" : "$s") << regindex % (kMaxRegAvailable / 2);
+			*reg = ss.str();
+			if(old == 0)
 			{
-				//如果是一个全局标识符，那么load到t8
-				this->generateOrder(new std::string(LW), new std::string(T8), this->strAddress + offset * 4, new std::string(R0));
-				*rsreg = std::string(T8);
-
+				//表示这个寄存器未被分配，那么先把相应地址上的值load到这个寄存器
+				int offset = sym->address;
+				if(global)
+				{
+					//全局变量是需要相对于字符串区偏移的
+					this->generateOrder(LW, reg, this->strAddress + 4 * offset, R0);		
+				}
+				else{
+					this->generateOrder(LW, reg, - offset * 4, FP);
+				}
+				//并维护allReg数组 
+				this->allReg[regindex] = sym->name;
+			}
+			else{
+				//这个寄存器已被分配，那么看被分配的是不是和当前需要的是一样的，如果是一样的那么可以直接用
+				if(this->isIdEqual(*rs, *old))
+				{
+					//那么直接用即可，什么都不用做
+				}
+				else{
+					//被分配，而且被分配的不是这个标识符，那么先把原来的写回，再把这个load到寄存器
+					symbol *oldsym = 0;
+					bool oldglobal = false;
+					this->findSym(old, &oldsym, &oldglobal);
+					//既然是被分配寄存器的，那么一定是局部变量，如果临时变量冲突，此时不需要写回，因为下一次不可能再用这个临时变量，只需要把局部变量写回即可
+					if(!this->isOperandTemp(oldsym->name))
+						this->generateOrder(SW, reg, - oldsym->address * 4, FP);
+					//存好以后，再把新的标识符对应的地址上的值load到这个寄存器
+					this->generateOrder(LW, reg, - sym->address * 4, FP);
+					//并维护allreg数组
+					this->allReg[regindex] = sym->name;
+				}
 			}
 		}
-
-		this->allocReg(rs, rsreg);
-		this->allocReg(rt, rtreg);
-		//生成move 指令，这里直接用add zero
-		this->generateOrder(new std::string(ADD), rtreg, rsreg, new std::string(R0));
 	}
-}*/
+}
+//把结果操作数转化为相应的寄存器
+void Compiler:: storeReg(std::string *rd, std::string *reg){
 
-/*void Compiler::handleAssign(midcode *code)
-{
-	std::string *rs = code->op1name;
-	std::string *rt = code->rstname;
-
-	this->loadWord(rs, new std::string(T0));
-	//然后分配存储rt的是哪一个，
-	this->storeWord(rt);
-}*/
-
-
-/*void Compiler::handleBranch(midcode *code)
-{
-	std::string *op1reg = new std::string();
-	if(this->isOperandNumber(code->op1name))
+	//此时rd只有三种情况：标识符 临时变量 #RET
+	if(this->isOperandRet(rd))
 	{
-		//表达式返回的是一个数字操作数，那么此时使用LI
-		this->generateOrder(new std::string(LI), new std::string(T9), atoi(code->op1name->c_str()));
-		//第一个操作数就是$t9了
-		*op1reg = std::string(T9);
+		//此时直接让reg为v0
+		*reg = *V0;
 	}
 	else{
-		//只有可能是临时变量了
-		this->allocReg(code->op1name, op1reg);
+		//这里是标识符或者是临时变量
+		bool global = false;
+		symbol *sym = 0;
+		this->findSym(rd, &sym, &global);
+		int regindex = sym->regIndex;
+		if(regindex == -1)
+		{
+			//说明没有相应的寄存器给它
+			//此时什么都不做，直接用reg的默认作为存放结果的寄存器，然后让调用者调用writeBack再吧结果存回地址上
+		}
+		else{
+			//说明有相应的寄存器给它，那么此时先检查当前相应的寄存器有没有被使用
+			std::string *old = this->allReg[regindex];
+			std::stringstream ss = std::stringstream();
+			ss << (regindex < (kMaxRegAvailable / 2) ? "$t" : "$s") << regindex % (kMaxRegAvailable / 2);
+			*reg = ss.str();
+			if(old == 0)
+			{
+				//表示这个寄存器未被分配
+				//并维护allReg数组 
+				this->allReg[regindex] = sym->name;
+			}
+			else{
+				//这个寄存器已被分配，那么看被分配的是不是和当前需要的是一样的，如果是一样的那么可以直接用
+				if(this->isIdEqual(*rd, *old))
+				{
+					//那么直接用即可，什么都不用做,直接用之前设置的reg
+				}
+				else{
+					//被分配，而且被分配的不是这个标识符，那么先把原来的写回，
+					symbol *oldsym = 0;
+					bool oldglobal = false;
+					this->findSym(old, &oldsym, &oldglobal);
+					//既然是被分配寄存器的，那么一定是局部变量
+					this->generateOrder(SW, reg, - oldsym->address * 4, FP);
+					//并维护allreg数组
+					this->allReg[regindex] = sym->name;
+				}
+			}
+		}
 	}
-	//上面就让op1reg保存了第一个操作数
-	std::string *op2reg = new std::string();
-	if(this->isOperandNumber(code->op2name))
-	{
-		//如果操作数2是一个数字，那么此时直接用addi即可，结果放在$t9中
-		//注意这里需要先把第二个操作数的数值取反
-		int value = atoi(code->op2name->c_str());
-		value = -1 * value;
-		this->generateOrder(new std::string(ADDI), new std::string(T9), op1reg, value);
-	}
-	else{
-		//操作数2不是一个数字，那么就是一个临时变量了，此时需要获得它的寄存器
-		this->allocReg(code->op2name, op2reg);
-		this->generateOrder(new std::string(SUB), new std::string(T9), op1reg, op2reg);
-	}
-	
-	switch(code->op)
-	{
-	case EQUOP:
-		this->generateOrder(new std::string(BEQ), new std::string(T9), new std::string(R0), code->rstname);
-		break;
-	case NEQUOP:
-		this->generateOrder(new std::string(BNE), new std::string(T9), new std::string(R0), code->rstname);
-		break;
-	case MOREEQUOP:
-		this->generateOrder(new std::string(BGEZ), new std::string(T9), code->rstname);
-		break;
-	case MOREOP:
-		this->generateOrder(new std::string(BGTZ), new std::string(T9), code->rstname);
-		break;
-	case LESSEQUOP:
-		this->generateOrder(new std::string(BLEZ), new std::string(T9), code->rstname);
-		break;
-	case LESSOP:
-		this->generateOrder(new std::string(BLTZ), new std::string(T9), code->rstname);
-		break;
-	}
-	//一开始忘了加nop..
-	this->generateOrder(new std::string(NOP));
-}*/
+
+}
 
 void Compiler::handleBranch(midcode *code)
 {
-	this->loadWord(code->op1name, new std::string(T0));
-	this->loadWord(code->op2name, new std::string(T1));
-	this->generateOrder(new std::string(SUB), new std::string(T0), new std::string(T0), new std::string(T1));
+	std::string *op1 = code->op1name;
+	std::string *op2 = code->op2name;
+
+	std::string *reg1 = new std::string();
+	*reg1 = *T9;
+	std::string *reg2 = new std::string();
+	*reg2 = *T8;
+	std::string *rstreg = new std::string();
+	*rstreg = *T7;
+	if(this->isOperandTemp(op1))
+	{
+		//如果op1是一个临时变量
+		//获得这个临时变量对应的寄存器
+		this->loadReg(op1, reg1);
+		if(this->isOperandNumber(op2))
+		{
+			//如果第二个操作数是一个数字，那么就把他俩减了以后的结果作为结果操作数
+			this->generateOrder(SUBI, rstreg, reg1, op2);
+		}
+		else{
+			//第二个操作数是一个临时变量
+			this->loadReg(op2, reg2);
+			//两个操作数都是临时变量，那么就把他俩减了后的结果放在t9，作为最后的判断
+			this->generateOrder(SUB, rstreg, reg1, reg2);
+			//释放空间
+		}
+		//释放空间
+	}
+	else{
+		//第一个操作数是一个数字
+		if(this->isOperandNumber(op2))
+		{
+			//两个操作数都是数字，把他俩减了之后的结果给t9
+			int value1 = atoi(op1->c_str());
+			int value2 = atoi(op2->c_str());
+			value2 = value1 - value2;
+			this->generateOrder(LI, rstreg, value2);
+		}
+		else{
+			//第二个操作数是一个临时变量
+			this->loadReg(op2, reg2);
+			//需要先把操作数1数字li到t9，
+			this->generateOrder(LI, T9, op1);
+			this->generateOrder(SUB, rstreg, T9, reg2);
+			//释放空间
+		}
+	}
 	switch(code->op)
 	{
 	case EQUOP:
-		this->generateOrder(new std::string(BEQ), new std::string(T0), new std::string(R0), code->rstname);
+		this->generateOrder(BEQ, rstreg, R0, code->rstname);
 		break;
 	case NEQUOP:
-		this->generateOrder(new std::string(BNE), new std::string(T0), new std::string(R0), code->rstname);
+		this->generateOrder(BNE, rstreg, R0, code->rstname);
 		break;
 	case MOREEQUOP:
-		this->generateOrder(new std::string(BGEZ), new std::string(T0), code->rstname);
+		this->generateOrder(BGEZ, rstreg, code->rstname);
 		break;
 	case MOREOP:
-		this->generateOrder(new std::string(BGTZ), new std::string(T0), code->rstname);
+		this->generateOrder(BGTZ, rstreg, code->rstname);
 		break;
 	case LESSEQUOP:
-		this->generateOrder(new std::string(BLEZ), new std::string(T0), code->rstname);
+		this->generateOrder(BLEZ, rstreg, code->rstname);
 		break;
 	case LESSOP:
-		this->generateOrder(new std::string(BLTZ), new std::string(T0), code->rstname);
+		this->generateOrder(BLTZ, rstreg, code->rstname);
 		break;
 	}
 	//一开始忘了加nop..
-	this->generateOrder(new std::string(NOP));
+	this->generateOrder(NOP);
+	//释放空间：
+	delete rstreg;
+	delete reg1;
+	delete reg2;
 }
 
 
@@ -696,328 +530,304 @@ void Compiler::handleGoto(std::string *label)
 {
 	std::string *newlab = new std::string();
 	this->str2Lower(label, newlab);
-	this->generateOrder(new std::string(J), newlab);
-	this->generateOrder(new std::string(NOP));
+	this->generateOrder(J, newlab);
+	this->generateOrder(NOP);
 }
-
-/*void Compiler::handleRealPara(std::string *para)
-{
-	//para也是从表达式得到的值，此时还是分为数字和临时变量
-	//reg保存这个参数最后的所使用的寄存器
-	std::string *reg = new std::string();
-	if(this->isOperandNumber(para))
-	{
-		//是个数字，这里使用临时寄存器t9
-		this->generateOrder(new std::string(LI), new std::string(T9), atoi(para->c_str()));
-		*reg = std::string(T9);
-	}
-	else{
-		//因为参数列表还是由<表达式>得到的，所以这里只有可能是临时变量，得到它对应的寄存器
-		this->allocReg(para, reg);
-	}
-
-	this->generateOrder(new std::string(SW), reg, 0, new std::string(SP));
-	this->generateOrder(new std::string(ADDI), new std::string(SP), new std::string(SP), -4);
-}*/
 
 void Compiler::handleRealPara(std::string *para)
 {
 	//para也是从表达式得到的值，此时还是分为数字和临时变量
-	this->loadWord(para, new std::string(T0));
-	this->generateOrder(new std::string(SW), new std::string(T0), 0, new std::string(SP));
-	this->generateOrder(new std::string(ADDI), new std::string(SP), new std::string(SP), -4);
-}
-
-
-/*void Compiler::handleRarray(midcode *code)
-{
-	bool global;
-	int offset;
-	this->findAddress(code->op1name, &offset, &global);
-	std::string *indexreg = new std::string();
-	if(this->isOperandNumber(code->op2name))
-	{
-		this->generateOrder(new std::string(LI), new std::string(T9), atoi(code->op2name->c_str()));
-		*indexreg = std::string(T9);
-	}
-	else{
-		this->allocReg(code->op2name, indexreg);
-	}
-
-
-	this->generateOrder(new std::string(ADDI), new std::string(T9), indexreg, offset);
-	this->generateOrder(new std::string(SLL), new std::string(T9), new std::string(T9), 2);
-	if(global)
-	{
-		//计算好偏移后相对于第一个常量寻址
-		this->generateOrder(new std::string(LW), new std::string(T9), this->strAddress, new std::string(T9));
-	}
-	else{
-		this->generateOrder(new std::string(SUB), new std::string(T9), new std::string(FP), new std::string(T9));
-		this->generateOrder(new std::string(LW), new std::string(T9), 0, new std::string(T9));
-	}
 	std::string *rstreg = new std::string();
-	this->allocReg(code->rstname, rstreg);
-	this->generateOrder(new std::string(ADD), rstreg, new std::string(T9), new std::string(R0));
-}*/
-
-void Compiler::handleRarray(midcode *code)
-{
-	bool global;
-	int offset;
-	this->findAddress(code->op1name, &offset, &global);
-	this->loadWord(code->op2name, new std::string(T0));
-	this->generateOrder(new std::string(ADDI), new std::string(T0), new std::string(T0), offset);
-	this->generateOrder(new std::string(SLL), new std::string(T0), new std::string(T0),new std::string("2"));
-	if(global)
-	{
-		//计算好偏移后相对于第一个常量寻址
-		this->generateOrder(new std::string(LW), new std::string(T0), this->strAddress, new std::string(T0));
-	}
-	else{
-		this->generateOrder(new std::string(SUB), new std::string(T0), new std::string(FP), new std::string(T0));
-		this->generateOrder(new std::string(LW), new std::string(T0), 0, new std::string(T0));
-	}
-	this->storeWord(code->rstname);
+	*rstreg = *T7;
+	this->loadReg(para, rstreg);
+	this->generateOrder(SW, rstreg, 0, SP);
+	this->generateOrder(ADDI, SP, SP, -4);
+	delete rstreg;
 }
 
 void Compiler::handleCall(std::string *name)
 {
 	std::string *newlab = new std::string();
 	this->str2Lower(name, newlab);
-	this->generateOrder(new std::string(JAL), newlab);
-	this->generateOrder(new std::string(NOP));;
+	this->generateOrder(JAL, newlab);
+	this->generateOrder(NOP);
+	delete newlab;
 }
 
-/*void Compiler::handleCompute(midcode *code)
+//根据情况看是否要写回到内存里
+void Compiler::writeBack(std::string *rd, std::string *reg)
 {
-	std::string *rs = code->op1name;
-	std::string *rt = code->op2name;
-	std::string *rd = code->rstname;
-
-	std::string *rsreg = new std::string();
-	std::string *rtreg = new std::string();
-	std::string *rdreg = new std::string();
-	
-	if(this->isOperandNumber(rs))
+	if(!this->isOperandRet(rd))
 	{
-		//第一个是数字，那么第二个肯定不是数字
-		this->allocReg(rt, rtreg);
-		//先把数字放在$t9
-		this->generateOrder(new std::string(LI), new std::string(T9), atoi(code->op1name->c_str()));
-		*rsreg = std::string(T9);
-	}
-	else{
-		//第一个不是数字，那么第二个可能是数字，也可能是临时变量
-		if(this->isOperandNumber(rt))
+		symbol *sym = 0;
+		bool global = false;
+		this->findSym(rd, &sym, &global);
+		if(sym && sym->regIndex == -1)
 		{
-			this->allocReg(rs, rsreg);
-			this->generateOrder(new std::string(LI), new std::string(T9), atoi(code->op2name->c_str()));
-			*rtreg = std::string(T9);
+			//如果是不分配寄存器的标识符，那么此时还需要写回相应的地址里去
+			if(global)
+			{
+				this->generateOrder(SW, reg, this->strAddress + 4 * sym->address, R0);		
+			}
+			else{
+				this->generateOrder(SW, reg, - sym->address * 4, FP);
+			}
+		}
+	}
+}
+
+void Compiler::handleAdd(midcode *code)
+{
+	std::string *op1 = code->op1name;
+	std::string *op2 = code->op2name;
+	std::string *rst = code->rstname;
+
+	std::string *reg1 = new std::string();
+	*reg1 = *T9;
+	std::string *reg2 = new std::string();
+	*reg2 = *T8;
+	std::string *rstreg = new std::string();
+	*rstreg = *T7;
+	if(this->isOperandNumber(op1))
+	{
+		if(this->isOperandTemp(op2))
+		{
+			//操作数1是一个数字，那么此时操作数2如果是临时变量，那么结果操作数也是临时变量
+			this->loadReg(op2, reg2);
+			this->storeReg(rst, rstreg);
+			this->generateOrder(ADDI, rstreg, reg2, op1);
 		}
 		else{
-			//第一个第二个都不是数字
-			this->allocReg(rs, rsreg);
-			this->allocReg(rt, rtreg);
+			//操作数2只能是0了
+			this->storeReg(rst, rstreg);
+			this->generateOrder(LI, rstreg, op1);
 		}
 	}
-
-	this->allocReg(rd, rdreg);
-	switch(code->op)
-	{
-		//一开始这里操作数的顺序错了，应该先t0后t1的，对于加法，乘法，除法都对，就是减法顺序颠倒会出错。。
-	case ADDOP:
-		this->generateOrder(new std::string(ADD), rdreg, rsreg, rtreg);
-		break;
-	case SUBOP:
-		this->generateOrder(new std::string(SUB), rdreg, rsreg, rtreg);
-		break;
-	case MULOP:
-		this->generateOrder(new std::string(MUL), rdreg, rsreg, rtreg);
-		break;
-	case DIVOP:
-		this->generateOrder(new std::string(DIVIDE), rsreg, rtreg);
-		this->generateOrder(new std::string(MFLO), rdreg);
-		break;
+	else{
+		//操作数1是一个临时变量/#RET/标识符
+		this->loadReg(op1, reg1);
+		if(this->isOperandNumber(op2))
+		{
+			//操作数2是一个数字
+			this->storeReg(rst, rstreg);
+			//获得了结果操作数对应的寄存器
+			this->generateOrder(ADDI, rstreg, reg1, op2);
+			//此时还需要看结果操作数是不是需要写回地址
+		}
+		else{
+			//操作数2是一个临时变量
+			//结果操作数是一个临时变量/#RET/标识符
+			this->loadReg(op2, reg2);
+			this->storeReg(rst, rstreg);
+			this->generateOrder(ADD, rstreg, reg1, reg2);
+		}
 	}
-}*/
-
-void Compiler::handleCompute(midcode *code)
-{
-	std::string *rs = code->op1name;
-	std::string *rt = code->op2name;
-	std::string *rd = code->rstname;
-
-	this->loadWord(rs, new std::string(T0));
-	this->loadWord(rt, new std::string(T1));
-	switch(code->op)
-	{
-		//一开始这里操作数的顺序错了，应该先t0后t1的，对于加法，乘法，除法都对，就是减法顺序颠倒会出错。。
-	case ADDOP:
-		this->generateOrder(new std::string(ADD), new std::string(T0), new std::string(T0), new std::string(T1));
-		break;
-	case SUBOP:
-		this->generateOrder(new std::string(SUB), new std::string(T0), new std::string(T0), new std::string(T1));
-		break;
-	case MULOP:
-		this->generateOrder(new std::string(MUL), new std::string(T0), new std::string(T0), new std::string(T1));
-		break;
-	case DIVOP:
-		this->generateOrder(new std::string(DIVIDE), new std::string(T0), new std::string(T1));
-		this->generateOrder(new std::string(MFLO), new std::string(T0));
-		break;
-	}
-	this->storeWord(rd);
+	this->writeBack(rst, rstreg);
+	//释放空间
+	delete reg1;
+	delete reg2;
+	delete rstreg;
 }
 
-/*void Compiler:: handleLarray(midcode *code)
+void Compiler::handleSub(midcode *code)
 {
-	std::string *rs = code->op1name;
-	std::string *index = code->op2name;
-	std::string *name = code->rstname;
+	std::string *op1 = code->op1name;
+	std::string *op2 = code->op2name;
+	std::string *rst = code->rstname;
 
-	std::string *rsreg = new std::string();
-	std::string *indexreg = new std::string();
+	std::string *reg1 = new std::string();
+	*reg1 = *T9;
+	std::string *reg2 = new std::string();
+	*reg2 = *T8;
+	std::string *rstreg = new std::string();
+	*rstreg = *T7;
+	if(this->isOperandNumber(op1))
+	{
+		//操作数1是一个数字，那么此时操作数2和结果操作数都是临时变量
+		if((*op1)[0] == '0')
+		{
+			//表示操作数1是0，那么此时直接用$zero就可以
+			*reg1 = *R0;
+		}
+		else{
+			//操作数1不是0，先LI
+			this->generateOrder(LI, reg1, op1);
+		}
+		this->loadReg(op2, reg2);
+		this->storeReg(rst, rstreg);
+		this->generateOrder(SUB, rstreg, reg1, reg2);
+	}
+	else{
+		//操作数1是一个临时变量
+		this->loadReg(op1, reg1);
+		if(this->isOperandTemp(op2))
+		{
+			//操作数2也是一个临时变量
+			this->loadReg(op2, reg2);
+
+			//结果操作数也是一个临时变量
+			this->storeReg(rst, rstreg);
+
+			//获得了结果操作数对应的寄存器
+			this->generateOrder(SUB, rstreg, reg1, reg2);
+		}
+		else{
+			//操作数2是一个数字
+			//结果操作数是一个临时变量
+			this->storeReg(rst, rstreg);
+			this->generateOrder(SUBI, rstreg, reg1, op2);
+		}
+	}
+	this->writeBack(rst, rstreg);
+	delete reg1;
+	delete reg2;
+	delete rstreg;
+}
+
+
+void Compiler::handleMulOrDiv(midcode *code)
+{
+	std::string *op1 = code->op1name;
+	std::string *op2 = code->op2name;
+	std::string *rst = code->rstname;
+
+	std::string *reg1 = new std::string();
+	*reg1 = *T9;
+	std::string *reg2 = new std::string();
+	*reg2 = *T8;
+	std::string *rstreg = new std::string();
+	*rstreg = *T7;
+	this->loadReg(op1, reg1);
+	this->loadReg(op2, reg2);
+	this->storeReg(rst, rstreg);
+	if(code->op == MULOP)
+	{
+		this->generateOrder(MULOBJ, rstreg, reg1, reg2);
+	}
+	else{
+		this->generateOrder(DIVOBJ, reg1, reg2);
+		this->generateOrder(MFLO, rstreg);
+	}
+	this->writeBack(rst, rstreg);
+	delete reg1;
+	delete reg2;
+	delete rstreg;
+}
+
+void Compiler::handleRarray(midcode *code)
+{
+	std::string *reg2 = new std::string();
+	*reg2 = *T8;
+	std::string *rstreg = new std::string();
+	*rstreg = *T7;
 
 	bool global = false;
-	int offset = 0;
-	this->findAddress(name, &offset, &global);
-	
-	if(this->isOperandNumber(index))
-	{
-		this->generateOrder(new std::string(LI), new std::string(T9), atoi(index->c_str()));
-		*indexreg = std::string(T9);
-	}
-	else{
-		this->allocReg(index, indexreg);
-	}
-	//同样的 $t9这里作为数组变量地址索引的临时寄存器
-	this->generateOrder(new std::string(ADDI), new std::string(T9), indexreg, offset);
-	this->generateOrder(new std::string(SLL), new std::string(T9), new std::string(T9), 2);
-	
-	this->allocReg(rs, rsreg);
+	symbol *sym = 0;
+	this->findSym(code->op1name, &sym, &global);
+
+	this->loadReg(code->op2name, reg2);
+	this->generateOrder(ADDI, T9, reg2, sym->address);
+	this->generateOrder(SLL, T9, T9, 2);
+
+	this->storeReg(code->rstname, rstreg);
 	if(global)
 	{
-		this->generateOrder(new std::string(SW), rsreg, this->strAddress, new std::string(T9));
+		//计算好偏移后相对于第一个常量寻址
+		this->generateOrder(LW, rstreg, this->strAddress, T9);
 	}
 	else{
-		this->generateOrder(new std::string(SUB), new std::string(T9), new std::string(FP), new std::string(T9));
-		this->generateOrder(new std::string(SW), rsreg, 0, new std::string(T9));
+		this->generateOrder(SUB, T9, FP, T9);
+		this->generateOrder(LW, rstreg, 0, T9);
 	}
-}*/
+	this->writeBack(code->rstname, rstreg);
+
+	//释放空间
+	delete reg2;
+	delete rstreg;
+}
+
 
 void Compiler:: handleLarray(midcode *code)
 {
 	std::string *rs = code->op1name;
 	std::string *index = code->op2name;
 	std::string *name = code->rstname;
+
+	std::string *reg1 = new std::string();
+	*reg1 = *T9;
+	std::string *reg2 = new std::string();
+	*reg2 = *T8;
+
 	bool global = false;
-	int offset = 0;
-	this->findAddress(name, &offset, &global);
-	this->loadWord(index, new std::string(T1));
-	this->generateOrder(new std::string(ADDI), new std::string(T1), new std::string(T1), offset);
-	this->generateOrder(new std::string(SLL), new std::string(T0), new std::string(T1),new std::string("2"));
-	this->loadWord(rs, new std::string(T1));
+	symbol *sym = 0;
+	this->findSym(name, &sym, &global);
+	//获得下标
+	this->loadReg(index, reg2);
+	this->generateOrder(ADDI, T7, reg2, sym->address);
+	this->generateOrder(SLL, T7, T7, 2);
+	this->loadReg(rs, reg1);
 	if(global)
 	{
-		this->generateOrder(new std::string(SW), new std::string(T1), this->strAddress, new std::string(T0));
+		this->generateOrder(SW, reg1, this->strAddress, T7);
 	}
 	else{
-		this->generateOrder(new std::string(SUB), new std::string(T0), new std::string(FP), new std::string(T0));
-		this->generateOrder(new std::string(SW), new std::string(T1), 0, new std::string(T0));
+		this->generateOrder(SUB, T7, FP, T7);
+		this->generateOrder(SW, reg1, 0, T7);
 	}
+	delete reg1;
+	delete reg2;
 }
-
-/*void Compiler:: handleScanf(midcode *code)
-{
-	if((*code->op1name)[0] == 'i')
-	{
-		//读入一个整数
-		this->generateOrder(new std::string(LI), new std::string(V0), 5);
-	}
-	else {
-		//读入一个字符
-		this->generateOrder(new std::string(LI), new std::string(V0), 12);
-	}
-	this->generateOrder(new std::string(SYSCALL));
-	//结果操作数只能是一个标识符
-	std::string *rstreg = new std::string();
-	this->allocReg(code->rstname, rstreg);
-	//把读到的结果给这个结果寄存器
-	this->generateOrder(new std::string(ADD), rstreg, new std::string(V0), new std::string(R0));
-}*/
 
 void Compiler:: handleScanf(midcode *code)
 {
 	if((*code->op2name)[0] == 'i')
 	{
 		//读入一个整数
-		this->generateOrder(new std::string(LI), new std::string(V0), 5);
+		this->generateOrder(LI, V0, 5);
 	}
 	else {
 		//读入一个字符
-		this->generateOrder(new std::string(LI), new std::string(V0), 12);
+		this->generateOrder(LI, V0, 12);
 	}
-	this->generateOrder(new std::string(SYSCALL));
+	this->generateOrder(SYSCALL);
 	//结果操作数只能是一个标识符
-	this->generateOrder(new std::string(ADD), new std::string(T0), new std::string(V0), new std::string(R0));
-	this->storeWord(code->rstname);
-}
+	std::string *rstreg = new std::string();
+	*rstreg = *T7;
+	this->storeReg(code->rstname, rstreg);
+	this->generateOrder(ADD, rstreg, V0, R0);
+	this->writeBack(code->rstname, rstreg);
 
-/*void Compiler::handlePrintf(midcode *code)
-{
-	if(code->op1name->length() == 0)
-	{
-		//说明是字符串
-		this->generateOrder(new std::string(LI), new std::string(V0), 4);
-		std::stringstream ss = std::stringstream();
-		ss << "$Message" << *(code->rstname);
-		this->generateOrder(new std::string(LA), new std::string(A0), &(ss.str()));
-		this->generateOrder(new std::string(SYSCALL));
-	}
-	else{
-		//说明是表达式,根据op1name的第一个字符是什么字母来判断是输出整数还是字母
-		this->generateOrder(new std::string(LI), new std::string(V0),(*code->op1name)[0] == 'i' ? 1 : 11);
-			//这里需要把要输出的数字/字符给到a0寄存器
-		if(this->isOperandNumber(code->rstname))
-		{
-				//如果是数字，那么直接给
-			this->generateOrder(new std::string(LI), new std::string(A0), atoi(code->rstname->c_str()));
-		}
-		else{
-				//说明是临时变量，那么先获得它所在的寄存器
-			std::string *reg = new std::string();
-			this->allocReg(code->rstname, reg);
-			this->generateOrder(new std::string(ADD), new std::string(A0), reg, new std::string(R0));
-		}
-		this->generateOrder(new std::string(SYSCALL));
-	}
-}*/
+	delete rstreg;
+}
 
 void Compiler::handlePrintf(midcode *code)
 {
 	if(code->op1name->length() == 0)
 	{
 		//说明是字符串
-		this->generateOrder(new std::string(LI), new std::string(V0), 4);
+		this->generateOrder(LI, V0, 4);
 		std::stringstream ss = std::stringstream();
 		ss << "$Message" << *(code->rstname);
-		this->generateOrder(new std::string(LA), new std::string(A0), &(ss.str()));
-		this->generateOrder(new std::string(SYSCALL));
+		this->generateOrder(LA, A0, &(ss.str()));
+		this->generateOrder(SYSCALL);
 	}
 	else{
 		//说明是表达式,根据op1name的第一个字符是什么字母来判断是输出整数还是字母
-		this->generateOrder(new std::string(LI), new std::string(V0),(*code->op1name)[0] == 'i' ? 1 : 11);
+		this->generateOrder(LI, V0, (*code->op1name)[0] == 'i' ? 1 : 11);
 		//这里需要把要输出的数字/字符给到a0寄存器
-		this->loadWord(code->rstname, new std::string(A0));
-		this->generateOrder(new std::string(SYSCALL));
+		std::string *rstreg = new std::string();
+		*rstreg = *T7;
+		this->loadReg(code->rstname, rstreg);
+		this->generateOrder(ADD, A0, rstreg, R0);
+		this->generateOrder(SYSCALL);
+		delete rstreg;
 	}
 }
 
 void Compiler::handleExit()
 {
-	this->generateOrder(new std::string(LI), new std::string(V0), 10);
-	this->generateOrder(new std::string(SYSCALL));
+	this->generateOrder(LI, V0, 10);
+	this->generateOrder(SYSCALL);
 }
 
 //统一规定sp先用后改变
@@ -1032,7 +842,7 @@ void Compiler::generate()
 	
 	//开始读中间代码了
 	//加个gotomain
-	this->generateOrder(new std::string(ADD), new std::string(FP), new std::string(SP), new std::string(R0));
+	this->generateOrder(ADD, FP, SP, R0);
 	this->handleGoto(new std::string("main"));
 	for(int i = 0 ; i < this->midindex ; i++)
 	{
@@ -1069,11 +879,15 @@ void Compiler::generate()
 		case RETOP:
 			this->handleRet(code->rstname);
 			break;
-		case MULOP:
-		case ADDOP:
-		case SUBOP:
 		case DIVOP:
-			this->handleCompute(code);
+		case MULOP:
+			this->handleMulOrDiv(code);
+			break;
+		case ADDOP:
+			this->handleAdd(code);
+			break;
+		case SUBOP:
+			this->handleSub(code);
 			break;
 		case LARRAYOP:
 			this->handleLarray(code);

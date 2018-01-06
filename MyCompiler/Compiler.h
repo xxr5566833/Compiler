@@ -230,6 +230,10 @@ private:
 	void printSym(symbol *sym);
 	//进入一个函数时
 	void inFunc();
+	//符号表打印文件
+	std::fstream symtabFile;
+	//打印符号表到文件
+	void writeSymtoFile();
 
 	//常量区
 	std::string *stringTab[kMaxStringNum];
@@ -297,7 +301,7 @@ private:
 	//这里设置一个成员变量，用于记录每个基本块的out集合，便于dag图删去不需要的临时变量
 	//这个在活跃变量分析时设置
 	bool **outData;
-	bool canAdd(bool flag[], Node *x);
+	bool canAdd(bool flag[], Node *x, Node* midqueue[], int length);
 	void DAG();
 
 	bool blockBeginFlag[kMaxBasicBlock];
@@ -328,22 +332,21 @@ private:
 	void generateOrder(std::string *order, std::string *rs, std::string *label);
 	void generateOrder(std::string *order, std::string *target);
 	void generateOrder(std::string *order);
+	void printOrder(std::string *order);
 	//函数的开始
 	void funcBegin(std::string *name);
-	//赋值
-	void handleAssign(midcode *code);
 	//当前编译的函数在函数表中的位置
 	int currentRef;
 	//生成label
 	void genMipsLabel(std::string *label);
 	//寻找标识符地址
-	void findAddress(std::string *name, int *offset, bool *global);
+	void findSym(std::string *name, symbol **resultsym, bool *global);
 	//loadword
-	void loadWord(std::string *rs, std::string *reg);
+	void loadReg(std::string *rs, std::string *reg);
 	//storeword
-	void storeWord(std::string *rd);
-	//处理负号
-	void handleNeg(midcode *code);
+	void storeReg(std::string *rd, std::string *reg);
+	//writeback
+	void writeBack(std::string *rd, std::string *reg);
 	//处理跳转
 	void handleBranch(midcode *code);
 	//处理无条件跳转
@@ -357,7 +360,10 @@ private:
 	//处理函数结束
 	void handleRet(std::string *name);
 	//处理运算
-	void handleCompute(midcode *code);
+	void handleAdd(midcode *code);
+	void handleSub(midcode *code);
+	void handleMulOrDiv(midcode *code);
+
 	//处理输入
 	void handleScanf(midcode *code);
 	//处理输出
@@ -377,17 +383,14 @@ private:
 	//判断是不是一个标识符
 	bool isOperandId(std::string *operand);
 
-	//寄存器简单分配
-	//9个临时寄存器，分别代表t0到t8,-1表示未分配
-	int tempReg[8];
-	int tempRegIndex ;
-	//8个为标识符准备的寄存器，分别代表s0到s7,值为0表示没有被分配，值不为0，表示被这个名字的标识符分配
-	std::string *symReg[8];
-	int symRegIndex;
+	//根据kMaxRegAvailable 的数量决定的可用寄存器的数量，对于每一个，如果是0，那么表示未被分配，如果不是0，那么表示被对应的变量分配
+	std::string *allReg[kMaxRegAvailable];
+	
 	void allocReg(std::string *operand, std::string *reg);
-	regAllocStack regStack;
-	void stackPop();
-	void stackPush();
+	//保存函数调用之前的寄存器的使用情况，便于之后恢复
+	std::string *regStack[kMaxRegAvailable];
+	void saveReg();
+	void loadReg();
 
 
 

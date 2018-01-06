@@ -40,8 +40,6 @@ void Compiler::divideToBlock()
 			break;
 
 		//call的下一句是ret的返回地址/分支语句的下一句也是同理
-		//这里让给数组赋值作为基本块的最后一句，不参与dag图优化
-		case LARRAYOP:
 		case CALLOP:
 		case GOTOOP:
 		case EQUOP:
@@ -50,6 +48,7 @@ void Compiler::divideToBlock()
 		case MOREOP:
 		case LESSEQUOP:
 		case MOREEQUOP:
+			//给数组元素赋值虽然可以参与dag图的构建，但是它必须要作为
 			if(!this->blockBeginFlag[i + 1])
 			{
 				//初始化数据结构
@@ -228,7 +227,7 @@ void Compiler::findNodeInTab(ListNode *nodelist[], int length, std::string *name
 	}
 }
 
-bool Compiler::canAdd(bool flag[],  Node *x)
+bool Compiler::canAdd(bool flag[],  Node *x, Node* midqueue[], int length)
 {
 	if(flag[x->index] || x->isLeaf)
 	{
@@ -241,6 +240,36 @@ bool Compiler::canAdd(bool flag[],  Node *x)
 	{
 		int parentindex = x->parentindex[i];
 		choose = choose && flag[parentindex];
+	}
+	//这里还要加上，所有的取数组值的节点，必须要在所有节点号比它大的给数组赋值的结点加入中间队列以后才能被加入节点
+	//所有给数组赋值的结点，必须要在所有节点号比它大的数组取值节点都加入中间队列后才能被加入中间队列
+	if(x->op == LARRAYOP)
+	{
+		for(int i = 0 ; i < length ; i++)
+		{
+			//对于所有中间节点
+			Node *midnode = midqueue[i];
+			if(midnode->index > x->index && midnode->op == RARRAYOP)
+			{
+				//如果index比当前的index大，（表示这个节点本来就该在当前结点之后执行），且op是数组取值
+				//那么必须要在这些结点都被加入后，才能加入当前结点！
+				choose = choose && flag[midnode->index];
+			}
+		}
+	}
+	if(x->op == RARRAYOP)
+	{
+		for(int i = 0 ; i < length ; i++)
+		{
+			//对于所有中间节点
+			Node *midnode = midqueue[i];
+			if(midnode->index > x->index && midnode->op == LARRAYOP)
+			{
+				//如果index比当前的index大，（表示这个节点本来就该在当前结点之后执行），且op是给数组赋值
+				//那么必须要在这些结点都被加入后，才能加入当前结点！
+				choose = choose && flag[midnode->index];
+			}
+		}
 	}
 	return choose;
 }
@@ -297,8 +326,19 @@ void Compiler::DAG()
 		//此时基本块一定有至少两句四元式，那么一定至少有一句运算语句
 		//这里不一定所有的基本块都是可以经过dag图优化的，所以设置一个限制，只有找到公共子表达式的才会使用dag图进行优化
 		int findcount = 0;
-		//接下来才是dag图的构建,注意这里最后一句肯定是不参与dag图的创建的，最后处理
-		for(int j = begin ; j < end - 1 ; j++)
+		//首先因为最后一句话不一定能参与dag图的创建，所以，这里需要判断一下参与dag图创建的顺序
+		midcode *endcode = this->codes[end - 1];
+		int endindex = 0;
+		if(endcode->op == SCANFOP || endcode->op == ADDOP || endcode->op == SUBOP || endcode->op == MULOP
+			|| endcode->op == DIVOP || endcode->op == RARRAYOP || endcode->op == LARRAYOP)
+		{
+			endindex = end;
+		}
+		else{
+			endindex = end - 1;
+		}
+
+		for(int j = begin ; j < endindex ; j++)
 		{
 			midcode *code = this->codes[j];
 			switch(code->op)
@@ -310,6 +350,7 @@ void Compiler::DAG()
 			case MULOP:
 			case DIVOP:
 			case RARRAYOP:
+			case LARRAYOP:
 				ListNode *x = 0;
 
 				this->findNodeInTab(nodetab, tablength, code->op1name, &x);
@@ -357,11 +398,31 @@ void Compiler::DAG()
 				for(int k = 0 ; k < nodeindex ; k++)
 				{
 					Node *node = dag[k];
+					//bug:数组名如果作为结果操作数，那么如果该结点的左右操作数相等，那么也不能把这个中间节点作为新四元式的中间节点
+					//因为数组名如果不一样，那么是不能作为等价的子节点存在的
+					//举个例子 a[1] = b  c[1] = b 那么如果按照原来的产生方式，a和c共享一个中间节点，此时如果再来一个t = c[1] 那么它就会把a所在的结点作为左操作数，因为
+					//a和c的index一样，所以这里我们对于LARRAYOP 的四元式，当且仅当 数组标识符也一样时才算作同一个中间节点
 					if(!(node->isLeaf) && node->op == code->op && node->xindex == x->index && node->yindex == y->index)
 					{
-						//满足条件
-						mid = node;
-						findcount += 1;
+
+						if(code->op != LARRAYOP)
+						{
+							mid = node;
+							findcount += 1;	
+							//尝试：当主名字空缺时才更新它的主名字
+							if(mid->flag)
+							{
+								*mid->mainname = *code->rstname;
+							}
+						}
+						else{
+							if(this->isIdEqual(*code->rstname, *node->mainname))
+							{
+								//只有当主名字一样时，才能算找到
+								mid = node;
+								findcount += 1;	
+							}
+						}
 						break;
 					}
 				}
@@ -373,7 +434,8 @@ void Compiler::DAG()
 					mid->index = nodeindex;
 					mid->isLeaf = false;
 					mid->mainname = new std::string();
-					mid->mainname = code->rstname;
+					*mid->mainname = *code->rstname;
+					mid->flag = false;
 					mid->op = code->op;
 					mid->parentnum = 0;
 					mid->xindex = x->index;
@@ -394,9 +456,18 @@ void Compiler::DAG()
 					z->name = code->rstname;
 					//bug:这里一开始没有把z添加到nodetab中
 					nodetab[tablength ++] = z;
+					z->index = mid->index;
 				}
-				//修改为创建时就指定其主名字，这样在恢复时一定可以以创建它时的名字作为操作符
-				z->index = mid->index;
+				else{
+					//表示在结点表中找到了z，那么如果z原来是某个结点的主名字，那么就需要设置相应结点的flag
+					Node *node = dag[z->index];
+					if(this->isIdEqual(*node->mainname, *z->name))
+					{
+						node->flag = true;
+					}
+					z->index = mid->index;
+					
+				}
 
 				break;
 			}
@@ -442,10 +513,11 @@ void Compiler::DAG()
 				break;
 			Node *n = 0;
 			//选取一个尚未进入队列，但是其所有父亲节点都已经进入队列的中间节点，或者是选取没有父节点的中间节点
-			for(int j = 0 ; j < midlength ; j++)
+			//这里最好从后往前找，这样就可以保证先加入到队列中的是后出现的表达式
+			for(int j = midlength - 1 ; j >= 0 ; j--)
 			{
 				Node *node = midqueue[j];
-				if(this->canAdd(flag, node))
+				if(this->canAdd(flag, node, midqueue, midlength))
 				{
 					//说明这个中间节点可以被添加
 					n = node;
@@ -459,7 +531,7 @@ void Compiler::DAG()
 			while(1)
 			{
 				Node *child = dag[n->xindex];
-				if(this->canAdd(flag, child))
+				if(this->canAdd(flag, child, midqueue, midlength))
 				{
 					n = child;
 					queue[queuelength++] = n;
@@ -482,21 +554,6 @@ void Compiler::DAG()
 			std::string *mid = new std::string();
 			//经过修改，是一定有主名字的,主名字是一定会被保留下来的
 
-			//如果已经有 主名字，那么这里直接用这个主名字，如果还没有主名字， 那么这里选择和这个节点相同的index 的一个名字作为主名字
-			/*if(!midnode->mainname)
-			{
-				//没有主名字，找一个作为主名字
-				for(int k = 0 ; k < tablength ; k++)
-				{
-					ListNode *node = nodetab[k];
-					if(node->index == midnode->index)
-					{
-						midnode->mainname = new std::string();
-						*midnode->mainname = *node->name;
-						break;
-					}
-				}
-			}*/
 			*mid = *midnode->mainname;
 			Node *x = dag[midnode->xindex];
 			Node *y = dag[midnode->yindex];
@@ -527,22 +584,65 @@ void Compiler::DAG()
 						{
 							this->pushMidCode(ADDOP, mid, new std::string("0"), listnode->name, false);
 						}
-					}
-					//不是临时变量，那么先判断是不是标识符，这里还得判断它是不是一个全局变量，如果是全局变量或者是接下来还活跃，那么就需要有补偿性的赋值语句
-					else if(this->isOperandId(listnode->name))
-					{
-						int index = -1;
-						this->getIndexInTab(&index, funcref, listnode->name);
-						if(index == -1)
-						{
-							this->pushMidCode(ADDOP, mid, new std::string("0"), listnode->name, false);
-						}
 						else{
-							if(this->outData[blockindex][index])
+							/*bug:
+							如果不活跃了，那么需要删除这个变量，但是注意，虽然以后不活跃了，但是在这个基本块以后可能还活跃
+							即下面可能会有用到这个临时变量的情况，但是如果这个四元式参与了活跃变量分析，那么它一定能得到正确的值，但是如果
+							没有参与，（比如在最后一句话），那么它就需要把这个被删了的操作数换成等价的另外一个操作数
+							*/
+							//先获得最后一句四元式,如果最后一句四元式是下面几种，那么需要替换
+							std::cout << *listnode->name << "被删去" << std::endl;
+							midcode *code = this->codes[end - 1];
+							switch(code->op)
 							{
-								this->pushMidCode(ADDOP, mid, new std::string("0"), listnode->name, false);
+							case EQUOP:
+							case NEQUOP:
+							case MOREOP:
+							case MOREEQUOP:
+							case LESSOP:
+							case LESSEQUOP:
+								{
+									//检查它的两个操作数是不是需要替换
+									if(this->isIdEqual(*(code->op1name), *(listnode->name)))
+									{
+										//让这个节点的mainname作为新的操作数
+										*code->op1name = *mid;
+										std::cout << *code->op1name << " 被替换为了 " << *mid << std::endl;
+									}
+									if(this->isIdEqual(*code->op2name, *listnode->name))
+									{
+										*code->op2name = *mid;
+										std::cout << *code->op2name << " 被替换为了 " << *mid << std::endl;
+									}
+								}
+								break;
 							}
 						}
+					}
+					//不是临时变量，那么先判断是不是标识符，然后需要判断这个标识符是一个简单变量还是一个数组
+					//是一个数组，一定需要生成相应的补偿语句，不是数组再判断是不是一个全局变量，如果是全局变量或者是接下来还活跃，那么就需要有补偿性的赋值语句
+					//bug:如果是一个数组，那么就需要直接补上赋值语句
+					else if(this->isOperandId(listnode->name))
+					{
+
+							int index = -1;
+							this->getIndexInTab(&index, funcref, listnode->name);
+							if(index == -1)
+							{
+								//是一个全局变量，那么补偿
+								this->pushMidCode(ADDOP, mid, new std::string("0"), listnode->name, false);
+							}
+							else{
+								//是一个局部变量，那么看接下来是否活跃
+								if(this->outData[blockindex][index])
+								{
+									this->pushMidCode(ADDOP, mid, new std::string("0"), listnode->name, false);
+								}
+								else{
+									//如果不活跃，还是需要判断最后一句四元式有没有用到这个标识符
+									std::cout << *listnode->name << "被删去" << std::endl;
+								}
+							}					
 					}
 					//然后只有可能是#RET了
 					else
@@ -550,9 +650,12 @@ void Compiler::DAG()
 				}
 			}
 		}
-		//这里处理最后一个跳转语句
-		midcode *endcode = this->codes[end - 1];
-		this->pushMidCode(endcode->op, endcode->op1name, endcode->op2name, endcode->rstname, false);
+		//这里看是否需要处理最后一句
+		if(endindex == end - 1)
+		{
+			midcode *endcode = this->codes[end - 1];
+			this->pushMidCode(endcode->op, endcode->op1name, endcode->op2name, endcode->rstname, false);
+		}
 	}
 }
 
@@ -602,28 +705,27 @@ void Compiler:: dataFlowAnalysis()
 {
 
 	//既然是以函数作为块来分析，那么需要先按函数分
+	bool **use = new bool*[this->blockIndex];
+	bool **def = new bool*[this->blockIndex];
+	bool **in = new bool*[this->blockIndex];
+	bool **out = new bool*[this->blockIndex];
+	//use def in out 都用bool数组表示
 	for(int i = 0 ; i < this->funcNum ; i++)
 	{
 		//表示当前函数的下标
 		int funcref = i;
+		//接下来begin就是函数的开始，end就是函数的结束,首先遍历一遍，计算每个块的use和def集合
 		int blockbegin = this->funcBlockBegin[i];
 		int blockend = i + 1 >= funcNum ? this->blockIndex : this->funcBlockBegin[i + 1];
 		int symnum = this->funcSymNum[funcref];
-		//接下来begin就是函数的开始，end就是函数的结束,首先遍历一遍，计算每个块的use和def集合
-		bool **use = new bool*[this->blockIndex];
-		bool **def = new bool*[this->blockIndex];
-		bool **in = new bool*[this->blockIndex];
-		bool **out = new bool*[this->blockIndex];
-		for(int j = 0 ; j < this->blockIndex ; j ++)
+		//首先初始化所有的in / use / def /out 集合为false
+		for(int j = blockend - 1 ; j >= blockbegin ; j--)
 		{
 			use[j] = new bool[symnum];
 			def[j] = new bool[symnum];
 			in[j] = new bool[symnum];
 			out[j] = new bool[symnum];
 		}
-		//use def in out 都用bool数组表示
-		//首先初始化所有的in / use / def /out 集合为false
-
 		for(int j = blockend - 1 ; j >= blockbegin ; j --)
 		{
 			//首先遍历一遍，设置好每个基本块的use集合和def集合
@@ -951,7 +1053,7 @@ void Compiler:: dataFlowAnalysis()
 
 		//这里需要把可以分配寄存器的给提取出来，因为冲突图只需要考虑这些变量，对于数组不需要考虑
 		int nodenum = 0;
-		int node2sym[100];
+		int node2sym[1000];
 		for(int j = 0 ; j < symnum ; j++)
 		{
 			symbol *sym = this->funcSymTab[funcref][j];
@@ -960,13 +1062,16 @@ void Compiler:: dataFlowAnalysis()
 				node2sym[nodenum ++] = j;
 			}
 		}
-		//这样就把参与冲突图建立的变量给提取出来了
+		//这样就把参与冲突图建立的变量给提取出来了,这里先不管这个变量有没有跨越基本块
+		//只要它是一个局部的临时变量或者是简单变量或者是参数变量，那么它就可以被分配寄存器
 
 
 		ConflictNode **nodearray = new ConflictNode*[nodenum];
 		for(int j = 0 ; j < nodenum ; j++)
 		{
 			ConflictNode *node = new ConflictNode();
+			//bug:这里没有把这个新new的结点放到nodearray数组里
+			nodearray[j] = node;
 			node->edgenum = 0;
 			for(int k = 0 ; k < nodenum ; k++)
 			{
@@ -1009,7 +1114,7 @@ void Compiler:: dataFlowAnalysis()
 		//冲突图构建完毕，接下来根据这个冲突图按照算法分配寄存器，这里暂定可用寄存器有14个
 		int *order = new int[nodenum];
 		int orderindex = 0;
-		//记录哪些结点不被分配寄存器，为false表示分配寄存器，为true表示要被分配寄存器
+		//记录哪些结点不被分配寄存器，为false表示分配寄存器，为true表示不被分配寄存器
 		bool *noallocflag = new bool[nodenum];
 		//记录哪些节点被移走了
 		bool *outflag = new bool[nodenum];
@@ -1110,7 +1215,7 @@ void Compiler:: dataFlowAnalysis()
 				for(int k = 0 ; k < nodenum ; k++)
 				{
 					//如果相连而且相连的这个节点已经加入了新图中且相连的这个节点不是一个未分配寄存器的
-					if(node->connect[k] && isadd[k] && noallocflag[k])
+					if(node->connect[k] && isadd[k] && !noallocflag[k])
 					{
 						//得到它的寄存器编号
 						int banregindex = regalloc[k];
@@ -1136,6 +1241,13 @@ void Compiler:: dataFlowAnalysis()
 		}
 		//到这里好像就分配完毕咯！
 
+		//这里输出一下分配情况
+		for(int j = 0 ; j < symnum ; j++)
+		{
+			symbol *sym = this->funcSymTab[funcref][j];
+			std::cout << *sym->name << " 被分配了 " << sym->regIndex << " 号寄存器" << std::endl;
+		}
+
 		//释放空间
 		delete[] regalloc;
 		delete[] isadd;
@@ -1147,18 +1259,18 @@ void Compiler:: dataFlowAnalysis()
 			delete nodearray[j];
 		}
 		delete[] nodearray;
-		for(int j = 0 ; j < this->blockIndex ; j++)
+		for(int j = blockend - 1 ; j >= blockbegin ; j--)
 		{
 			delete[] use[j];
 			delete[] def[j];
 			delete[] in[j];
 			delete[] out[j];
 		}
-		delete[] use;
-		delete[] def;
-		delete[] in;
-		delete[] out;
 	}
+	delete[] use;
+	delete[] def;
+	delete[] in;
+	delete[] out;
 }
 
 
@@ -1208,7 +1320,6 @@ void Compiler::smallOptimize()
 				//首先把这个lab语句保存下来
 				this->codes[this->midindex++] = code;
 				//因为会跳过一些lab语句，所以循环下一次可能不是从下一个开始，nexti记录了i应为什么值
-				int nexti = i;
 				for(int j = i + 1 ; j < index ; j++)
 				{
 
@@ -1216,13 +1327,11 @@ void Compiler::smallOptimize()
 					if(labcode->op != LABOP)
 					{
 						//如果遇到了不是lab的情况，那么直接break
-						//这里再把nexti赋回来
-						i = nexti;
 						break;
 					}
 					else{
 						//如果遇到了连续的lab，那么把所有这个lab都替换为result
-						nexti ++;
+						i ++;
 						std::string *lab = labcode->rstname;
 						for(int k = 0 ; k < index ; k++)
 						{
@@ -1256,15 +1365,42 @@ void Compiler::smallOptimize()
 					std::cout << "被删除" << std::endl << std::endl;;
 					i ++;
 				}
-				else if(deletecode->op == LABOP && this->isIdEqual(*deletecode->rstname, *code->rstname)){
-					//此时不保存这个code即可
-					this->writeMidCode(code);
-					
-					std::cout << "被删除" << std::endl << std::endl;
-				}
 				else{
 					//这里记得把code给保存了！
 					this->codes[this->midindex ++] = code;
+				}
+			}
+			break;
+		default:
+			this->codes[this->midindex++] = code;
+		}
+	}
+	//这里第二遍遍历可以删除 goto label 和labbel 连续出现的情况
+	index = this->midindex;
+	this->midindex = 0;
+	for(int i = 0 ; i < index ; i++)
+	{
+		midcode *code = this->codes[i];
+		std::string *op1name = code->op1name;
+		std::string *op2name = code->op2name;
+		std::string *rstname = code->rstname;
+		switch(code->op)
+		{
+			//主要删除 goto label和后一句label是一样的情况，注意此时要保留的是后一句的lab而不是前一句的goto
+			//还要注意，如果后一句不满足删除情况，那么这个goto语句是需要保留下来的
+		case GOTOOP:
+			{
+				midcode *nextcode = this->codes[i + 1];
+				if(nextcode->op == LABOP && this->isIdEqual(*nextcode->rstname, *code->rstname)){
+					//此时不保存这个code即可，注意保存后一句的label
+					this->writeMidCode(code);
+					
+					std::cout << "被删除" << std::endl << std::endl;
+					this->codes[this->midindex++] = nextcode;
+					i++;
+				}
+				else{
+					this->codes[this->midindex++] = code;
 				}
 			}
 			break;

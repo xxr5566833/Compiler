@@ -21,6 +21,9 @@ Compiler::Compiler(char *path)
 	ss.str("");
 	ss << path << "_mipscode.asm";
 	this->objectFile = std::fstream(ss.str(), std::ios::out);
+	ss.str("");
+	ss << path << "_symboltab.txt";
+	this->symtabFile = std::fstream(ss.str(), std::ios::out);
 	this->sym = std::string();
 	this->lineCount = 0;
 	this->warningList = std::vector<warning*>();
@@ -49,13 +52,14 @@ void Compiler:: begin()
 	this->divideToBlock();
 	this->printBlock();
 	this->initBlockConnect();
-//	this->printBlockConnect();
+	this->printBlockConnect();
 
 	this->dataFlowAnalysis();
 
-//	this->DAG();
+	this->DAG();
 
 	this->writeMidCodetoFile(this->optimizeFile);
+	this->writeSymtoFile();
 	this->objectInit();
 	this->generate();
 	this->warningPrint();

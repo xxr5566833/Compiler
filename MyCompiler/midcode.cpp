@@ -34,7 +34,7 @@ const char *midneg = "-";
 
 const char *midassign = "=";
 
-const char *middiv = "\\";
+const char *middiv = "/";
 
 const char *midmul = "*";
 

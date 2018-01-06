@@ -86,7 +86,7 @@ $t24 = $t24 + 1
 $t23 = $t23 * $t24
 $t25 = _simple_int_num + 0
 $t25 = $t25 + 1
-$t23 = $t23 \ $t25
+$t23 = $t23 / $t25
 if $t23 == 0 then goto $label10
 $t26 = 1 + 0
 _array_int_fibarray[1] = $t26
@@ -323,7 +323,7 @@ $t100 = _simple_int_length + 0
 $t101 = _simple_int_length + 0
 $t101 = $t101 * _simple_int_length
 $t100 = $t100 + $t101
-$t100 = $t100 \ _simple_int_length
+$t100 = $t100 / _simple_int_length
 $t100 = $t100 - 1
 _simple_int_length = $t100 + 0
 goto $label33
@@ -500,11 +500,11 @@ $t139 = 95 * $t139
 printf $t139
 printf 32
 $t140 = _array_char_a[1]
-$t140 = 43 \ $t140
+$t140 = 43 / $t140
 printf $t140
 printf 33
 $t141 = _array_char_a[1]
-$t141 = $t141 \ -400
+$t141 = $t141 / -400
 printf $t141
 printf 34
 push 47
@@ -520,11 +520,11 @@ printf 36
 push 5
 call fib
 $t143 = #RET + 0
-$t143 = 1000 \ $t143
+$t143 = 1000 / $t143
 printf $t143
 printf 37
 $t144 = _simple_char_t + 0
-$t144 = 95 \ $t144
+$t144 = 95 / $t144
 push 1
 call fib
 $t144 = $t144 * #RET
@@ -537,7 +537,7 @@ $t145 = 355200 * $t145
 printf $t145
 printf 39
 $t146 = _simple_char_t + 0
-$t146 = 355200 \ $t146
+$t146 = 355200 / $t146
 printf $t146
 printf 40
 $t147 = _array_char_a[5]
@@ -555,8 +555,8 @@ $t148 = $t148 * #RET
 printf $t148
 printf 41
 $t151 = _simple_char_t + 0
-$t151 = 355200 \ $t151
-$t151 = $t151 \ 355200
+$t151 = 355200 / $t151
+$t151 = $t151 / 355200
 $t152 = _array_int_a[20]
 $t151 = $t151 * $t152
 printf $t151
@@ -603,7 +603,7 @@ $t163 = #RET + 0
 $t164 = _array_int_a[$t163]
 $t165 = _array_int_a[0]
 $t166 = _array_int_a[0]
-$t165 = $t165 \ $t166
+$t165 = $t165 / $t166
 push $t165
 call fib
 $t167 = #RET + 0
@@ -637,7 +637,7 @@ $t175 = #RET + 0
 $t176 = _array_int_a[$t175]
 $t177 = _array_int_a[0]
 $t178 = _array_int_a[0]
-$t177 = $t177 \ $t178
+$t177 = $t177 / $t178
 push $t177
 call fib
 $t179 = #RET + 0
@@ -652,8 +652,8 @@ $t182 = #RET + 0
 $t183 = _array_int_a[$t182]
 $t183 = 0 - $t183
 $t184 = _simple_char_t + 0
-$t184 = 355200 \ $t184
-$t184 = $t184 \ 355200
+$t184 = 355200 / $t184
+$t184 = $t184 / 355200
 $t185 = _array_int_a[20]
 $t184 = $t184 * $t185
 $t183 = $t183 + $t184
@@ -671,7 +671,7 @@ $t188 = #RET + 0
 $t189 = _array_int_a[$t188]
 $t190 = _array_int_a[0]
 $t191 = _array_int_a[0]
-$t190 = $t190 \ $t191
+$t190 = $t190 / $t191
 push $t190
 call fib
 $t192 = #RET + 0
@@ -712,7 +712,7 @@ $t203 = #RET + 0
 $t204 = _array_int_a[$t203]
 $t205 = _array_int_a[0]
 $t206 = _array_int_a[0]
-$t205 = $t205 \ $t206
+$t205 = $t205 / $t206
 push $t205
 call fib
 $t207 = #RET + 0
@@ -729,4 +729,202 @@ $t212 = _array_char_a[5]
 push $t212
 call returnChar
 $t213 = #RET + 0
-$t214 = _array
+$t214 = _array_char_a[5]
+push $t214
+call returnChar
+$t213 = $t213 * #RET
+$t215 = _array_char_a[5]
+push $t215
+call returnChar
+$t213 = $t213 * #RET
+$t213 = 95 * $t213
+$t211 = $t211 - $t213
+push 6
+call fib
+$t216 = #RET + 0
+push $t216
+call fib
+$t217 = #RET + 0
+push 5
+call fib
+$t218 = #RET + 0
+$t217 = $t217 - $t218
+push $t217
+call fib
+$t219 = #RET + 0
+$t219 = 0 - $t219
+$t211 = $t211 - $t219
+push 0
+call fib
+$t220 = #RET + 0
+$t220 = 355200 * $t220
+$t211 = $t211 + $t220
+printf $t211
+printf 50
+push 5
+call fib
+$t221 = #RET + 0
+$t221 = 1000 / $t221
+$t221 = $t221 - 200
+push 0
+call fib
+$t222 = #RET + 0
+push $t222
+call fib
+$t223 = #RET + 0
+push $t223
+call fib
+$t224 = #RET + 0
+$t225 = _array_int_a[$t224]
+$t226 = _array_int_a[0]
+$t227 = _array_int_a[0]
+$t226 = $t226 / $t227
+push $t226
+call fib
+$t228 = #RET + 0
+push $t228
+call fib
+$t229 = #RET + 0
+$t230 = _array_int_a[$t229]
+$t225 = $t225 - $t230
+push $t225
+call fib
+$t231 = #RET + 0
+$t232 = _array_int_a[$t231]
+$t233 = _array_char_a[5]
+push $t233
+call returnChar
+$t234 = #RET + 0
+$t235 = _array_char_a[5]
+push $t235
+call returnChar
+$t234 = $t234 * #RET
+$t236 = _array_char_a[5]
+push $t236
+call returnChar
+$t234 = $t234 * #RET
+$t234 = 95 * $t234
+$t232 = $t232 - $t234
+push 5
+call fib
+$t237 = #RET + 0
+$t237 = 3 + $t237
+push $t237
+call fib
+$t238 = #RET + 0
+push 5
+call fib
+$t239 = #RET + 0
+$t238 = $t238 - $t239
+push $t238
+call fib
+$t240 = #RET + 0
+push $t240
+call fib
+$t241 = #RET + 0
+$t241 = 0 - $t241
+$t232 = $t232 - $t241
+push 0
+call fib
+$t242 = #RET + 0
+$t242 = 355200 * $t242
+$t232 = $t232 + $t242
+push 0
+call fib
+$t243 = #RET + 0
+push $t243
+call fib
+$t244 = #RET + 0
+push $t244
+call fib
+$t245 = #RET + 0
+$t246 = _array_int_a[$t245]
+$t247 = _array_int_a[0]
+$t248 = _array_int_a[0]
+$t247 = $t247 / $t248
+push $t247
+call fib
+$t249 = #RET + 0
+push $t249
+call fib
+$t250 = #RET + 0
+$t251 = _array_int_a[$t250]
+$t246 = $t246 - $t251
+push $t246
+call fib
+$t252 = #RET + 0
+$t253 = _array_int_a[$t252]
+$t254 = _array_char_a[5]
+push $t254
+call returnChar
+$t255 = #RET + 0
+$t256 = _array_char_a[5]
+push $t256
+call returnChar
+$t255 = $t255 * #RET
+$t257 = _array_char_a[5]
+push $t257
+call returnChar
+$t255 = $t255 * #RET
+$t255 = 95 * $t255
+$t253 = $t253 - $t255
+$t253 = 0 - $t253
+push 5
+call fib
+$t258 = #RET + 0
+$t258 = 3 + $t258
+push $t258
+call fib
+$t259 = #RET + 0
+push 5
+call fib
+$t260 = #RET + 0
+$t259 = $t259 - $t260
+push $t259
+call fib
+$t261 = #RET + 0
+push $t261
+call fib
+$t262 = #RET + 0
+$t262 = 0 - $t262
+$t253 = $t253 - $t262
+push 0
+call fib
+$t263 = #RET + 0
+$t263 = 355200 * $t263
+$t253 = $t253 + $t263
+$t232 = $t232 / $t253
+$t221 = $t221 + $t232
+push $t221
+call fib
+$t264 = #RET + 0
+printf $t264
+main3$end:
+ret main3
+init main
+printf 51
+scanf choose char choose
+$t265 = choose + 0
+$t266 = 97 + 0
+if $t266 != $t265 then goto $label44
+call main1
+goto $label43
+$label44:
+$t267 = 98 + 0
+if $t267 != $t265 then goto $label45
+call main2
+goto $label43
+$label45:
+$t268 = 99 + 0
+if $t268 != $t265 then goto $label46
+call main3
+goto $label43
+$label46:
+$t269 = 100 + 0
+if $t269 != $t265 then goto $label47
+call main4
+goto $label43
+$label47:
+printf 52
+$label43:
+exit 
