@@ -1,6 +1,6 @@
 #include "Compiler.h"
 
-const int baseAddress = 0x10000000 / 4;
+const int baseAddress = 0;
 
 //mips保留字
 std::string *SW = new std::string("sw");
@@ -51,6 +51,7 @@ std::string *SLL = new std::string("sll");
 
 std::string *MOVE = new std::string("move");
 
+std::string *ADDU = new std::string("addu");
 
 
 std::string *SP = new std::string("$sp");
@@ -58,6 +59,8 @@ std::string *SP = new std::string("$sp");
 std::string *FP = new std::string("$fp");
 
 std::string *RA = new std::string("$ra");
+
+std::string *GP = new std::string("$gp");
 
 //t9统一作为操作数1使用的默认寄存器
 
@@ -119,7 +122,7 @@ void Compiler::initAscii()
 
 void Compiler::pushOrder(std::string *order)
 {
-	//std::cout << *order;
+	std::cout << *order;
 	std::string *save = new std::string();
 	*save = *order;
 	this->mipsCodes[this->mipsIndex++] = save;
@@ -191,44 +194,6 @@ void Compiler::genMipsLabel(std::string *label)
 	delete newlab;
 }
 
-void Compiler::initConstAndVar(symbol *sym, int initaddress)
-{
-	//表示是全局的常量
-	if(sym == 0)
-	{
-		for(int i = 0 ; i < this->top ; i++)
-		{
-			symbol *sym = this->symTab[i];
-			switch(sym->symbolType)
-			{
-			case CONSTSYM:
-				this->generateOrder(LI, T9, sym->feature);
-				//这里需要相对于第一个常量的起始地址偏移
-				this->generateOrder(SW, T9, sym->address * 4 + this->strAddress, R0);
-				break;
-			}
-		}
-		//std::cout << this->address;
-	}
-	//表示是局部的常量和变量,此时传入的初始地址为0，需要使用当前的栈指针来寻址
-	else{
-		symbol **symtab = this->funcSymTab[sym->ref];
-		for(int i = 0 ; i < this->funcSymNum[sym->ref] ; i++)
-		{
-			symbol *sym = symtab[i];
-			//std::cout << *sym->name << std::endl;
-			switch(sym->symbolType)
-			{
-			case CONSTSYM:
-				this->generateOrder(LI, T9, sym->feature);
-				//bug:这里在修改时修改错了，变成了li，真的震惊，因为我发现我的测试文件里竟然没有在函数内部声明常量的！
-				this->generateOrder(SW, T9, initaddress - sym->address * 4, SP);
-			}
-		}
-		
-	}
-}
-
 void Compiler::funcBegin(std::string *name)
 {
 	//进入时 sp已经存好了实参，所以sp的地址已经改变，为了方便处理，这里把sp的指针变回放入形参之前的位置
@@ -260,8 +225,6 @@ void Compiler::funcBegin(std::string *name)
 	currentaddress += 1;
 	this->generateOrder(SW, RA, - currentaddress * 4, SP);
 	currentaddress += 1;
-	//保存常量
-	this->initConstAndVar(sym, 0);
 	//当前帧指针等于之前栈指针
 	this->generateOrder(ADD, FP, SP, R0);
 	//当前栈指针修改
@@ -359,8 +322,7 @@ void Compiler::loadReg(std::string *rs, std::string *reg)
 			int offset = sym->address;
 			if(global)
 			{
-				//全局变量是需要相对于字符串区偏移的
-				this->generateOrder(LW, reg, this->strAddress + 4 * offset, R0);		
+				this->generateOrder(LW, reg, 4 * offset, GP);		
 			}
 			else{
 				this->generateOrder(LW, reg, - offset * 4, FP);
@@ -408,32 +370,31 @@ void Compiler:: storeReg(std::string *rd, std::string *reg){
 			ss << (regindex < (kMaxRegAvailable / 2) ? "$t" : "$s") << regindex % (kMaxRegAvailable / 2);
 			*reg = ss.str();
 			this->allReg[regindex] = sym->name;
-			/*if(old == 0)
-			{
-				//表示这个寄存器未被分配
-				//并维护allReg数组 
-				this->allReg[regindex] = sym->name;
-			}
-			else{
-				//这个寄存器已被分配，那么看被分配的是不是和当前需要的是一样的，如果是一样的那么可以直接用
-				if(this->isIdEqual(*rd, *old))
-				{
-					//那么直接用即可，什么都不用做,直接用之前设置的reg
-				}
-				else{
-					//被分配，而且被分配的不是这个标识符，那么先把原来的写回，
-					symbol *oldsym = 0;
-					bool oldglobal = false;
-					this->findSym(old, &oldsym, &oldglobal);
-					//既然是被分配寄存器的，那么一定是局部变量
-					this->generateOrder(SW, reg, - oldsym->address * 4, FP);
-					//并维护allreg数组
-					this->allReg[regindex] = sym->name;
-				}
-			}*/
 		}
 	}
 
+}
+
+//根据情况看是否要写回到内存里
+void Compiler::writeBack(std::string *rd, std::string *reg)
+{
+	if(!this->isOperandRet(rd))
+	{
+		symbol *sym = 0;
+		bool global = false;
+		this->findSym(rd, &sym, &global);
+		if(sym && sym->regIndex == -1)
+		{
+			//如果是不分配寄存器的标识符，那么此时还需要写回相应的地址里去
+			if(global)
+			{
+				this->generateOrder(SW, reg, 4 * sym->address, GP);		
+			}
+			else{
+				this->generateOrder(SW, reg, - sym->address * 4, FP);
+			}
+		}
+	}
 }
 
 void Compiler::handleBranch(midcode *code)
@@ -541,28 +502,6 @@ void Compiler::handleCall(std::string *name)
 	this->generateOrder(JAL, newlab);
 	this->generateOrder(NOP);
 	delete newlab;
-}
-
-//根据情况看是否要写回到内存里
-void Compiler::writeBack(std::string *rd, std::string *reg)
-{
-	if(!this->isOperandRet(rd))
-	{
-		symbol *sym = 0;
-		bool global = false;
-		this->findSym(rd, &sym, &global);
-		if(sym && sym->regIndex == -1)
-		{
-			//如果是不分配寄存器的标识符，那么此时还需要写回相应的地址里去
-			if(global)
-			{
-				this->generateOrder(SW, reg, this->strAddress + 4 * sym->address, R0);		
-			}
-			else{
-				this->generateOrder(SW, reg, - sym->address * 4, FP);
-			}
-		}
-	}
 }
 
 void Compiler::handleAdd(midcode *code)
@@ -717,12 +656,11 @@ void Compiler::handleRarray(midcode *code)
 	this->loadReg(code->op2name, reg2);
 	this->generateOrder(ADDI, T9, reg2, sym->address);
 	this->generateOrder(SLL, T9, T9, 2);
-
 	this->storeReg(code->rstname, rstreg);
 	if(global)
 	{
-		//计算好偏移后相对于第一个常量寻址
-		this->generateOrder(LW, rstreg, this->strAddress, T9);
+		this->generateOrder(ADDU, T9, T9, GP);
+		this->generateOrder(LW, rstreg, 0, T9);
 	}
 	else{
 		this->generateOrder(SUB, T9, FP, T9);
@@ -757,7 +695,8 @@ void Compiler:: handleLarray(midcode *code)
 	this->loadReg(rs, reg1);
 	if(global)
 	{
-		this->generateOrder(SW, reg1, this->strAddress, T7);
+		this->generateOrder(ADDU, T7, T7, GP);
+		this->generateOrder(SW, reg1, 0, T7);
 	}
 	else{
 		this->generateOrder(SUB, T7, FP, T7);
@@ -824,8 +763,6 @@ void Compiler::generate()
 {
 	this->initAscii();
 	this->generateOrder(new std::string(".text"));
-	//存储全局常量
-	this->initConstAndVar(0, this->mipsAddress);
 	
 	//开始读中间代码了
 	//加个gotomain

@@ -60,9 +60,9 @@ void Compiler:: begin()
 	}
 	//先生成优化前的中间代码和目标代码，然后生成优化后的中间代码和目标代码
 	this->writeMidCodetoFile(this->midFileBefore);
-	this->objectInit();
+	/*this->objectInit();
 	this->generate();
-	this->writeMipsOrderToFile(this->objectFileBefore);
+	this->writeMipsOrderToFile(this->objectFileBefore);*/
 	//然后开始优化，并生成优化后的中间代码和目标代码
 	this->initOptimize();
 	this->smallOptimize();
