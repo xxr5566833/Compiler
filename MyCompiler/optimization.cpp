@@ -281,16 +281,19 @@ void Compiler::DAG()
 {
 	//限制一个基本块最多有100个节点
 	const int kMaxNodeNum = 100;
+	int oldindex = this->midindex;
 	this->midindex = 0;
 	for(int i = 0 ; i < this->blockIndex ; i++)
 	{
 		int blockindex = i;
 		int begin = this->blockBegin[i];
-		int end = i + 1 >= this->blockIndex ? this->midindex : this->blockBegin[i + 1];
+		//bug :midindex是变化的了，已经不能用于可用的midcode的下标了，还好其他程序测出了这个bug
+		int end = i + 1 >= this->blockIndex ? oldindex : this->blockBegin[i + 1];
 		int tablength = 0;
 		int nodeindex = 0;
-		ListNode *nodetab[kMaxNodeNum];
-		Node *dag[kMaxNodeNum];
+		ListNode *nodetab[kMaxNodeNum * 5];
+		//bug: 有的测试文件生成的dag图节点超过了100个。。
+		Node *dag[kMaxNodeNum * 5];
 		//这里还得根据当前blockindex判断在哪个函数里。。
 		int funcref = -1;
 		for(int k = 0 ; k < this->funcNum ; k++)
@@ -487,10 +490,11 @@ void Compiler::DAG()
 		}
 		std::cout << "第" << i << "块有优化" << std::endl;
 		//建立好dag图和节点表以后，就可以导出新的中间代码了
-		Node *queue[kMaxNodeNum] = {0};
+		Node *queue[kMaxNodeNum * 5] = {0};
 		int queuelength = 0;
-		Node *midqueue[kMaxNodeNum] = {0};
-		bool flag[kMaxNodeNum] = {0};
+		Node *midqueue[kMaxNodeNum * 5] = {0};
+		//bug:因为数组空间开的太小，导致flag[超出最大的下标]一直为true。。tmd
+		bool flag[kMaxNodeNum * 5] = {0};
 		int midlength = 0;
 		//首先把所有中间节点进入队列
 		for(int j = 0 ; j < nodeindex ; j++)
@@ -993,6 +997,7 @@ void Compiler:: dataFlowAnalysis()
 		}
 		//到这里就把这个函数的in/out集合给求好了
 		//这里输出一下结果
+		
 		for(int j = blockend - 1 ; j >= blockbegin ; j --)
 		{
 			int blockindex = j;
@@ -1046,7 +1051,7 @@ void Compiler:: dataFlowAnalysis()
 			}
 		}
 		std::cout << "活跃变量分析完毕" << std::endl;
-
+		
 
 		//开始构建冲突图，给每个局部的临时变量和简单变量分配属于它们的寄存器
 		//目前定义：变量的活跃范围：以基本块为单位，1.该基本块的def集合有这个变量，那么这个基本块中该变量活跃2.该基本块的in集合内有这个变量，这个基本块

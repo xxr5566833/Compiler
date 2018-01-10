@@ -1414,9 +1414,10 @@ void Compiler:: printfStatement()
 	if(this->tok.id == STRING)
 	{
 		//写字符串
-		this->pushString(this->tok.val.str);
+		int strindex = -1;
+		this->pushString(this->tok.val.str, &strindex);
 		num = new std::string();
-		this->int2string(num, this->stringNum - 1);
+		this->int2string(num, strindex);
 		this->inSym();
 		if(this->tok.id == COMMA)
 		{
@@ -1511,6 +1512,10 @@ void Compiler:: returnStatement(bool *returnflag, eRetType returntype, std::stri
 	//bug:注意这里main函数不需要返回！这里其他函数的return才有效，main函数因为根本不需要main的结束标号
 	if(!this->isIdEqual(std::string("main"), *name))
 		this->pushMidCode(GOTOOP, new std::string(), new std::string(), &(ss.str()), false);
+	else{
+		//bug:如果是main函数，那么直接生成EXITOP
+		this->pushMidCode(EXITOP, new std::string(), new std::string(), new std::string(), false);
+	}
 	//std::cout << "这是一个 <返回语句>" << std::endl;
 }
 

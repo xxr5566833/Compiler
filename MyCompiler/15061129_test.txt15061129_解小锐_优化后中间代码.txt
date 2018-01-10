@@ -357,85 +357,85 @@ i = $t126 + 0
 goto $label41
 $label42:
 i = 0 + 0
-printf 10
+printf 4
 printf 95
 _simple_char_t = 65 + 0
-printf 11
+printf 4
 $t127 = _simple_char_t + 0
 printf $t127
-printf 12
+printf 4
 printf 43
-printf 13
+printf 4
 $t128 = _array_char_a[1]
 printf $t128
-printf 14
+printf 4
 $t129 = _array_char_a[5]
 push $t129
 call returnChar
 $t130 = #RET + 0
 printf $t130
-printf 15
+printf 4
 call returna
 $t131 = #RET + 0
 printf $t131
-printf 16
+printf 4
 printf 34545
-printf 17
+printf 4
 printf -400
-printf 18
+printf 4
 printf -1563
-printf 19
+printf 4
 printf 1000
-printf 20
+printf 4
 printf 0
-printf 21
+printf 4
 printf -888
-printf 22
+printf 4
 printf 456
-printf 23
+printf 4
 $t132 = _array_int_a[20]
 printf $t132
-printf 24
+printf 4
 $t133 = _array_int_a[1]
 printf $t133
-printf 25
+printf 4
 push 0
 call fib
 $t134 = #RET + 0
 printf $t134
-printf 26
+printf 4
 push 1
 call fib
 $t135 = #RET + 0
 printf $t135
-printf 27
+printf 4
 push 5
 call fib
 $t136 = #RET + 0
 printf $t136
-printf 28
+printf 4
 printf 100
-printf 29
+printf 4
 $t137 = _array_int_a[20]
 printf $t137
-printf 30
+printf 4
 push 5
 call fib
 $t138 = #RET + 0
 printf $t138
-printf 31
+printf 4
 $t139 = _simple_char_t + 0
 $t139 = 95 * $t139
 printf $t139
-printf 32
+printf 4
 $t140 = _array_char_a[1]
 $t140 = 43 / $t140
 printf $t140
-printf 33
+printf 4
 $t141 = _array_char_a[1]
 $t141 = $t141 / -400
 printf $t141
-printf 34
+printf 4
 push 47
 call returnChar
 $t142 = #RET + 0
@@ -443,32 +443,32 @@ push 1
 call fib
 $t142 = $t142 * #RET
 printf $t142
-printf 35
+printf 4
 printf 355200
-printf 36
+printf 4
 push 5
 call fib
 $t143 = #RET + 0
 $t143 = 1000 / $t143
 printf $t143
-printf 37
+printf 4
 $t144 = _simple_char_t + 0
 $t144 = 95 / $t144
 push 1
 call fib
 $t144 = $t144 * #RET
 printf $t144
-printf 38
+printf 4
 push 0
 call fib
 $t145 = #RET + 0
 $t145 = 355200 * $t145
 printf $t145
-printf 39
+printf 4
 $t146 = _simple_char_t + 0
 $t146 = 355200 / $t146
 printf $t146
-printf 40
+printf 4
 $t147 = _array_char_a[5]
 push $t147
 call returnChar
@@ -482,14 +482,14 @@ push $t150
 call returnChar
 $t148 = $t148 * #RET
 printf $t148
-printf 41
+printf 4
 $t151 = _simple_char_t + 0
 $t151 = 355200 / $t151
 $t151 = $t151 / 355200
 $t152 = _array_int_a[20]
 $t151 = $t151 * $t152
 printf $t151
-printf 42
+printf 4
 $t153 = _array_char_a[5]
 push $t153
 call returnChar
@@ -504,7 +504,7 @@ call returnChar
 $t154 = $t154 * #RET
 $t154 = 95 * $t154
 printf $t154
-printf 43
+printf 4
 push 6
 call fib
 $t157 = #RET + 0
@@ -519,7 +519,7 @@ push $t158
 call fib
 $t160 = #RET + 0
 printf $t160
-printf 44
+printf 4
 push 0
 call fib
 $t161 = #RET + 0
@@ -545,14 +545,14 @@ call fib
 $t170 = #RET + 0
 $t171 = _array_int_a[$t170]
 printf $t171
-printf 45
+printf 4
 printf -888
-printf 46
+printf 4
 call returna
 $t172 = #RET + 0
 $t172 = 0 - $t172
 printf $t172
-printf 47
+printf 4
 push 0
 call fib
 $t173 = #RET + 0
@@ -585,7 +585,7 @@ $t185 = _array_int_a[20]
 $t184 = $t184 * $t185
 $t183 = $t183 + $t184
 printf $t183
-printf 48
+printf 4
 push 0
 call fib
 $t186 = #RET + 0
@@ -625,7 +625,7 @@ $t198 = $t198 * #RET
 $t198 = 95 * $t198
 $t196 = $t196 - $t198
 printf $t196
-printf 49
+printf 4
 push 0
 call fib
 $t201 = #RET + 0
@@ -685,7 +685,7 @@ $t220 = #RET + 0
 $t220 = 355200 * $t220
 $t211 = $t211 + $t220
 printf $t211
-printf 50
+printf 4
 push 5
 call fib
 $t221 = #RET + 0
@@ -825,7 +825,7 @@ printf $t264
 main3$end:
 ret main3
 init main
-printf 51
+printf 10
 scanf choose char choose
 $t265 = choose + 0
 $t266 = 97 + 0
@@ -848,6 +848,6 @@ if $t269 != $t265 then goto $label47
 call main4
 goto $label43
 $label47:
-printf 52
+printf 11
 $label43:
 exit 

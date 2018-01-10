@@ -104,6 +104,8 @@ void Compiler:: pushMidCode(midop op,std::string *operand1, std::string *operand
 		this->optimizeCodes[this->optimizeMidIndex++] = code;
 	else
 		this->codes[this->midindex ++] = code;
+	//this->writeMidCode(code);
+
 }
 
 
@@ -301,8 +303,21 @@ void Compiler:: genLabel(std::string *lab)
 	*lab = ss.str();
 }
 
-void Compiler:: pushString(std::string *str)
+void Compiler:: pushString(std::string *str, int *strindex)
 {
+	//这里增加一条，判断是否有重复的string，如果有，那么就不用push了，直接返回下标即可
+	for(int i = 0 ; i < this->stringNum ; i++)
+	{
+		std::string *tempstr = this->stringTab[i];
+		if(this->isIdEqual(*tempstr, *str))
+		{
+			//一旦string是相同的，那么直接设置好下标，返回
+			*strindex = i;
+			return ;
+		}
+	}
+	//遍历了一遍没有相同的，那么push进数组，然后设置strindex
+	*strindex = this->stringNum;
 	this->stringTab[this->stringNum ++] = str;
 }
 

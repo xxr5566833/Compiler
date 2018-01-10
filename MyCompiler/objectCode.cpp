@@ -85,7 +85,14 @@ const int kMaxSymReg = 8;
 
 void Compiler::objectInit()
 {
+	this->mipsIndex = 0;
+	this->mipsAddress = 0;
+	this->currentRef = -1;
+	this->regInit();
+}
 
+void Compiler::regInit()
+{
 	for(int i = 0 ; i < kMaxRegAvailable ; i++)
 	{
 		this->allReg[i] = 0;
@@ -94,7 +101,6 @@ void Compiler::objectInit()
 
 void Compiler::initAscii()
 {
-	this->objectFile << "#初始化字符串\n";
 	this->generateOrder(new std::string(".data"));
 
 	for(int i = 0 ; i < this->stringNum ; i++)
@@ -111,59 +117,69 @@ void Compiler::initAscii()
 	this->mipsAddress = this->strAddress;
 }
 
-void Compiler::printOrder(std::string *order)
+void Compiler::pushOrder(std::string *order)
 {
 	//std::cout << *order;
-	this->objectFile << *order;
+	std::string *save = new std::string();
+	*save = *order;
+	this->mipsCodes[this->mipsIndex++] = save;
+}
+
+void Compiler::writeMipsOrderToFile(std::fstream &tofile)
+{
+	for(int i = 0 ; i < this->mipsIndex ; i++)
+	{
+		tofile << *(this->mipsCodes[i]);
+	}
 }
 
 void Compiler::generateOrder(std::string *order, std::string *rs, int num)
 {
 	std::stringstream ss = std::stringstream();
 	ss << "\t" << *order << "\t" << *rs << "\t,\t" << num << std::endl;
-	this->printOrder(&ss.str());
+	this->pushOrder(&ss.str());
 }
 
 void Compiler::generateOrder(std::string *order, std::string *rs, int num, std::string *rt)
 {
 	std::stringstream ss = std::stringstream();
 	ss << "\t" << *order << "\t" << *rs << "\t,\t" << num << "(" << *rt << ")" << std::endl;
-	this->printOrder(&ss.str());
+	this->pushOrder(&ss.str());
 }
 
 void Compiler::generateOrder(std::string *order, std::string *rd, std::string *rt, int imme)
 {
 	std::stringstream ss = std::stringstream();
 	ss << "\t" << *order << "\t" << *rd << "\t,\t" << *rt << "\t,\t" << imme << std::endl;
-	this->printOrder(&ss.str());
+	this->pushOrder(&ss.str());
 }
 
 void Compiler::generateOrder(std::string *order, std::string *rd, std::string *rs, std::string *rt)
 {
 	std::stringstream ss = std::stringstream();
 	ss << "\t" << *order << "\t" << *rd << "\t,\t" << *rs << "\t,\t" << *rt << std::endl;
-	this->printOrder(&ss.str());
+	this->pushOrder(&ss.str());
 }
 
 void Compiler:: generateOrder(std::string *order, std::string *rs, std::string *label)
 {
 	std::stringstream ss = std::stringstream();
 	ss << "\t" << *order << "\t" << *rs << "\t,\t" << *label << std::endl;
-	this->printOrder(&ss.str());
+	this->pushOrder(&ss.str());
 }
 
 void Compiler::generateOrder(std::string *order, std::string *target)
 {
 	std::stringstream ss = std::stringstream();
 	ss << "\t" << *order << "\t" << *target << std::endl;
-	this->printOrder(&ss.str());
+	this->pushOrder(&ss.str());
 }
 
 void Compiler::generateOrder(std::string *order)
 {
 	std::stringstream ss = std::stringstream();
 	ss << "\t" << *order << std::endl;
-	this->printOrder(&ss.str());
+	this->pushOrder(&ss.str());
 }
 
 void Compiler::genMipsLabel(std::string *label)
@@ -171,7 +187,7 @@ void Compiler::genMipsLabel(std::string *label)
 	std::string *newlab = new std::string();
 	this->str2Lower(label, newlab);
 	*newlab = *newlab + ":\n";
-	this->printOrder(newlab);
+	this->pushOrder(newlab);
 	delete newlab;
 }
 
@@ -205,7 +221,8 @@ void Compiler::initConstAndVar(symbol *sym, int initaddress)
 			{
 			case CONSTSYM:
 				this->generateOrder(LI, T9, sym->feature);
-				this->generateOrder(LI, T9, initaddress - sym->address * 4, SP);
+				//bug:这里在修改时修改错了，变成了li，真的震惊，因为我发现我的测试文件里竟然没有在函数内部声明常量的！
+				this->generateOrder(SW, T9, initaddress - sym->address * 4, SP);
 			}
 		}
 		
@@ -266,7 +283,7 @@ void Compiler::handleRet(std::string *name)
 	this->generateOrder(LW, FP, currentaddress * 4, SP);
 	currentaddress += 1;
 
-	this->objectInit();
+	this->regInit();
 	//更新每一个寄存器
 	for(int i = kMaxRegAvailable - 1 ; i >= 0 ; i--)
 	{
@@ -355,41 +372,12 @@ void Compiler::loadReg(std::string *rs, std::string *reg)
 			std::stringstream ss = std::stringstream();
 			ss << (regindex < (kMaxRegAvailable / 2) ? "$t" : "$s") << regindex % (kMaxRegAvailable / 2);
 			*reg = ss.str();
-			if(old == 0)
+			//如果是参数，此时如果对应的reg上没有记录或者是和这个记录不是该参数，说明该参数还没有被load进寄存器，需要先把它从内存load到相应的寄存器里
+			if(sym->symbolType == PARASYM &&(!this->allReg[regindex] || !this->isIdEqual(*(this->allReg[regindex]), *sym->name)))
 			{
-				//表示这个寄存器未被分配，那么先把相应地址上的值load到这个寄存器
-				int offset = sym->address;
-				if(global)
-				{
-					//全局变量是需要相对于字符串区偏移的
-					this->generateOrder(LW, reg, this->strAddress + 4 * offset, R0);		
-				}
-				else{
-					this->generateOrder(LW, reg, - offset * 4, FP);
-				}
-				//并维护allReg数组 
-				this->allReg[regindex] = sym->name;
+				this->generateOrder(LW, reg, - sym->address * 4, FP);
 			}
-			else{
-				//这个寄存器已被分配，那么看被分配的是不是和当前需要的是一样的，如果是一样的那么可以直接用
-				if(this->isIdEqual(*rs, *old))
-				{
-					//那么直接用即可，什么都不用做
-				}
-				else{
-					//被分配，而且被分配的不是这个标识符，那么先把原来的写回，再把这个load到寄存器
-					symbol *oldsym = 0;
-					bool oldglobal = false;
-					this->findSym(old, &oldsym, &oldglobal);
-					//既然是被分配寄存器的，那么一定是局部变量，如果临时变量冲突，此时不需要写回，因为下一次不可能再用这个临时变量，只需要把局部变量写回即可
-					if(!this->isOperandTemp(oldsym->name))
-						this->generateOrder(SW, reg, - oldsym->address * 4, FP);
-					//存好以后，再把新的标识符对应的地址上的值load到这个寄存器
-					this->generateOrder(LW, reg, - sym->address * 4, FP);
-					//并维护allreg数组
-					this->allReg[regindex] = sym->name;
-				}
-			}
+			this->allReg[regindex] = sym->name;
 		}
 	}
 }
@@ -419,7 +407,8 @@ void Compiler:: storeReg(std::string *rd, std::string *reg){
 			std::stringstream ss = std::stringstream();
 			ss << (regindex < (kMaxRegAvailable / 2) ? "$t" : "$s") << regindex % (kMaxRegAvailable / 2);
 			*reg = ss.str();
-			if(old == 0)
+			this->allReg[regindex] = sym->name;
+			/*if(old == 0)
 			{
 				//表示这个寄存器未被分配
 				//并维护allReg数组 
@@ -441,7 +430,7 @@ void Compiler:: storeReg(std::string *rd, std::string *reg){
 					//并维护allreg数组
 					this->allReg[regindex] = sym->name;
 				}
-			}
+			}*/
 		}
 	}
 
@@ -833,8 +822,6 @@ void Compiler::handleExit()
 //统一规定sp先用后改变
 void Compiler::generate()
 {
-	this->mipsAddress = 0;
-	this->currentRef = -1;
 	this->initAscii();
 	this->generateOrder(new std::string(".text"));
 	//存储全局常量

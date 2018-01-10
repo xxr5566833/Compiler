@@ -29,6 +29,8 @@ const int kMaxStringNum = 1000;
 const int kMaxBasicBlock = 1000;
 //最大临时变量的数量
 const int kMaxTemp = 1000;
+//最多目标代码条数
+const int kMaxMipsCodes = 10000;
 
 //标识符的类型  与种类分开
 enum eRetType {INTRET = 7, CHARRET, VOIDRET, NOTTYPE };
@@ -242,7 +244,7 @@ private:
 	int stringAddress[kMaxStringNum];
 	//需要一个来记录字符串占用了多少空间
 	int strAddress;
-	void pushString(std::string *str);
+	void pushString(std::string *str, int *strindex);
 	void genMessage(std::string *str, int num);
 
 	//四元式相关
@@ -251,8 +253,6 @@ private:
 	void writeMidCode(midcode *code);
 	//把整个四元式写入文件
 	void writeMidCodetoFile(std::fstream &tofile);
-	//四元式文件
-	std::fstream midFile;
 	//四元式数组
 	midcode* codes[kMaxMidCode];
 	//数组指针
@@ -267,8 +267,11 @@ private:
 	void genLabel(std::string *lab);
 	int label;
 
+
+	//优化前四元式文件
+	std::fstream midFileBefore;
 	//优化后四元式的文件
-	std::fstream optimizeFile;
+	std::fstream midFileAfter;
 	//优化后四元式数组
 	midcode* optimizeCodes[kMaxMidCode];
 	int optimizeMidIndex;
@@ -311,11 +314,18 @@ private:
 	std::fstream blockFile;
 	int tempMap[kMaxTemp];
 
-
-	//目标代码生成
-	std::fstream objectFile;
-	//初始化寄存器池
+	//目标代码优化前文件
+	std::fstream objectFileBefore;
+	//目标代码优化后文件
+	std::fstream objectFileAfter;
+	//目标代码数组
+	std::string *mipsCodes[kMaxMipsCodes];
+	//下标
+	int mipsIndex;
+	//初始化目标代码生成
 	void objectInit();
+	//初始化寄存器池
+	void regInit();
 	//初始化字符串定义
 	void initAscii();
 	//生成目标代码
@@ -332,7 +342,8 @@ private:
 	void generateOrder(std::string *order, std::string *rs, std::string *label);
 	void generateOrder(std::string *order, std::string *target);
 	void generateOrder(std::string *order);
-	void printOrder(std::string *order);
+	void pushOrder(std::string *order);
+	void writeMipsOrderToFile(std::fstream &tofile);
 	//函数的开始
 	void funcBegin(std::string *name);
 	//当前编译的函数在函数表中的位置

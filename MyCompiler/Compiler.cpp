@@ -10,21 +10,25 @@ Compiler::Compiler(char *path)
 		exit(0);
 	}
 	std::stringstream ss = std::stringstream();
-	ss << path << "_block.txt";
+	ss << path << "15061129_解小锐_基本块划分情况.txt";
 	this->blockFile = std::fstream(ss.str(), std::ios::out);
 	ss.str("");
-	ss << path << "_midcode_before.txt";
-	this->midFile = std::fstream(ss.str(), std::ios::out);
+	ss << path << "15061129_解小锐_优化前中间代码.txt";
+	this->midFileBefore = std::fstream(ss.str(), std::ios::out);
 	ss.str("");
-	ss << path << "_midcode_after.txt";
-	this->optimizeFile = std::fstream(ss.str(), std::ios::out);
+	ss << path << "15061129_解小锐_优化后中间代码.txt";
+	this->midFileAfter = std::fstream(ss.str(), std::ios::out);
 	ss.str("");
-	ss << path << "_mipscode.asm";
-	this->objectFile = std::fstream(ss.str(), std::ios::out);
+	ss << path << "15061129_解小锐_优化前目标代码.asm";
+	this->objectFileBefore = std::fstream(ss.str(), std::ios::out);
 	ss.str("");
-	ss << path << "_symboltab.txt";
+	ss << path << "15061129_解小锐_优化后目标代码.asm";
+	this->objectFileAfter = std::fstream(ss.str(), std::ios::out);
+	ss.str("");
+	ss << path << "15061129_解小锐_符号表信息.txt";
 	this->symtabFile = std::fstream(ss.str(), std::ios::out);
 	this->sym = std::string();
+
 	this->lineCount = 0;
 	this->warningList = std::vector<warning*>();
 	this->errorList = std::vector<error*>();
@@ -46,7 +50,20 @@ void Compiler:: begin()
 	this->initWordArray();
 	int i = 0;
 	this->program();
-	this->writeMidCodetoFile(this->midFile);
+	//注意这里如果有错误，那么直接输出错误并结束
+	if(this->errorList.size() > 0)
+	{
+		//说明有错误，结束程序
+		this->warningPrint();
+		this->errorPrint();
+		return ;
+	}
+	//先生成优化前的中间代码和目标代码，然后生成优化后的中间代码和目标代码
+	this->writeMidCodetoFile(this->midFileBefore);
+	this->objectInit();
+	this->generate();
+	this->writeMipsOrderToFile(this->objectFileBefore);
+	//然后开始优化，并生成优化后的中间代码和目标代码
 	this->initOptimize();
 	this->smallOptimize();
 	this->divideToBlock();
@@ -58,12 +75,11 @@ void Compiler:: begin()
 
 	this->DAG();
 
-	this->writeMidCodetoFile(this->optimizeFile);
+	this->writeMidCodetoFile(this->midFileAfter);
 	this->writeSymtoFile();
 	this->objectInit();
 	this->generate();
-	this->warningPrint();
-	this->errorPrint();
+	this->writeMipsOrderToFile(this->objectFileAfter);
 }
 
 //一些所有模块都可能用到的方法加在这里吧
