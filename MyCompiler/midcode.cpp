@@ -90,8 +90,9 @@ void Compiler::int2string(std::string *s, int value)
 	*s = ss.str();
 }
 
-void Compiler:: pushMidCode(midop op,std::string *operand1, std::string *operand2, std::string *rst, bool optimize)
+void Compiler:: pushMidCode(midop op,std::string *operand1, std::string *operand2, std::string *rst)
 {
+	//这里统一重新申请空间
 	midcode *code = new midcode();
 	code->op = op;
 	code->op1name = new std::string();
@@ -100,10 +101,8 @@ void Compiler:: pushMidCode(midop op,std::string *operand1, std::string *operand
 	*(code->op2name) = *operand2;
 	code->rstname = new std::string();
 	*(code->rstname) = *rst;
-	if(optimize)
-		this->optimizeCodes[this->optimizeMidIndex++] = code;
-	else
-		this->codes[this->midindex ++] = code;
+
+	this->codes[this->midindex ++] = code;
 	//this->writeMidCode(code);
 
 }
@@ -111,6 +110,7 @@ void Compiler:: pushMidCode(midop op,std::string *operand1, std::string *operand
 
 void Compiler:: writeMidCodetoFile(std::fstream &tofile)
 {
+	tofile << "一共有" << this->midindex << "条四元式" << std::endl << std::endl; 
 	for(int i = 0 ; i < this->midindex ; i++)
 	{
 		midcode *code = this->codes[i];

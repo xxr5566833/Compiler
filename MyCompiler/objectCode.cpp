@@ -1,7 +1,4 @@
 #include "Compiler.h"
-
-const int baseAddress = 0;
-
 //mips保留字
 std::string *SW = new std::string("sw");
 
@@ -89,7 +86,6 @@ const int kMaxSymReg = 8;
 void Compiler::objectInit()
 {
 	this->mipsIndex = 0;
-	this->mipsAddress = 0;
 	this->currentRef = -1;
 	this->regInit();
 }
@@ -104,6 +100,7 @@ void Compiler::regInit()
 
 void Compiler::initAscii()
 {
+	//因为发现mars的default模式下，.asciiz 存储的地址不是从0x10000000开始的，即之后全局变量的寻址直接从$gp开始即可，所以这里不需要记录strAddress了
 	this->generateOrder(new std::string(".data"));
 
 	for(int i = 0 ; i < this->stringNum ; i++)
@@ -113,16 +110,11 @@ void Compiler::initAscii()
 		ss << "$Message" << i << ":" << ".asciiz" << "\"" << *str << "\"" ;
 		this->generateOrder(&(ss.str()));
 	}
-	this->strAddress = baseAddress * 4;
-	//统一提供400的空间，即可以存400个字符的字符串
-	this->strAddress = this->strAddress + 400;
-	//当前mipsAddress 就是当前字符串存好后的地址
-	this->mipsAddress = this->strAddress;
 }
 
 void Compiler::pushOrder(std::string *order)
 {
-	std::cout << *order;
+	//std::cout << *order;
 	std::string *save = new std::string();
 	*save = *order;
 	this->mipsCodes[this->mipsIndex++] = save;
@@ -130,6 +122,8 @@ void Compiler::pushOrder(std::string *order)
 
 void Compiler::writeMipsOrderToFile(std::fstream &tofile)
 {
+	std::cout << "一共有" << this->mipsIndex << "条目标代码" << std::endl << std::endl;
+	tofile << "#一共有" << this->mipsIndex << "条目标代码" << std::endl << std::endl;
 	for(int i = 0 ; i < this->mipsIndex ; i++)
 	{
 		tofile << *(this->mipsCodes[i]);
@@ -298,7 +292,7 @@ void Compiler::findSym(std::string *name, symbol **resultsym, bool *global)
 
 
 //转化要使用的操作数为对应的寄存器
-void Compiler::loadReg(std::string *rs, std::string *reg)
+void Compiler::getUseReg(std::string *rs, std::string *reg)
 {
 	//bug : 临时变量不能作为全局的来使用，只能作为局部的！直接把他当做一个标识符
 	//reg 传入的是，如果这个变量没有相应的寄存器，那么该变量对应的默认寄存器是什么
@@ -344,7 +338,7 @@ void Compiler::loadReg(std::string *rs, std::string *reg)
 	}
 }
 //把结果操作数转化为相应的寄存器
-void Compiler:: storeReg(std::string *rd, std::string *reg){
+void Compiler:: getResultReg(std::string *rd, std::string *reg){
 
 	//此时rd只有三种情况：标识符 临时变量 #RET
 	if(this->isOperandRet(rd))
@@ -412,7 +406,7 @@ void Compiler::handleBranch(midcode *code)
 	{
 		//如果op1是一个临时变量
 		//获得这个临时变量对应的寄存器
-		this->loadReg(op1, reg1);
+		this->getUseReg(op1, reg1);
 		if(this->isOperandNumber(op2))
 		{
 			//如果第二个操作数是一个数字，那么就把他俩减了以后的结果作为结果操作数
@@ -420,7 +414,7 @@ void Compiler::handleBranch(midcode *code)
 		}
 		else{
 			//第二个操作数是一个临时变量
-			this->loadReg(op2, reg2);
+			this->getUseReg(op2, reg2);
 			//两个操作数都是临时变量，那么就把他俩减了后的结果放在t9，作为最后的判断
 			this->generateOrder(SUB, rstreg, reg1, reg2);
 			//释放空间
@@ -439,7 +433,7 @@ void Compiler::handleBranch(midcode *code)
 		}
 		else{
 			//第二个操作数是一个临时变量
-			this->loadReg(op2, reg2);
+			this->getUseReg(op2, reg2);
 			//需要先把操作数1数字li到t9，
 			this->generateOrder(LI, T9, op1);
 			this->generateOrder(SUB, rstreg, T9, reg2);
@@ -489,7 +483,7 @@ void Compiler::handleRealPara(std::string *para)
 	//para也是从表达式得到的值，此时还是分为数字和临时变量
 	std::string *rstreg = new std::string();
 	*rstreg = *T7;
-	this->loadReg(para, rstreg);
+	this->getUseReg(para, rstreg);
 	this->generateOrder(SW, rstreg, 0, SP);
 	this->generateOrder(ADDI, SP, SP, -4);
 	delete rstreg;
@@ -521,23 +515,23 @@ void Compiler::handleAdd(midcode *code)
 		if(this->isOperandTemp(op2))
 		{
 			//操作数1是一个数字，那么此时操作数2如果是临时变量，那么结果操作数也是临时变量
-			this->loadReg(op2, reg2);
-			this->storeReg(rst, rstreg);
+			this->getUseReg(op2, reg2);
+			this->getResultReg(rst, rstreg);
 			this->generateOrder(ADDI, rstreg, reg2, op1);
 		}
 		else{
 			//操作数2只能是0了
-			this->storeReg(rst, rstreg);
+			this->getResultReg(rst, rstreg);
 			this->generateOrder(LI, rstreg, op1);
 		}
 	}
 	else{
 		//操作数1是一个临时变量/#RET/标识符
-		this->loadReg(op1, reg1);
+		this->getUseReg(op1, reg1);
 		if(this->isOperandNumber(op2))
 		{
 			//操作数2是一个数字
-			this->storeReg(rst, rstreg);
+			this->getResultReg(rst, rstreg);
 			//获得了结果操作数对应的寄存器
 			this->generateOrder(ADDI, rstreg, reg1, op2);
 			//此时还需要看结果操作数是不是需要写回地址
@@ -545,8 +539,8 @@ void Compiler::handleAdd(midcode *code)
 		else{
 			//操作数2是一个临时变量
 			//结果操作数是一个临时变量/#RET/标识符
-			this->loadReg(op2, reg2);
-			this->storeReg(rst, rstreg);
+			this->getUseReg(op2, reg2);
+			this->getResultReg(rst, rstreg);
 			this->generateOrder(ADD, rstreg, reg1, reg2);
 		}
 	}
@@ -581,20 +575,20 @@ void Compiler::handleSub(midcode *code)
 			//操作数1不是0，先LI
 			this->generateOrder(LI, reg1, op1);
 		}
-		this->loadReg(op2, reg2);
-		this->storeReg(rst, rstreg);
+		this->getUseReg(op2, reg2);
+		this->getResultReg(rst, rstreg);
 		this->generateOrder(SUB, rstreg, reg1, reg2);
 	}
 	else{
 		//操作数1是一个临时变量
-		this->loadReg(op1, reg1);
+		this->getUseReg(op1, reg1);
 		if(this->isOperandTemp(op2))
 		{
 			//操作数2也是一个临时变量
-			this->loadReg(op2, reg2);
+			this->getUseReg(op2, reg2);
 
 			//结果操作数也是一个临时变量
-			this->storeReg(rst, rstreg);
+			this->getResultReg(rst, rstreg);
 
 			//获得了结果操作数对应的寄存器
 			this->generateOrder(SUB, rstreg, reg1, reg2);
@@ -602,7 +596,7 @@ void Compiler::handleSub(midcode *code)
 		else{
 			//操作数2是一个数字
 			//结果操作数是一个临时变量
-			this->storeReg(rst, rstreg);
+			this->getResultReg(rst, rstreg);
 			this->generateOrder(SUBI, rstreg, reg1, op2);
 		}
 	}
@@ -625,9 +619,9 @@ void Compiler::handleMulOrDiv(midcode *code)
 	*reg2 = *T8;
 	std::string *rstreg = new std::string();
 	*rstreg = *T7;
-	this->loadReg(op1, reg1);
-	this->loadReg(op2, reg2);
-	this->storeReg(rst, rstreg);
+	this->getUseReg(op1, reg1);
+	this->getUseReg(op2, reg2);
+	this->getResultReg(rst, rstreg);
 	if(code->op == MULOP)
 	{
 		this->generateOrder(MULOBJ, rstreg, reg1, reg2);
@@ -653,10 +647,10 @@ void Compiler::handleRarray(midcode *code)
 	symbol *sym = 0;
 	this->findSym(code->op1name, &sym, &global);
 
-	this->loadReg(code->op2name, reg2);
+	this->getUseReg(code->op2name, reg2);
 	this->generateOrder(ADDI, T9, reg2, sym->address);
 	this->generateOrder(SLL, T9, T9, 2);
-	this->storeReg(code->rstname, rstreg);
+	this->getResultReg(code->rstname, rstreg);
 	if(global)
 	{
 		this->generateOrder(ADDU, T9, T9, GP);
@@ -689,10 +683,10 @@ void Compiler:: handleLarray(midcode *code)
 	symbol *sym = 0;
 	this->findSym(name, &sym, &global);
 	//获得下标
-	this->loadReg(index, reg2);
+	this->getUseReg(index, reg2);
 	this->generateOrder(ADDI, T7, reg2, sym->address);
 	this->generateOrder(SLL, T7, T7, 2);
-	this->loadReg(rs, reg1);
+	this->getUseReg(rs, reg1);
 	if(global)
 	{
 		this->generateOrder(ADDU, T7, T7, GP);
@@ -721,7 +715,7 @@ void Compiler:: handleScanf(midcode *code)
 	//结果操作数只能是一个标识符
 	std::string *rstreg = new std::string();
 	*rstreg = *T7;
-	this->storeReg(code->rstname, rstreg);
+	this->getResultReg(code->rstname, rstreg);
 	this->generateOrder(ADD, rstreg, V0, R0);
 	this->writeBack(code->rstname, rstreg);
 
@@ -745,7 +739,7 @@ void Compiler::handlePrintf(midcode *code)
 		//这里需要把要输出的数字/字符给到a0寄存器
 		std::string *rstreg = new std::string();
 		*rstreg = *T7;
-		this->loadReg(code->rstname, rstreg);
+		this->getUseReg(code->rstname, rstreg);
 		this->generateOrder(ADD, A0, rstreg, R0);
 		this->generateOrder(SYSCALL);
 		delete rstreg;

@@ -197,23 +197,6 @@ void Compiler::initBlockConnect()
 	}
 }
 
-void Compiler::printBlockConnect()
-{
-	for(int i = 0 ; i < this->blockIndex ; i ++)
-	{
-		Block *block = this->blockArray[i];
-		std::cout << "基本块" << i;
-		std::cout << "的后继基本块有:" << block->next1 << " " << block->next2 << std::endl;
-		std::cout << "前驱基本块有:" << std::endl;
-		for(int j = 0 ; j < block->prenum ; j++)
-		{
-			std::cout << block->prearray[j] << " ";
-		}
-		std::cout << std::endl;
-		
-	}
-}
-
 void Compiler::findNodeInTab(ListNode *nodelist[], int length, std::string *name, ListNode **x)
 {
 	for(int i = 0 ; i < length ; i++)
@@ -279,7 +262,7 @@ bool Compiler::canAdd(bool flag[],  Node *x, Node* midqueue[], int length, Node 
 
 void Compiler::DAG()
 {
-	//限制一个基本块最多有100个节点
+	//限制一个基本块最多有500个节点
 	const int kMaxNodeNum = 100;
 	int oldindex = this->midindex;
 	this->midindex = 0;
@@ -315,7 +298,7 @@ void Compiler::DAG()
 		//除了赋值以外的其他类型全部原样输出
 		if(firstcode->op != ADDOP && firstcode->op != SUBOP && firstcode->op != MULOP && firstcode->op != DIVOP)
 		{
-			this->pushMidCode(firstcode->op, firstcode->op1name, firstcode->op2name, firstcode->rstname, false);
+			this->pushMidCode(firstcode->op, firstcode->op1name, firstcode->op2name, firstcode->rstname);
 			begin += 1;
 		}
 		//如果此时基本块结束了，那么就直接continue
@@ -325,7 +308,7 @@ void Compiler::DAG()
 		if(end - 1 == begin)
 		{
 			firstcode = this->codes[begin];
-			this->pushMidCode(firstcode->op, firstcode->op1name, firstcode->op2name, firstcode->rstname, false);
+			this->pushMidCode(firstcode->op, firstcode->op1name, firstcode->op2name, firstcode->rstname);
 			continue;
 		}
 		//此时基本块一定有至少两句四元式，那么一定至少有一句运算语句
@@ -484,11 +467,11 @@ void Compiler::DAG()
 			for(int j = begin ; j < end ; j++)
 			{
 				midcode *code = this->codes[j];
-				this->pushMidCode(code->op, code->op1name, code->op2name, code->rstname, false);
+				this->pushMidCode(code->op, code->op1name, code->op2name, code->rstname);
 			}
 			continue;
 		}
-		std::cout << "第" << i << "块有优化" << std::endl;
+		this->dagFile << "第" << i << "块有优化" << std::endl;
 		//建立好dag图和节点表以后，就可以导出新的中间代码了
 		Node *queue[kMaxNodeNum * 5] = {0};
 		int queuelength = 0;
@@ -571,7 +554,7 @@ void Compiler::DAG()
 			
 
 			//这时就可以生成新的中间代码
-			this->pushMidCode(midnode->op, op1name, op2name, mid, false);
+			this->pushMidCode(midnode->op, op1name, op2name, mid);
 			//同时这时还需要把和这个节点的index相同的 标识符 #RET 临时变量 都生成相应的赋值操作，其中临时变量是需要检查它还活不活跃，即看这个基本块的out集合里有没有它
 			for(int k = 0 ; k < tablength ; k++)
 			{
@@ -588,7 +571,7 @@ void Compiler::DAG()
 						//如果基本块出口还活跃，那么需要给它一个赋值补偿语句
 						if(this->outData[blockindex][index])
 						{
-							this->pushMidCode(ADDOP, mid, new std::string("0"), listnode->name, false);
+							this->pushMidCode(ADDOP, mid, new std::string("0"), listnode->name);
 						}
 						else{
 							/*bug:
@@ -597,7 +580,6 @@ void Compiler::DAG()
 							没有参与，（比如在最后一句话），那么它就需要把这个被删了的操作数换成等价的另外一个操作数
 							*/
 							//先获得最后一句四元式,如果最后一句四元式是下面几种，那么需要替换
-							std::cout << *listnode->name << "被删去" << std::endl;
 							midcode *code = this->codes[end - 1];
 							switch(code->op)
 							{
@@ -636,23 +618,22 @@ void Compiler::DAG()
 							if(index == -1)
 							{
 								//是一个全局变量，那么补偿
-								this->pushMidCode(ADDOP, mid, new std::string("0"), listnode->name, false);
+								this->pushMidCode(ADDOP, mid, new std::string("0"), listnode->name);
 							}
 							else{
 								//是一个局部变量，那么看接下来是否活跃
 								if(this->outData[blockindex][index])
 								{
-									this->pushMidCode(ADDOP, mid, new std::string("0"), listnode->name, false);
+									this->pushMidCode(ADDOP, mid, new std::string("0"), listnode->name);
 								}
 								else{
 									//如果不活跃，还是需要判断最后一句四元式有没有用到这个标识符
-									std::cout << *listnode->name << "被删去" << std::endl;
 								}
 							}					
 					}
 					//然后只有可能是#RET了
 					else
-						this->pushMidCode(ADDOP, mid, new std::string("0"), listnode->name, false);
+						this->pushMidCode(ADDOP, mid, new std::string("0"), listnode->name);
 				}
 			}
 		}
@@ -660,30 +641,47 @@ void Compiler::DAG()
 		if(endindex == end - 1)
 		{
 			midcode *endcode = this->codes[end - 1];
-			this->pushMidCode(endcode->op, endcode->op1name, endcode->op2name, endcode->rstname, false);
+			this->pushMidCode(endcode->op, endcode->op1name, endcode->op2name, endcode->rstname);
 		}
 	}
+	std::cout << "dag图优化完毕" << std::endl;
 }
 
-void Compiler::printBlock()
+void Compiler::writeBlockToFile()
 {
+	this->blockFile << "下面是每个基本块的连接情况,包括的信息有:" << std::endl 
+		<< "1.这是第几个基本块" << std::endl << "2.这个基本块中的语句" << std::endl << "3.这个基本块的前驱和后继基本块的下标" << std::endl << std::endl << std::endl;
 	for(int i = 0 ; i < this->blockIndex ; i++)
 	{
+		this->blockFile << "第" << i << "个基本块:" << std::endl;
+		Block *block = this->blockArray[i];
 		int begin = this->blockBegin[i];
 		int end = i + 1 >= this->blockIndex ? this->midindex : this->blockBegin[i + 1];
 		for(int j = begin ; j < end ; j++)
 		{
 			this->writeMidCode(this->codes[j], this->blockFile);
 		}
-		this->blockFile << "第" << i << "个基本块" << std::endl;
+		this->blockFile << std::endl;
+		this->blockFile << "后继基本块有: ";
+		if(block->next1 != -1)
+			this->blockFile << block->next1 << " ";
+		if(block->next2 != -1)
+			this->blockFile << block->next2 << " ";
+		this->blockFile << std::endl;
+		this->blockFile << "前驱基本块有: " ;
+		for(int j = 0 ; j < block->prenum ; j++)
+		{
+			this->blockFile << block->prearray[j] << " ";
+		}
+		this->blockFile << std::endl << std::endl << std::endl;	
 	}
+	std::cout << "流图构建分析完毕" << std::endl;
 }
 
 //初始化
 void Compiler::initOptimize()
 {
 	this->blockIndex = 0;
-	this->optimizeMidIndex = 0;
 	//初始化flag数组全为false
 	for(int i = 0 ; i < kMaxBasicBlock ; i++)
 	{
@@ -998,50 +996,50 @@ void Compiler:: dataFlowAnalysis()
 		//到这里就把这个函数的in/out集合给求好了
 		//这里输出一下结果
 		
-		for(int j = blockend - 1 ; j >= blockbegin ; j --)
+		for(int j = blockbegin ; j < blockend ; ++ j)
 		{
 			int blockindex = j;
-			std::cout << "第" << blockindex << "个基本块：" << std::endl;
+			this->dataAnalysisFile << "第" << blockindex << "个基本块：" << std::endl;
 			symbol **symtab = this->funcSymTab[funcref];
-			std::cout << "use集合有：" << std::endl;
+			this->dataAnalysisFile << "use集合有：" << std::endl;
 			for(int k = 0 ; k < symnum ; k++)
 			{
 				if(use[blockindex][k])
 				{
-					std::cout << *(symtab[k]->name) << " ";
+					this->dataAnalysisFile << *(symtab[k]->name) << " ";
 				}
 			}
-			std::cout << std::endl;
+			this->dataAnalysisFile << std::endl;
 
-			std::cout << "def集合有：" << std::endl;
+			this->dataAnalysisFile << "def集合有：" << std::endl;
 			for(int k = 0 ; k < symnum ; k++)
 			{
 				if(def[blockindex][k])
 				{
-					std::cout << *(symtab[k]->name) << " ";
+					this->dataAnalysisFile << *(symtab[k]->name) << " ";
 				}
 			}
-			std::cout << std::endl;
+			this->dataAnalysisFile << std::endl;
 
-			std::cout << "out集合有：" << std::endl;
+			this->dataAnalysisFile << "out集合有：" << std::endl;
 			for(int k = 0 ; k < symnum ; k++)
 			{
 				if(out[blockindex][k])
 				{
-					std::cout << *(symtab[k]->name) << " ";
+					this->dataAnalysisFile << *(symtab[k]->name) << " ";
 				}
 			}
-			std::cout << std::endl;
+			this->dataAnalysisFile << std::endl;
 
-			std::cout << "in集合有：" << std::endl;
+			this->dataAnalysisFile << "in集合有：" << std::endl;
 			for(int k = 0 ; k < symnum ; k++)
 			{
 				if(in[blockindex][k])
 				{
-					std::cout << *(symtab[k]->name) << " ";
+					this->dataAnalysisFile << *(symtab[k]->name) << " ";
 				}
 			}
-			std::cout << std::endl;
+			this->dataAnalysisFile << std::endl << std::endl;
 
 			this->outData[blockindex] = new bool[symnum];
 			//把out集合记录下来
@@ -1049,9 +1047,7 @@ void Compiler:: dataFlowAnalysis()
 			{
 				this->outData[blockindex][k] = out[blockindex][k];
 			}
-		}
-		std::cout << "活跃变量分析完毕" << std::endl;
-		
+		}	
 
 		//开始构建冲突图，给每个局部的临时变量和简单变量分配属于它们的寄存器
 		//目前定义：变量的活跃范围：以基本块为单位，1.该基本块的def集合有这个变量，那么这个基本块中该变量活跃2.该基本块的in集合内有这个变量，这个基本块
@@ -1249,11 +1245,14 @@ void Compiler:: dataFlowAnalysis()
 		//到这里好像就分配完毕咯！
 
 		//这里输出一下分配情况
+		this->dataAnalysisFile << "第" << funcref << "个函数的寄存器分配情况: " << std::endl;
 		for(int j = 0 ; j < symnum ; j++)
 		{
 			symbol *sym = this->funcSymTab[funcref][j];
-			std::cout << *sym->name << " 被分配了 " << sym->regIndex << " 号寄存器" << std::endl;
+			if(sym->regIndex != -1)
+				this->dataAnalysisFile << *sym->name << " 被分配了 " << sym->regIndex << " 号寄存器" << std::endl;
 		}
+		this->dataAnalysisFile << std::endl << std::endl;
 
 		//释放空间
 		delete[] regalloc;
@@ -1274,6 +1273,7 @@ void Compiler:: dataFlowAnalysis()
 			delete[] out[j];
 		}
 	}
+	std::cout << "数据分析完毕，寄存器分配完毕" << std::endl;
 	delete[] use;
 	delete[] def;
 	delete[] in;
@@ -1302,8 +1302,8 @@ void Compiler::smallOptimize()
 			if((this->isIdEqual(*op1name, std::string("0")) && this->isIdEqual(*op2name, *rstname)) || 
 				(this->isIdEqual(*op2name, std::string("0")) && this->isIdEqual(*op1name, *rstname)))
 			{
-				this->writeMidCode(code);
-				std::cout << "被删除" << std::endl << std::endl;
+				this->writeMidCode(code, this->dagFile);
+				this->dagFile << "被删除" << std::endl << std::endl;
 			}
 			else{
 				this->codes[this->midindex++] = code;
@@ -1316,8 +1316,8 @@ void Compiler::smallOptimize()
 			}
 			else{
 				
-				this->writeMidCode(code);
-				std::cout << "被删除" << std::endl << std::endl;
+				this->writeMidCode(code, this->dagFile);
+				this->dagFile << "被删除" << std::endl << std::endl;
 			}
 			break;
 		case LABOP:
@@ -1348,11 +1348,11 @@ void Compiler::smallOptimize()
 							if((replacecode->op == GOTOOP || replacecode->op == EQUOP || replacecode->op == NEQUOP || replacecode->op == LESSOP || replacecode->op == LESSEQUOP || replacecode->op == MOREOP
 								|| replacecode->op == MOREEQUOP) && this->isIdEqual(*replacecode->rstname, *lab))
 							{
-								this->writeMidCode(replacecode);
-								std::cout << "被替换为:" << std::endl;
+								this->writeMidCode(replacecode, this->dagFile);
+								this->dagFile << "被替换为:" << std::endl;
 								*replacecode->rstname = *result;
-								this->writeMidCode(replacecode);
-								std::cout << std::endl;
+								this->writeMidCode(replacecode, this->dagFile);
+								this->dagFile << std::endl;
 							}
 						}
 					}
@@ -1368,8 +1368,8 @@ void Compiler::smallOptimize()
 					//首先把当前的code保存好
 					this->codes[this->midindex ++] = code;
 					//后一个也是goto，那么取消这个goto,i++ 即可
-					this->writeMidCode(deletecode);
-					std::cout << "被删除" << std::endl << std::endl;;
+					this->writeMidCode(deletecode, this->dagFile);
+					this->dagFile << "被删除" << std::endl << std::endl;;
 					i ++;
 				}
 				else{
@@ -1400,9 +1400,9 @@ void Compiler::smallOptimize()
 				midcode *nextcode = this->codes[i + 1];
 				if(nextcode->op == LABOP && this->isIdEqual(*nextcode->rstname, *code->rstname)){
 					//此时不保存这个code即可，注意保存后一句的label
-					this->writeMidCode(code);
+					this->writeMidCode(code, this->dagFile);
 					
-					std::cout << "被删除" << std::endl << std::endl;
+					this->dagFile << "被删除" << std::endl << std::endl;
 					this->codes[this->midindex++] = nextcode;
 					i++;
 				}
@@ -1415,4 +1415,5 @@ void Compiler::smallOptimize()
 			this->codes[this->midindex++] = code;
 		}
 	}
+	std::cout << "小优化结束" << std::endl;
 }

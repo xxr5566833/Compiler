@@ -80,46 +80,42 @@ public:
 	~Compiler();
 
 private:
+	/*------------词法分析相关------------*/
 	//文件流指针
 	std::fstream file;
 	//当前字符
 	char c;
+	//读下一个字符
+	void nextChar();
+	//让文件指针下一次读到的单词还是当前这个单词，并维护行数，即字符回溯
+	void retract();
 	//当前读入的字符集合
 	std::string sym;
-	//inSym()执行后，保存的当前 单词
+	//保存的当前,单词,具体定义见token.h
 	token tok;
 	//当前行数
 	int lineCount ;
+	//判断文件是否结束
+	bool isEof();
+
+
 
 	//保留字集合，因为要比较是不是保留字必须要一个个字符进行比较
 	std::string reserve[kMaxReserve];
 	//单词标志输出数组，与枚举类型一一对应
 	std::string wordOutput[kMaxWord];
-
-	//初始化
+	////初始化单词类型的string输出，与枚举一一对应，主要用于一开始的词法分析的单词输出，之后没有实际意义
 	void initWordArray();
+	//建立保留字表，便于得到当前单词是不是一个保留字
 	void setup();
-
-	//与错误处理有关的
-	void skip();
-
 	//与sym有关的
+	//清空sym字符串，便于输入新的单词
 	void clearSym();
+	//把当前字符添加到当前字符串数组
 	void symAppend();
+	//表示读入一个新的单词，保存在tok中，为语法分析所使用
 	void inSym();
-
-	bool isEof();
-	void nextChar();
-	void retract();
-
-	//跳过不处理
-	void skipSpace();
-
-
-	//读一类
-	void readUntilNotLetterOrNum();
-
-	//判断
+	//词法分析中所需要用到的判断：
 	//判断单个字符
 	bool isSpace();
 	bool isTab();
@@ -132,56 +128,95 @@ private:
 	bool isEqu();
 	//Em表示感叹号
 	bool isEm();
-
 	bool isLetter();
 	bool isNumber();
 	bool isPlusOrMinus();
 	bool isStarOrDiv();
-
+	//判断当前字符是否在给定的文法范围内
 	bool isInStringRange();
 
 	//判断标识符或者保留字是否相等
 	bool isIdEqual(std::string id1, std::string id2);
-	//处理sym
+	//专门用于处理当前是保留字还是标识符
 	void handleSym();
 
+	//跳过空白字符不处理，注意维护lineCount
+	void skipSpace();
 
-	//语法分析相关：
-	//判断
-	bool isInRange(const tokenType range[], const int size);
+
+
+	/*----------------语法分析相关----------------*/
 	//语法成分：
+	//<整数>
 	void int_(int *value);
+	//<常量定义>
 	void constDef();
+	//<常量声明>
 	void constState();
+	//<常量>
 	void constant(int *value, eRetType *rettype);
+	//<参数表>
 	void varParaList(symbol *sym);
+	//<因子>
 	void factor(eRetType *resulttype, std::string *operand);
+	//<项>
 	void term(eRetType *resulttype, std::string *operand);
+	//<表达式>
 	void expression(eRetType *type, std::string *operand);
+	//<变量定义处理>
 	void varDef(eRetType rettype, std::string *name);
+	//<声明头部>
 	void decHead(eRetType *rettype, std::string **name);
+	//<参数>
 	void para(symbol *sym);
+	//<无参函数定义>
 	void noParaFuncDef(symbol *sym);
+	//<有参函数定义>
 	void haveParaFuncDef(symbol *sym);
+	//<非main的void类型的函数定义>
 	void notMainVoidFuncDef();
+	//<main函数定义>
 	void mainDef();
+	//<可能以函数定义开始的程序>
 	void beginWithFunc();
+	//<可能以变量声明开始的程序>
 	void beginWithVar();
+	//<程序>
 	void program();
+	//<条件>
 	void condition(std::string *label);
+	//<条件语句>
 	void ifStatement(bool *returnflag, eRetType returntype, std::string *name);
+	//<情况子语句>
 	void caseStatement(eRetType switchtype, std::string *switchtemp, bool *returnflag, eRetType returntype, std::string *donelab, std::string *nextlab, int *caseconst, std::string *name);
+	//<情况表>
 	void caseTab(eRetType switchtype, std::string *switchtemp, bool *returnflag, eRetType returntype, std::string *donelab, std::string *name);
+	//<情况语句>
 	void switchStatement(bool *returnflag, eRetType returntype, std::string *name);
+	//<循环语句>
 	void whileStatement(bool *returnflag, eRetType returntype, std::string *name);
+	//<读语句>
 	void scanfStatement();
+	//<写语句>
 	void printfStatement();
+	//<返回语句>
 	void returnStatement(bool *returnflag, eRetType returntype, std::string *name);
+	//<语句>
 	void statement(bool *returnflag, eRetType returntype, std::string *name);
+	//<语句列>
 	void statementList(bool *returnflag, eRetType returntype, std::string *name);
+	//<变量声明>
 	void varState();
+	//<复合语句>
 	void comStatement(bool *returnflag, eRetType returntype, std::string *name);
 
+	//判断单词是否在给定的范围内
+	bool isInRange(const tokenType range[], const int size);
+
+
+
+
+	/*-----------------错误处理相关-----------------*/
 	//处理错误
 	std::vector<error*> errorList;
 	std::string *errorMsgList[kMaxErrorType];
@@ -192,7 +227,6 @@ private:
 	void skip(const tokenType follow[], const int size);
 	//根据错误的类型跳读
 	void errorSkip(errorType id);
-
 	//处理警告
 	std::vector<warning*> warningList;
 	std::string *warningMsgList[kMaxWarningType];
@@ -200,8 +234,10 @@ private:
 	void warningSetup();
 	void warningPrint();
 
-	//符号表相关
+	/*----------------符号表相关----------------*/
+	//符号表
 	symbol *symTab[kMaxSymbol];
+	//hash表
 	int symHash[kMaxHash];
 	//分程序索引
 	int index;
@@ -211,15 +247,13 @@ private:
 	int address;
 	//保存全局变量分配区的分配情况
 	int globalAddress;
-
+	//符号表的一些初始化
 	void initSymTab();
 	//查找,根据local参数是局部查找还是全局查找
 	bool find(std::string *name, symbol **sym, bool local);
-	//插入
+	//插入该符号
 	symbol* push(std::string *name, eRetType returntype, eSymType symboltype, int feature, int decline);
 
-	//删除符号表直到this->index的前一个，并维护this->index this->top，注意释放空间,还要维护hash表
-	void pop();
 	//为了以后便于生成目标代码，这里必须要把编译完的函数的符号信息记录下来
 	symbol **funcSymTab[kMaxFuncSymbol];
 	//记录编译完的分函数的符号个数
@@ -230,92 +264,94 @@ private:
 	int funcNum;
 	//记录当前分函数的符号个数
 	int currentFuncSymNum;
-	//打印一个符号
-	void printSym(symbol *sym);
 	//进入一个函数时
 	void inFunc();
+	//删除符号表直到this->index的前一个，并维护this->index this->top，注意释放空间,还要维护hash表
+	void pop();
+	//字符串数组，记录可能用到的字符串
+	std::string *stringTab[kMaxStringNum];
+	int stringNum ;
+	//需要一个数组记录所有的字符串的相对偏移,如果不能用.asciiz的话，到时候根据字符串的下标，得到其起始地址直接输出也可以
+	int stringAddress[kMaxStringNum];
+	void pushString(std::string *str, int *strindex);
+	void genMessage(std::string *str, int num);
+
+	//打印一个符号
+	void printSym(symbol *sym);
 	//符号表打印文件
 	std::fstream symtabFile;
 	//打印符号表到文件
 	void writeSymtoFile();
 
-	//常量区
-	std::string *stringTab[kMaxStringNum];
-	int stringNum ;
-	//需要一个数组记录所有的字符串的相对偏移,如果不能用.asciiz的话，到时候根据字符串的下标，得到其起始地址直接输出也可以
-	int stringAddress[kMaxStringNum];
-	//需要一个来记录字符串占用了多少空间
-	int strAddress;
-	void pushString(std::string *str, int *strindex);
-	void genMessage(std::string *str, int num);
 
-	//四元式相关
+
+	/*----------------中间代码相关----------------*/
+	//把一个中间代码写到指定的文件中
 	void writeMidCode(midcode *code, std::fstream &tofile);
-	//专门作为控制台输出
+	//把一个中间代码控制台输出
 	void writeMidCode(midcode *code);
 	//把整个四元式写入文件
 	void writeMidCodetoFile(std::fstream &tofile);
 	//四元式数组
 	midcode* codes[kMaxMidCode];
-	//数组指针
+	//四元式数量
 	int midindex;
 	//保存一个四元式
-	void pushMidCode(midop op, std::string *operand1, std::string *operand2, std::string *rst, bool optimize);
-	//init
+	void pushMidCode(midop op, std::string *operand1, std::string *operand2, std::string *rst);
+	//在语法分析时生成中间代码需要一些初始化
 	void initMidCode();
 	//label和临时变量需要有个生成函数,而且分别有个不断增长的量来维护
 	void genTemp(std::string *temp);
 	int temp;
 	void genLabel(std::string *lab);
 	int label;
-
-
 	//优化前四元式文件
 	std::fstream midFileBefore;
 	//优化后四元式的文件
 	std::fstream midFileAfter;
-	//优化后四元式数组
-	midcode* optimizeCodes[kMaxMidCode];
-	int optimizeMidIndex;
 
-	//优化相关
+	/*------------------优化相关------------------*/
+	//记录该句四元式是否是某一个基本块的开始，如果已经有记录，那么就不要重复记录，防止出现长度为0的基本块
+	bool blockBeginFlag[kMaxMidCode];
+	//记录每个基本块的开始的四元式的index
+	int blockBegin[kMaxBasicBlock];
+	//记录最大基本块的长度
+	int blockIndex;
 	//分成基本块
 	void divideToBlock();
-	//每个基本块的数据结构
+	//初始化基本块之间的连接关系
+	void initBlockConnect();
+	//划分基本块后的情况的输出文件
+	std::fstream blockFile;
+	//记录每个基本块的信息
 	Block* blockArray[kMaxBasicBlock];
-	//根据label，返回其所在的基本块index
+	//根据label，返回其所在的基本块index，在小优化时会用到
 	void findLabel(std::string *label, int *index);
 	//优化一开始的初始化
 	void initOptimize();
-	void printBlock();
+	//把基本块的信息输出到基本块文件中
+	void writeBlockToFile();
 	//一些小的优化
 	void smallOptimize();
-	//初始化基本块之间的连接关系
-	void initBlockConnect();
-	//输出连接关系
-	void printBlockConnect();
-	//数据流分析
+
+	//数据流分析输出文件：
+	std::fstream dataAnalysisFile;
+	//数据流分析方法
 	void dataFlowAnalysis();
 	//需要一个记录每个函数的基本块开始情况的数据结构
 	int funcBlockBegin[kMaxFuncNum];
 	//需要一个方法得到这个局部变量在函数表中的下标
 	void getIndexInTab(int *index, int funcref, std::string *name);
 	void findNodeInTab(ListNode *nodelist[], int length, std::string *name, ListNode **x);
-	
-
 	//这里设置一个成员变量，用于记录每个基本块的out集合，便于dag图删去不需要的临时变量
-	//这个在活跃变量分析时设置
 	bool **outData;
 	bool canAdd(bool flag[], Node *x, Node* midqueue[], int length, Node *dag[]);
+
+	//DAG图方法
 	void DAG();
-
-	bool blockBeginFlag[kMaxBasicBlock];
-	int blockBegin[kMaxBasicBlock];
-	int blockIndex;
-	//划分基本块后的情况的输出文件
-	std::fstream blockFile;
-	int tempMap[kMaxTemp];
-
+	//dag图以及小的优化的信息
+	std::fstream dagFile;
+	/*--------------------目标代码相关--------------------*/
 	//目标代码优化前文件
 	std::fstream objectFileBefore;
 	//目标代码优化后文件
@@ -326,16 +362,12 @@ private:
 	int mipsIndex;
 	//初始化目标代码生成
 	void objectInit();
-	//初始化寄存器池
+	//初始化寄存器池，此时寄存器池只是记录当前使用该寄存器的变量名称
 	void regInit();
 	//初始化字符串定义
 	void initAscii();
 	//生成目标代码
 	void generate();
-	//存全局常量
-	void initConstAndVar(symbol *sym, int initaddress);
-	//当前占用的空间
-	int mipsAddress;
 	//生成一条指令
 	void generateOrder(std::string *order, std::string *rd, std::string *rs, std::string *rt);
 	void generateOrder(std::string *order, std::string *rs, int baseaddress, std::string *rt);
@@ -344,9 +376,12 @@ private:
 	void generateOrder(std::string *order, std::string *rs, std::string *label);
 	void generateOrder(std::string *order, std::string *target);
 	void generateOrder(std::string *order);
+	//把这个命令保存到目标代码数组中
 	void pushOrder(std::string *order);
+	//把当前目标代码写到相应的文件中
 	void writeMipsOrderToFile(std::fstream &tofile);
-	//函数的开始
+
+	//函数开始
 	void funcBegin(std::string *name);
 	//当前编译的函数在函数表中的位置
 	int currentRef;
@@ -355,9 +390,9 @@ private:
 	//寻找标识符地址
 	void findSym(std::string *name, symbol **resultsym, bool *global);
 	//loadword
-	void loadReg(std::string *rs, std::string *reg);
+	void getUseReg(std::string *rs, std::string *reg);
 	//storeword
-	void storeReg(std::string *rd, std::string *reg);
+	void getResultReg(std::string *rd, std::string *reg);
 	//writeback
 	void writeBack(std::string *rd, std::string *reg);
 	//处理跳转
@@ -398,12 +433,6 @@ private:
 
 	//根据kMaxRegAvailable 的数量决定的可用寄存器的数量，对于每一个，如果是0，那么表示未被分配，如果不是0，那么表示被对应的变量分配
 	std::string *allReg[kMaxRegAvailable];
-	
-	void allocReg(std::string *operand, std::string *reg);
-	//保存函数调用之前的寄存器的使用情况，便于之后恢复
-	std::string *regStack[kMaxRegAvailable];
-	void saveReg();
-	void loadReg();
 
 
 

@@ -277,7 +277,7 @@ void Compiler:: varParaList(symbol *sym)
 	int paraindex = 0;
 	std::string *temppara = new std::string();
 	this->expression(&type, temppara);
-	this->pushMidCode(REALPARAOP, new std::string(), new std::string(), temppara, false);
+	this->pushMidCode(REALPARAOP, new std::string(), new std::string(), temppara);
 	if(sym->feature > paraindex)
 	{
 		if(sym->paraList[paraindex] != type)
@@ -297,7 +297,7 @@ void Compiler:: varParaList(symbol *sym)
 		this->inSym();
 		std::string *temppara = new std::string();
 		this->expression(&type, temppara);
-		this->pushMidCode(REALPARAOP, new std::string(), new std::string(), temppara, false);
+		this->pushMidCode(REALPARAOP, new std::string(), new std::string(), temppara);
 		if(sym->feature > paraindex)
 		{
 			if(sym->paraList[paraindex] != type)
@@ -367,7 +367,7 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 				}
 			}
 			this->genTemp(resultoperand);
-			this->pushMidCode(RARRAYOP, sym->name, temp, resultoperand, false);
+			this->pushMidCode(RARRAYOP, sym->name, temp, resultoperand);
 			if(this->tok.id == RBRACKET)
 			{
 				this->inSym();
@@ -397,7 +397,7 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 			if(this->tok.id == RPARENT)
 			{
 				//执行相关函数调用
-				this->pushMidCode(CALLOP, new std::string(), new std::string(), sym->name, false);
+				this->pushMidCode(CALLOP, new std::string(), new std::string(), sym->name);
 				resultoperand = new std::string("#RET");
 				this->inSym();
 			}
@@ -418,7 +418,7 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 					//这里都是无参函数调用，所以这里不能是一个有参函数，这里不跳读
 					this->errorHandle(NOTANOPARAFUNC);
 				}
-				this->pushMidCode(CALLOP, new std::string(), new std::string(), sym->name, false);
+				this->pushMidCode(CALLOP, new std::string(), new std::string(), sym->name);
 				resultoperand = new std::string("#RET");
 			}
 			//不要忘记常量标识符
@@ -480,7 +480,7 @@ void Compiler:: term(eRetType *resulttype, std::string *operand)
 		//因为除了这两种情况以外，就只剩下 标识符 或者 v0寄存器，这两个都是不能作为中间结果的
 		std::string *temp = new std::string();
 		this->genTemp(temp);
-		this->pushMidCode(ADDOP, resultoperand, new std::string("0"), temp, false);
+		this->pushMidCode(ADDOP, resultoperand, new std::string("0"), temp);
 		*resultoperand = *temp;
 	}
 	//所以第一个操作数，要么是一个临时变量，要么是一个数字
@@ -523,13 +523,13 @@ void Compiler:: term(eRetType *resulttype, std::string *operand)
 					//不是临时变量，那么需要生成临时变量，并把原来的操作数的值给这个临时变量，让这个临时变量参与运算并作为结果操作数
 					std::string *result = new std::string();
 					this->genTemp(result);
-					this->pushMidCode(ADDOP, factoroperand2, new std::string("0"), result, false);
-					this->pushMidCode(isstar ? MULOP : DIVOP, resultoperand, result, result, false);
+					this->pushMidCode(ADDOP, factoroperand2, new std::string("0"), result);
+					this->pushMidCode(isstar ? MULOP : DIVOP, resultoperand, result, result);
 					*resultoperand = *result;
 				}
 				else{
 					//是临时变量，那么直接把它作为最后的操作数
-					this->pushMidCode(isstar ? MULOP : DIVOP, resultoperand, factoroperand2, factoroperand2, false);
+					this->pushMidCode(isstar ? MULOP : DIVOP, resultoperand, factoroperand2, factoroperand2);
 					//然后需要让resultoperand始终存放结果操作数
 					*resultoperand = *factoroperand2;
 				}
@@ -538,7 +538,7 @@ void Compiler:: term(eRetType *resulttype, std::string *operand)
 		else{
 			//第一个不是数字，那么只有可能是临时变量了，因为首先第一个之前的限制就是临时变量或者数字，之后如果参与了与第二个因子
 			//的运算，那么最后的结果也要么是临时变量，要么是数字
-			this->pushMidCode(isstar ? MULOP : DIVOP, resultoperand, factoroperand2, resultoperand, false);
+			this->pushMidCode(isstar ? MULOP : DIVOP, resultoperand, factoroperand2, resultoperand);
 		}
 
 	}
@@ -577,7 +577,7 @@ void Compiler:: expression(eRetType *resulttype, std::string *operand)
 		}
 		else{
 			//不是数字常量，那么肯定是临时变量了
-			this->pushMidCode(SUBOP, new std::string("0"), termoperand1, termoperand1, false);
+			this->pushMidCode(SUBOP, new std::string("0"), termoperand1, termoperand1);
 		}
 	}
 	*resulttype = flag ? INTRET : *resulttype;
@@ -603,12 +603,12 @@ void Compiler:: expression(eRetType *resulttype, std::string *operand)
 				*termoperand1 = *constvalue;
 			}
 			else{
-				this->pushMidCode(isplus ? ADDOP : SUBOP, termoperand1, termoperand2, termoperand2, false);
+				this->pushMidCode(isplus ? ADDOP : SUBOP, termoperand1, termoperand2, termoperand2);
 				*termoperand1 = *termoperand2;
 			}
 		}
 		else{
-			this->pushMidCode(isplus ? ADDOP : SUBOP, termoperand1, termoperand2, termoperand1, false);
+			this->pushMidCode(isplus ? ADDOP : SUBOP, termoperand1, termoperand2, termoperand1);
 		}
 	}
 	*operand = *termoperand1;
@@ -813,7 +813,7 @@ void Compiler:: noParaFuncDef(symbol *sym)
 		this->errorHandle(NOTLBRACE);
 	}
 	bool returnflag = false;
-	this->pushMidCode(FUNCBEGINOP, new std::string(), new std::string(), sym->name, false);
+	this->pushMidCode(FUNCBEGINOP, new std::string(), new std::string(), sym->name);
 	this->comStatement(&returnflag, sym->returnType, sym->name);
 	if(this->tok.id == RBRACE)
 	{
@@ -832,8 +832,8 @@ void Compiler:: noParaFuncDef(symbol *sym)
 	//先生成函数结束的标号
 	std::stringstream ss = std::stringstream();
 	ss << *(sym->name) << "$end";
-	this->pushMidCode(LABOP, new std::string(), new std::string(), &(ss.str()), false);
-	this->pushMidCode(RETOP, new std::string(), new std::string(), sym->name, false);
+	this->pushMidCode(LABOP, new std::string(), new std::string(), &(ss.str()));
+	this->pushMidCode(RETOP, new std::string(), new std::string(), sym->name);
 	//std::cout << "这是一个 <无参函数定义处理>" << std::endl;
 }
 
@@ -924,7 +924,7 @@ void Compiler:: mainDef()
 		this->errorHandle(NOTLBRACE);
 	}
 	bool returnflag = false;
-	this->pushMidCode(FUNCBEGINOP, new std::string(), new std::string(), new std::string("main"), false);
+	this->pushMidCode(FUNCBEGINOP, new std::string(), new std::string(), new std::string("main"));
 	this->comStatement(&returnflag, VOIDRET, name);
 	//这里类型是void，不需要检查有没有return
 	if(this->tok.id == RBRACE)
@@ -932,7 +932,7 @@ void Compiler:: mainDef()
 		this->pop();
 		//std::cout << "这是一个 <主函数定义>" << std::endl;
 
-		this->pushMidCode(EXITOP, new std::string(), new std::string(), new std::string(), false);
+		this->pushMidCode(EXITOP, new std::string(), new std::string(), new std::string());
 		return ;
 	}
 	else{
@@ -1063,7 +1063,7 @@ void Compiler:: program()
 		this->constState();
 	}
 	this->beginWithVar();
-
+	std::cout << "语法语义分析完毕" << std::endl;
 	//std::cout << "这是一个 <程序>" << std::endl;
 
 }
@@ -1089,28 +1089,28 @@ void Compiler:: condition(std::string *label)
 		switch(token)
 		{
 		case EQU:
-			this->pushMidCode(NEQUOP, tempoperand1, tempoperand2, label, false);
+			this->pushMidCode(NEQUOP, tempoperand1, tempoperand2, label);
 			break;
 		case NEQU:
-			this->pushMidCode(EQUOP, tempoperand1, tempoperand2, label, false);
+			this->pushMidCode(EQUOP, tempoperand1, tempoperand2, label);
 			break;
 		case LESSEQU:
-			this->pushMidCode(MOREOP, tempoperand1, tempoperand2, label, false);
+			this->pushMidCode(MOREOP, tempoperand1, tempoperand2, label);
 			break;
 		case LESS:
-			this->pushMidCode(MOREEQUOP, tempoperand1, tempoperand2, label, false);
+			this->pushMidCode(MOREEQUOP, tempoperand1, tempoperand2, label);
 			break;
 		case MORE:
-			this->pushMidCode(LESSEQUOP, tempoperand1, tempoperand2, label, false);
+			this->pushMidCode(LESSEQUOP, tempoperand1, tempoperand2, label);
 			break;
 		case MOREEQU:
-			this->pushMidCode(LESSOP, tempoperand1, tempoperand2, label, false);
+			this->pushMidCode(LESSOP, tempoperand1, tempoperand2, label);
 			break;
 
 		}
 	}
 	else{
-		this->pushMidCode(EQUOP, tempoperand1, new std::string("0"), label, false);
+		this->pushMidCode(EQUOP, tempoperand1, new std::string("0"), label);
 	}
 	
 	//std::cout << "这是一个 <条件>" << std::endl;
@@ -1147,8 +1147,8 @@ void Compiler:: ifStatement(bool *returnflag, eRetType returntype, std::string *
 		//不是一个语句
 		this->errorHandle(NOTSTATEMENT);
 	}
-	this->pushMidCode(GOTOOP, new std::string(), new std::string(), endlabel, false);
-	this->pushMidCode(LABOP, new std::string(), new std::string(), elselabel, false);
+	this->pushMidCode(GOTOOP, new std::string(), new std::string(), endlabel);
+	this->pushMidCode(LABOP, new std::string(), new std::string(), elselabel);
 	if(this->tok.id == ELSE)
 	{
 		this->inSym();
@@ -1166,7 +1166,7 @@ void Compiler:: ifStatement(bool *returnflag, eRetType returntype, std::string *
 	else{
 		this->errorHandle(NOTSTATEMENT);
 	}
-	this->pushMidCode(LABOP, new std::string(), new std::string(), endlabel, false);
+	this->pushMidCode(LABOP, new std::string(), new std::string(), endlabel);
 	//std::cout << "这是一个 <条件语句>" << std::endl;
 }
 
@@ -1191,8 +1191,8 @@ void Compiler:: caseStatement(eRetType switchtype, std::string *switchtemp, bool
 		this->genTemp(constoperand);
 		std::string *constvalue = new std::string();
 		this->int2string(constvalue, value);
-		this->pushMidCode(ADDOP, constvalue, new std::string("0"), constoperand, false);
-		this->pushMidCode(NEQUOP, constoperand, switchtemp, nextlab, false);
+		this->pushMidCode(ADDOP, constvalue, new std::string("0"), constoperand);
+		this->pushMidCode(NEQUOP, constoperand, switchtemp, nextlab);
 	}
 	else{
 		//不是一个常量，跳读到冒号
@@ -1213,7 +1213,7 @@ void Compiler:: caseStatement(eRetType switchtype, std::string *switchtemp, bool
 	else{
 		this->errorHandle(NOTSTATEMENT);
 	}
-	this->pushMidCode(GOTOOP, new std::string(), new std::string(), donelab, false);
+	this->pushMidCode(GOTOOP, new std::string(), new std::string(), donelab);
 	//std::cout << "这是一个 <情况子语句>" << std::endl;
 }
 
@@ -1229,7 +1229,7 @@ void Compiler:: caseTab(eRetType switchtype, std::string *switchtemp, bool *retu
 			std::string *nextlab = new std::string();
 			this->genLabel(nextlab);
 			this->caseStatement(switchtype, switchtemp, returnflag, returntype, donelab, nextlab, &caseconst, name);
-			this->pushMidCode(LABOP, new std::string(), new std::string(), nextlab, false);
+			this->pushMidCode(LABOP, new std::string(), new std::string(), nextlab);
 
 			//检查上个case常量是否与之前某个case的常量相等
 			for(int i = 0 ; i < count ; ++i)
@@ -1302,7 +1302,7 @@ void Compiler:: switchStatement(bool *returnflag, eRetType returntype, std::stri
 			this->errorHandle(NOTSTATEMENT);
 		}
 	}
-	this->pushMidCode(LABOP, new std::string(), new std::string(), done, false);
+	this->pushMidCode(LABOP, new std::string(), new std::string(), done);
 	if(this->tok.id == RBRACE){
 		this->inSym();
 	}
@@ -1319,7 +1319,7 @@ void Compiler:: whileStatement(bool *returnflag, eRetType returntype, std::strin
 	this->genLabel(whilelab);
 	std::string *endlab = new std::string();
 	this->genLabel(endlab);
-	this->pushMidCode(LABOP, new std::string(), new std::string(), whilelab, false);
+	this->pushMidCode(LABOP, new std::string(), new std::string(), whilelab);
 	this->inSym();
 	if(this->tok.id == LPARENT)
 	{
@@ -1343,8 +1343,8 @@ void Compiler:: whileStatement(bool *returnflag, eRetType returntype, std::strin
 	else{
 		this->errorHandle(NOTSTATEMENT);
 	}
-	this->pushMidCode(GOTOOP, new std::string(), new std::string(), whilelab, false);
-	this->pushMidCode(LABOP, new std::string(), new std::string(), endlab, false);
+	this->pushMidCode(GOTOOP, new std::string(), new std::string(), whilelab);
+	this->pushMidCode(LABOP, new std::string(), new std::string(), endlab);
 	//std::cout << "这是一个 <循环语句>" << std::endl;
 }
 
@@ -1379,10 +1379,10 @@ void Compiler::scanfStatement()
 		switch(sym->returnType)
 		{
 		case INTRET:
-			this->pushMidCode(SCANFOP, sym->name, new std::string("int"), sym->name, false);
+			this->pushMidCode(SCANFOP, sym->name, new std::string("int"), sym->name);
 			break;
 		case CHARRET:
-			this->pushMidCode(SCANFOP, sym->name, new std::string("char"), sym->name, false);
+			this->pushMidCode(SCANFOP, sym->name, new std::string("char"), sym->name);
 			break;
 		}
 		this->inSym();
@@ -1409,10 +1409,10 @@ void Compiler::scanfStatement()
 			switch(sym->returnType)
 			{
 			case INTRET:
-				this->pushMidCode(SCANFOP, sym->name, new std::string("int"), sym->name, false);
+				this->pushMidCode(SCANFOP, sym->name, new std::string("int"), sym->name);
 				break;
 			case CHARRET:
-				this->pushMidCode(SCANFOP, sym->name, new std::string("char"), sym->name, false);
+				this->pushMidCode(SCANFOP, sym->name, new std::string("char"), sym->name);
 				break;
 			}
 			this->inSym();
@@ -1465,7 +1465,7 @@ void Compiler:: printfStatement()
 				this->errorHandle(NOTRPARENT);
 			}
 			//当确认后面没有表达式输出后，才输出字符串
-			this->pushMidCode(PRINTFOP, new std::string(), new std::string(), num, false);
+			this->pushMidCode(PRINTFOP, new std::string(), new std::string(), num);
 			//std::cout << "这是一个 <写语句>" << std::endl;
 			return ;
 		}
@@ -1477,15 +1477,15 @@ void Compiler:: printfStatement()
 	if(num)
 	{
 		//如果num不是0，那么说明需要输出字符串
-		this->pushMidCode(PRINTFOP, new std::string(), new std::string(), num, false);
+		this->pushMidCode(PRINTFOP, new std::string(), new std::string(), num);
 	}
 	switch(rettype)
 	{
 	case INTRET:
-		this->pushMidCode(PRINTFOP, new std::string("int"), new std::string(), temp, false);
+		this->pushMidCode(PRINTFOP, new std::string("int"), new std::string(), temp);
 		break;
 	case CHARRET:
-		this->pushMidCode(PRINTFOP, new std::string("char"), new std::string(), temp, false);
+		this->pushMidCode(PRINTFOP, new std::string("char"), new std::string(), temp);
 		break;
 	}
 	if(this->tok.id == RPARENT)
@@ -1516,7 +1516,7 @@ void Compiler:: returnStatement(bool *returnflag, eRetType returntype, std::stri
 		else 
 		{
 			//int / char
-			this->pushMidCode(ADDOP, temp, new std::string("0"), new std::string("#RET"), false);
+			this->pushMidCode(ADDOP, temp, new std::string("0"), new std::string("#RET"));
 			if(returntype != rettype)
 			{
 				//return类型不匹配，提示，不跳读
@@ -1543,10 +1543,10 @@ void Compiler:: returnStatement(bool *returnflag, eRetType returntype, std::stri
 	ss << *name << "$end";
 	//bug:注意这里main函数不需要返回！这里其他函数的return才有效，main函数因为根本不需要main的结束标号
 	if(!this->isIdEqual(std::string("main"), *name))
-		this->pushMidCode(GOTOOP, new std::string(), new std::string(), &(ss.str()), false);
+		this->pushMidCode(GOTOOP, new std::string(), new std::string(), &(ss.str()));
 	else{
 		//bug:如果是main函数，那么直接生成EXITOP
-		this->pushMidCode(EXITOP, new std::string(), new std::string(), new std::string(), false);
+		this->pushMidCode(EXITOP, new std::string(), new std::string(), new std::string());
 	}
 	//std::cout << "这是一个 <返回语句>" << std::endl;
 }
@@ -1624,7 +1624,7 @@ void Compiler:: statement(bool *returnflag, eRetType returntype, std::string *fu
 			}
 			this->inSym();
 			this->varParaList(sym);
-			this->pushMidCode(CALLOP, new std::string(), new std::string(), sym->name, false);
+			this->pushMidCode(CALLOP, new std::string(), new std::string(), sym->name);
 			if(this->tok.id == RPARENT)
 			{
 				this->inSym();
@@ -1658,7 +1658,7 @@ void Compiler:: statement(bool *returnflag, eRetType returntype, std::string *fu
 			{
 				this->errorHandle(INTTOCHARNOTALLOW);
 			}
-			this->pushMidCode(ADDOP, expressoperand, new std::string("0"), sym->name, false);
+			this->pushMidCode(ADDOP, expressoperand, new std::string("0"), sym->name);
 			if(this->tok.id == SEMI)
 			{
 				this->inSym();
@@ -1710,7 +1710,7 @@ void Compiler:: statement(bool *returnflag, eRetType returntype, std::string *fu
 			{
 				std::string *temp = new std::string();
 				this->genTemp(temp);
-				this->pushMidCode(ADDOP, tempoperand, new std::string("0"), temp, false);
+				this->pushMidCode(ADDOP, tempoperand, new std::string("0"), temp);
 				*tempoperand = *temp;
 			}
 			//如果是int给char类型赋值，那么不允许！这里一开始怎么没把判断加上
@@ -1718,7 +1718,7 @@ void Compiler:: statement(bool *returnflag, eRetType returntype, std::string *fu
 			{
 				this->errorHandle(INTTOCHARNOTALLOW);
 			}
-			this->pushMidCode(LARRAYOP, tempoperand, indexoperand, name, false);
+			this->pushMidCode(LARRAYOP, tempoperand, indexoperand, name);
 			if(this->tok.id == SEMI)
 			{
 				this->inSym();
@@ -1735,7 +1735,7 @@ void Compiler:: statement(bool *returnflag, eRetType returntype, std::string *fu
 				this->errorHandle(NOTANOPARAFUNC);
 				return ;
 			}
-			this->pushMidCode(CALLOP, new std::string(), new std::string(), name, false);
+			this->pushMidCode(CALLOP, new std::string(), new std::string(), name);
 			this->inSym();
 		}
 		else{

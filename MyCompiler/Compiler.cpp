@@ -10,25 +10,31 @@ Compiler::Compiler(char *path)
 		exit(0);
 	}
 	std::stringstream ss = std::stringstream();
-	ss << path << "15061129_解小锐_基本块划分情况.txt";
+	ss << "15061129_解小锐_基本块划分情况.txt";
 	this->blockFile = std::fstream(ss.str(), std::ios::out);
 	ss.str("");
-	ss << path << "15061129_解小锐_优化前中间代码.txt";
+	ss << "15061129_解小锐_优化前中间代码.txt";
 	this->midFileBefore = std::fstream(ss.str(), std::ios::out);
 	ss.str("");
-	ss << path << "15061129_解小锐_优化后中间代码.txt";
+	ss << "15061129_解小锐_优化后中间代码.txt";
 	this->midFileAfter = std::fstream(ss.str(), std::ios::out);
 	ss.str("");
-	ss << path << "15061129_解小锐_优化前目标代码.asm";
+	ss << "15061129_解小锐_优化前目标代码.asm";
 	this->objectFileBefore = std::fstream(ss.str(), std::ios::out);
 	ss.str("");
-	ss << path << "15061129_解小锐_优化后目标代码.asm";
+	ss << "15061129_解小锐_优化后目标代码.asm";
 	this->objectFileAfter = std::fstream(ss.str(), std::ios::out);
 	ss.str("");
-	ss << path << "15061129_解小锐_符号表信息.txt";
+	ss << "15061129_解小锐_符号表信息.txt";
 	this->symtabFile = std::fstream(ss.str(), std::ios::out);
-	this->sym = std::string();
+	ss.str("");
+	ss << "15061129_解小锐_数据流分析信息.txt";
+	this->dataAnalysisFile = std::fstream(ss.str(), std::ios::out);
+	ss.str("");
+	ss << "15061129_解小锐_dag图以及小优化信息.txt";
+	this->dagFile = std::fstream(ss.str(), std::ios::out);
 
+	this->sym = std::string();
 	this->lineCount = 0;
 	this->warningList = std::vector<warning*>();
 	this->errorList = std::vector<error*>();
@@ -45,6 +51,7 @@ void Compiler:: begin()
 {
 	//符号表初始化
 	this->initSymTab();
+	//语法分析时生成中间代码初始化
 	this->initMidCode();
 	this->setup();
 	this->initWordArray();
@@ -60,16 +67,15 @@ void Compiler:: begin()
 	}
 	//先生成优化前的中间代码和目标代码，然后生成优化后的中间代码和目标代码
 	this->writeMidCodetoFile(this->midFileBefore);
-	/*this->objectInit();
+	this->objectInit();
 	this->generate();
-	this->writeMipsOrderToFile(this->objectFileBefore);*/
+	this->writeMipsOrderToFile(this->objectFileBefore);
 	//然后开始优化，并生成优化后的中间代码和目标代码
 	this->initOptimize();
 	this->smallOptimize();
 	this->divideToBlock();
-	this->printBlock();
 	this->initBlockConnect();
-	this->printBlockConnect();
+	this->writeBlockToFile();
 
 	this->dataFlowAnalysis();
 
