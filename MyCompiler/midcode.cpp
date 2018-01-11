@@ -328,24 +328,24 @@ void Compiler ::genMessage(std::string *str, int num)
 	ss << num;
 	*str = ss.str();
 }
-
+//注意rs的长度，如果长度小于0，那么直接返回false
 bool Compiler::isOperandNumber(std::string *rs)
 {
-	return (*rs)[0] >= '0' && (*rs)[0] <= '9' || (*rs)[0] == '-';
+	return rs->length() > 0 ? (*rs)[0] >= '0' && (*rs)[0] <= '9' || (*rs)[0] == '-' : false;
 }
 
 bool Compiler::isOperandTemp(std::string *rs)
 {
-	return (*rs)[0] == '$';
+	return rs->length() > 0 ? (*rs)[0] == '$' : false;
 }
 
 bool Compiler::isOperandRet(std::string *rs)
 {
-	return (*rs)[0] == '#';
+	return rs->length() > 0 ? (*rs)[0] == '#' : false;
 }
 
 bool Compiler::isOperandId(std::string *rs)
 {
-	return (*rs)[0] == '_' || ((*rs)[0] >= 'A' && (*rs)[0] <= 'Z')
-		|| ((*rs)[0] >= 'a' && (*rs)[0] <= 'z');
+	return rs->length() > 0 ? (*rs)[0] == '_' || ((*rs)[0] >= 'A' && (*rs)[0] <= 'Z')
+		|| ((*rs)[0] >= 'a' && (*rs)[0] <= 'z') : false;
 }

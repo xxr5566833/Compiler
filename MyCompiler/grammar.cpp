@@ -87,10 +87,9 @@ const tokenType COMSTATEMENT_BEGIN[] = {CONST, INT, CHAR, IF, WHILE, LBRACKET, S
 const tokenType RELATION_OPERATOR[] = {LESSEQU, MOREEQU, EQU, NEQU, LESS, MORE,};
 
 const int RELATION_OPERATOR_SIZE = 6;
-
  
 
-bool Compiler:: isInRange(const tokenType range[], int size)
+bool Compiler:: isInRange(const tokenType range[],const int size)
 {
 	int t = this->tok.id;
 	
@@ -117,6 +116,7 @@ void Compiler:: int_(int *value)
 			this->inSym();
 		}
 		else{
+			//有正负号，但是后面不是一个无符号整数，那么此时进行报错，并跳读到无符号整数的follow集
 			this->errorHandle(NOTUNSIGNEDINT);
 		}
 	}
@@ -154,6 +154,7 @@ void Compiler:: constDef()
 					this->inSym();
 				}
 				else{
+					//缺少=符号，此时跳读直到遇到整数或者字符
 					this->errorHandle(NOTASSIGN);
 				}
 				if(this->isInRange(INT_BEGIN, INT_BEGIN_SIZE))
@@ -165,6 +166,7 @@ void Compiler:: constDef()
 						this->push(name, returntype, symboltype, value, this->lineCount);
 					}
 					else{
+						//常量标识符重复定义了,跳读
 						this->errorHandle(DUPLICATEDEF);
 					}
 				}
@@ -173,7 +175,7 @@ void Compiler:: constDef()
 				}
 			}
 			else{
-				//不是标识符，那么就什么也不做
+				//不是标识符，那么跳读到逗号或者分号
 				this->errorHandle(NOTID);
 			}
 
@@ -224,6 +226,7 @@ void Compiler:: constDef()
 	}
 	else{
 		this->errorHandle(NOTINTORCHAR);
+		//不是一个int或者是char，跳读直到分号
 	}
 	//std::cout << "这是一个 <常量定义>" << std::endl;
 }
@@ -239,6 +242,7 @@ void Compiler:: constState()
 			this->inSym();
 		}
 		else{
+			//缺少分号怎么办。。不跳读！假装它忘写了
 			this->errorHandle(NOTSEMI);
 		}
 	}while(this->tok.id == CONST);
@@ -278,13 +282,13 @@ void Compiler:: varParaList(symbol *sym)
 	{
 		if(sym->paraList[paraindex] != type)
 		{
+			//参数类型不匹配，不跳读
 			this->errorHandle(PARATYPEDISMATCH);
-			return ;
 		}
 	}
 	else{
+		//参数个数不匹配，不跳读
 		this->errorHandle(PARANUMDISMATCH);
-		return ;
 	}
 	paraindex ++;
 	while(this->tok.id == COMMA)
@@ -298,16 +302,19 @@ void Compiler:: varParaList(symbol *sym)
 		{
 			if(sym->paraList[paraindex] != type)
 			{
+				//类型不匹配不跳读
 				this->errorHandle(PARATYPEDISMATCH);
 			}
 		}
 		else{
+			//个数不匹配不跳读
 			this->errorHandle(PARANUMDISMATCH);
 		}
 		paraindex ++;
 	}
 	if(paraindex != sym->feature)
 	{
+		//个数不匹配不跳读
 		this->errorHandle(PARANUMDISMATCH);
 	}
 	//std::cout << "这是一个 <值参数表>" << std::endl;
@@ -323,8 +330,10 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 		symbol *sym = 0;
 		if(!this->find(this->tok.val.str, &sym, false))
 		{
+			//说明这个标识符没有被定义，那么此时跳读并结束对这个因子的分析
 			this->errorHandle(IDNOTDEF);
 			return ;
+			
 		}
 		*resulttype = sym->returnType;
 		this->inSym();
@@ -333,6 +342,7 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 			//说明是数组元素值
 			if(sym->symbolType != ARRAYSYM)
 			{
+				//标识符不是一个数组，那么此时跳读并结束对因子的分析即可
 				this->errorHandle(NOTANARRAY);
 				return ;
 			}
@@ -342,20 +352,18 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 			this->expression(&type, temp);
 			if(type != INTRET)
 			{
+				//不是一个int型的表达式，不做跳读处理
 				this->errorHandle(NOTAINT);
-				//TODO跳读处理
-				return ;
 			}
 			if(this->isOperandNumber(temp))
 			{
-				//如果表达式返回的临时变量是一个常数，那么这里就需要检查数组下标是否越界
+				//如果表达式返回的是一个常数，那么这里就需要检查数组下标是否越界
 				int constvalue = atoi(temp->c_str());
 				//注意还要和0比较
 				if(constvalue >= sym->feature || constvalue < 0)
 				{
+					//下标越界不跳读
 					this->errorHandle(ARRAYINDEXOUTOFRANGE);
-					//跳读
-					return ;
 				}
 			}
 			this->genTemp(resultoperand);
@@ -366,6 +374,7 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 
 			}
 			else{
+				//缺少右中括号，默认是忘写了，不跳读
 				this->errorHandle(NOTRBRACKET);
 
 			}
@@ -374,13 +383,14 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 			//说明是一个函数调用
 			if(sym->symbolType != FUNCSYM)
 			{
+				//不是一个函数，那么此时跳读并结束对因子的分析
 				this->errorHandle(NOTAFUNC);
 				return ;
 			}
 			if(sym->returnType == VOID)
 			{
+				//不是一个有返回值的函数调用，那么此时不跳读
 				this->errorHandle(NORETURNVALUE);
-				return ;
 			}
 			this->inSym();
 			this->varParaList(sym);
@@ -392,8 +402,8 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 				this->inSym();
 			}
 			else{
+				//缺少右小括号，那么此时默认忘写了，不跳读
 				this->errorHandle(NOTRPARENT);
-
 			}
 		}
 		else{
@@ -405,9 +415,8 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 			else if(sym->symbolType == FUNCSYM){
 				if(sym->feature != 0)
 				{
-					//这里都是无参函数调用，所以这里不能是一个有参函数
+					//这里都是无参函数调用，所以这里不能是一个有参函数，这里不跳读
 					this->errorHandle(NOTANOPARAFUNC);
-					return ;
 				}
 				this->pushMidCode(CALLOP, new std::string(), new std::string(), sym->name, false);
 				resultoperand = new std::string("#RET");
@@ -422,6 +431,7 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 				*resultoperand = *constvalue;
 			}
 			else{
+				//不是一个被正确使用的标识符，不跳读
 				this->errorHandle(INVALIDID);
 			}
 		}
@@ -435,6 +445,7 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 			this->inSym();
 		}
 		else{
+			//缺少右小括号，默认忘写不跳读
 			this->errorHandle(NOTRPARENT);
 		}
 	}
@@ -447,6 +458,7 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 		*resultoperand = *constvalue;
 	}
 	else{
+		//不是一个正确的因子，此时跳读
 		this->errorHandle(NOTFACTOR);
 	}
 	*operand = *resultoperand;
@@ -609,16 +621,14 @@ void Compiler:: varDef(eRetType rettype, std::string *name)
 	symbol *sym = 0;
 	if(this->find(name, &sym, true))
 	{
+		//这个名字已经被定义过了，那么跳读
 		this->errorHandle(DUPLICATEDEF);
-		//这里暂定出错为直接return
-		return ;
 	}
 	if(this->tok.id == SEMI)
 	{
 		//处理之前的简单变量标识符
 		this->push(name, rettype, SIMPLESYM, -1, this->lineCount);
 		this->inSym();
-		//std::cout << "这是一个 <变量定义处理>" << std::endl; ;
 		return ;
 	}
 	else if(this->tok.id == LBRACKET)
@@ -633,7 +643,8 @@ void Compiler:: varDef(eRetType rettype, std::string *name)
 			this->inSym();
 		}
 		else{
-			this->errorHandle(NOTID);
+			//跳读
+			this->errorHandle(NOTUNSIGNEDINT);
 		}
 		if(this->tok.id == RBRACKET)
 		{
@@ -642,6 +653,7 @@ void Compiler:: varDef(eRetType rettype, std::string *name)
 			this->inSym();
 		}
 		else{
+			//默认是忘写了，不跳读
 			this->errorHandle(NOTRBRACKET);
 		}
 	}
@@ -659,16 +671,18 @@ void Compiler:: varDef(eRetType rettype, std::string *name)
 			symbol *sym = 0;
 			if(this->find(this->tok.val.str, &sym, true))
 			{
+				//重复定义了跳读，并continue
 				this->errorHandle(DUPLICATEDEF);
-				//这里出错直接return
-				return ;
+				continue;
 			}
 			//保存在标识符信息
 			symname = this->tok.val.str; 
 			this->inSym();
 		}
 		else{
+			//跳读并continue
 			this->errorHandle(NOTID);
+			continue;
 		}
 		int feature = -1;
 		if(this->tok.id == LBRACKET)
@@ -682,6 +696,7 @@ void Compiler:: varDef(eRetType rettype, std::string *name)
 				this->inSym();
 			}
 			else{
+				//跳读
 				this->errorHandle(NOTUNSIGNEDINT);
 			}
 			if(this->tok.id == RBRACKET)
@@ -691,6 +706,7 @@ void Compiler:: varDef(eRetType rettype, std::string *name)
 				this->inSym();
 			}
 			else{
+				//默认忘写不跳读
 				this->errorHandle(NOTRBRACKET);
 			}
 		}
@@ -705,6 +721,7 @@ void Compiler:: varDef(eRetType rettype, std::string *name)
 		this->inSym();
 	}
 	else{
+		//默认忘写不跳读
 		this->errorHandle(NOTSEMI);
 	}
 	//std::cout << "这是一个 <变量处理定义>" << std::endl;
@@ -723,6 +740,7 @@ void Compiler:: decHead(eRetType *rettype, std::string **name)
 		*rettype = CHARRET;
 	}
 	else{
+		//类型默认为int，不跳读
 		this->errorHandle(NOTINTORCHAR);
 	}
 	this->inSym();
@@ -751,6 +769,7 @@ void Compiler:: para(symbol *sym)
 	symbol *tempsym = 0;
 	if(this->find(name, &tempsym, true))
 	{
+		//参数的名字和之前的重复
 		this->errorHandle(DUPLICATEDEF);
 		return ;
 	}
@@ -790,6 +809,7 @@ void Compiler:: noParaFuncDef(symbol *sym)
 		this->inSym();
 	}
 	else{
+		//假定它忘写了
 		this->errorHandle(NOTLBRACE);
 	}
 	bool returnflag = false;
@@ -803,10 +823,10 @@ void Compiler:: noParaFuncDef(symbol *sym)
 		{
 			//如果没有任何return语句而且返回类型是有返回值的类型，那么报错
 			this->errorHandle(NONERETURN);
-			return ;
 		}
 	}
 	else{
+		//假设忘写
 		this->errorHandle(NOTRBRACKET);
 	}
 	//先生成函数结束的标号
@@ -827,6 +847,7 @@ void Compiler:: haveParaFuncDef(symbol *sym)
 		this->inSym();
 	}
 	else{
+		//假设忘写
 		this->errorHandle(NOTRPARENT);
 	}
 	this->noParaFuncDef(sym);
@@ -844,7 +865,6 @@ void Compiler:: notMainVoidFuncDef()
 	if(this->find(name, &sym, true))
 	{
 		this->errorHandle(DUPLICATEDEF);
-		return ;
 	}
 	else{
 		sym = this->push(name, rettype, FUNCSYM, 0, this->lineCount);
@@ -874,6 +894,7 @@ void Compiler:: mainDef()
 	}
 	else{
 		this->errorHandle(NOTMAIN);
+		this->inSym();
 	}
 	//把main函数插入符号表
 	this->push(name, VOIDRET, FUNCSYM, 0, this->lineCount);
@@ -882,6 +903,7 @@ void Compiler:: mainDef()
 		this->inSym();
 	}
 	else{
+		//假设忘写
 		this->errorHandle(NOTLPARENT);
 	}
 	if(this->tok.id == RPARENT)
@@ -889,6 +911,7 @@ void Compiler:: mainDef()
 		this->inSym();
 	}
 	else{
+		//假设忘写
 		this->errorHandle(NOTRPARENT);
 	}
 	if(this->tok.id == LBRACE)
@@ -897,6 +920,7 @@ void Compiler:: mainDef()
 		this->inSym();
 	}
 	else{
+		//假设忘写
 		this->errorHandle(NOTLBRACE);
 	}
 	bool returnflag = false;
@@ -912,6 +936,7 @@ void Compiler:: mainDef()
 		return ;
 	}
 	else{
+		//假设忘写
 		this->errorHandle(NOTRBRACE);
 	}
 
@@ -999,7 +1024,6 @@ void Compiler:: beginWithVar()
 			if(this->find(name, &sym, true))
 			{
 				this->errorHandle(DUPLICATEDEF);
-				return ;
 			}
 			else{
 				sym = this->push(name, rettype, FUNCSYM, 0, this->lineCount);
@@ -1014,7 +1038,6 @@ void Compiler:: beginWithVar()
 			if(this->find(name, &sym, true))
 			{
 				this->errorHandle(DUPLICATEDEF);
-				return ;
 			}
 			else{
 				sym = this->push(name, rettype, FUNCSYM, 0, this->lineCount);
@@ -1121,6 +1144,7 @@ void Compiler:: ifStatement(bool *returnflag, eRetType returntype, std::string *
 		this->statement(returnflag, returntype, name);
 	}
 	else{
+		//不是一个语句
 		this->errorHandle(NOTSTATEMENT);
 	}
 	this->pushMidCode(GOTOOP, new std::string(), new std::string(), endlabel, false);
@@ -1130,7 +1154,10 @@ void Compiler:: ifStatement(bool *returnflag, eRetType returntype, std::string *
 		this->inSym();
 	}
 	else{
+
+		//默认它没有写else，这里不跳读，直接结束
 		this->errorHandle(NOTELSE);
+		return ;
 	}
 	if(this->isInRange(STATEMENT_BEGIN, STATEMENT_BEGIN_SIZE))
 	{
@@ -1154,8 +1181,9 @@ void Compiler:: caseStatement(eRetType switchtype, std::string *switchtemp, bool
 		this->constant(&value, &casetype);
 		if(casetype != switchtype)
 		{
+			//常量类型不一样，不跳读
 			this->errorHandle(CASESWITCHDISMATCH);
-			return ;
+			this->inSym();
 		}
 		//获得case后的常量的值
 		*caseconst = value;
@@ -1167,6 +1195,7 @@ void Compiler:: caseStatement(eRetType switchtype, std::string *switchtemp, bool
 		this->pushMidCode(NEQUOP, constoperand, switchtemp, nextlab, false);
 	}
 	else{
+		//不是一个常量，跳读到冒号
 		this->errorHandle(NOTCONSTANT);
 	}
 	if(this->tok.id == COLON)
@@ -1174,6 +1203,7 @@ void Compiler:: caseStatement(eRetType switchtype, std::string *switchtemp, bool
 		this->inSym();
 	}
 	else{
+		//默认忘写
 		this->errorHandle(NOTCOLON);
 	}
 	if(this->isInRange(STATEMENT_BEGIN, STATEMENT_BEGIN_SIZE))
@@ -1206,6 +1236,7 @@ void Compiler:: caseTab(eRetType switchtype, std::string *switchtemp, bool *retu
 			{
 				if(casevalue[i] == caseconst)
 				{
+					//常量的值重复了  不跳读
 					this->errorHandle(CASEVALUEDUPLICATE);
 				}
 			}
@@ -1335,11 +1366,13 @@ void Compiler::scanfStatement()
 		if(!this->find(this->tok.val.str, &sym, false))
 		{
 			this->errorHandle(IDNOTDEF);
+			//直接return，不读了
 			return ;
 		}
 		//注意只有参数类型和标识符类型可以被输入所改变
 		if(sym->symbolType != SIMPLESYM && sym->symbolType != PARASYM)
 		{
+			//这里提示，不跳读
 			this->errorHandle(NOTASIMPLE);
 		}
 		//根据标识符的类型，判断是输入字符还是输入整数
@@ -1367,7 +1400,7 @@ void Compiler::scanfStatement()
 			if(!this->find(this->tok.val.str, &sym, false))
 			{
 				this->errorHandle(IDNOTDEF);
-				return ;
+				return;
 			}
 			if(sym->symbolType != SIMPLESYM && sym->symbolType != PARASYM)
 			{
@@ -1477,8 +1510,8 @@ void Compiler:: returnStatement(bool *returnflag, eRetType returntype, std::stri
 		this->expression(&rettype, temp);
 		if(returntype == VOIDRET)
 		{
+			//是void类型的，却有return()这样的语句，那么提示，不跳读
 			this->errorHandle(CANNOTRETURN);
-			return ;
 		}
 		else 
 		{
@@ -1486,8 +1519,8 @@ void Compiler:: returnStatement(bool *returnflag, eRetType returntype, std::stri
 			this->pushMidCode(ADDOP, temp, new std::string("0"), new std::string("#RET"), false);
 			if(returntype != rettype)
 			{
+				//return类型不匹配，提示，不跳读
 				this->errorHandle(RETURNTYPEDISMATCH);
-				return ;
 			}
 		}
 		*returnflag = true;
@@ -1503,7 +1536,6 @@ void Compiler:: returnStatement(bool *returnflag, eRetType returntype, std::stri
 	{
 		//如果说是int 或者是 char，却什么都不返回，也报错
 		this->errorHandle(RETURNTYPEDISMATCH);
-		return ;
 	}
 	//bug：返回语句应该统一跳到这个函数的结束段，但是之前却没有这个设定
 	//统一函数体的结束处为 函数名$end
@@ -1589,7 +1621,6 @@ void Compiler:: statement(bool *returnflag, eRetType returntype, std::string *fu
 			if(sym->symbolType != FUNCSYM)
 			{
 				this->errorHandle(NOTAFUNC);
-				return ;
 			}
 			this->inSym();
 			this->varParaList(sym);
@@ -1626,7 +1657,6 @@ void Compiler:: statement(bool *returnflag, eRetType returntype, std::string *fu
 			if(sym->returnType == CHARRET && rettype == INTRET)
 			{
 				this->errorHandle(INTTOCHARNOTALLOW);
-				return ;
 			}
 			this->pushMidCode(ADDOP, expressoperand, new std::string("0"), sym->name, false);
 			if(this->tok.id == SEMI)

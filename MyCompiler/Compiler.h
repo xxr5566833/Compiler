@@ -148,7 +148,7 @@ private:
 
 	//语法分析相关：
 	//判断
-	bool isInRange(const tokenType range[], int size);
+	bool isInRange(const tokenType range[], const int size);
 	//语法成分：
 	void int_(int *value);
 	void constDef();
@@ -189,7 +189,9 @@ private:
 	void errorSetup();
 	void errorPrint();
 	//跳读
-	void errorSkip(tokenType id);
+	void skip(const tokenType follow[], const int size);
+	//根据错误的类型跳读
+	void errorSkip(errorType id);
 
 	//处理警告
 	std::vector<warning*> warningList;

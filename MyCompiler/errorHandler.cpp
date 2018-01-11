@@ -92,16 +92,122 @@ const char *CASEVALUEDUPLICATEMSG = "case后的常量出现了重复";
 const char *ARRAYINDEXOUTOFRANGEMSG = "数组下标越界！";
 
 const char *DIVZEROMSG = "不能除以0";
- 
+
+
+//试着写一下吧
+
+const tokenType UNSIGNEDINT_FOLLOW[] = {LESSEQU, MOREEQU, EQU, NEQU, LESS, MORE, PLUS, MINUS, STAR, DIV, COMMA, COLON, SEMI, RBRACKET, RPARENT};
+
+const int UNSIGNEDINT_FOLLOW_SIZE = 15;
+
+const tokenType INT_ASSIGN_FOLLOW[] = {PLUS, MINUS, ZERO, UNSIGNEDINT, COMMA, SEMI };
+
+const int INT_ASSIGN_FOLLOW_SIZE = 6;
+
+const tokenType DUPLICATEDEF_FOLLOW[] = {COMMA, SEMI};
+
+const int DUPLICATEDEF_FOLLOW_SIZE = 2;
+
+const tokenType NOTID_FOLLOW[] = {COMMA, SEMI};
+
+const int NOTID_FOLLOW_SIZE = 2;
+
+const tokenType NOTSINGLECHAR_FOLLOW[] = {COMMA, SEMI};
+
+const int NOTSINGLECHAR_FOLLOW_SIZE = 2;
+
+const tokenType NOTINTORCHAR_FOLLOW[] = {SEMI};
+
+const int NOTINTORCHAR_FOLLOW_SIZE = 1;
+
+const tokenType IDNOTDEF_FOLLOW[] = {PLUS, MINUS, STAR, DIV, RPARENT, SEMI, RBRACKET, LESSEQU, MOREEQU, EQU, NEQU, LESS, MORE};
+
+const int IDNOTDEF_FOLLOW_SIZE = 13;
+
+const tokenType NOTANARRAY_FOLLOW[] = {PLUS, MINUS, STAR, DIV, RPARENT, SEMI, RBRACKET, LESSEQU, MOREEQU, EQU, NEQU, LESS, MORE};
+
+const int NOTANARRAY_FOLLOW_SIZE = 13;
+
+const tokenType NOTAFUNC_FOLLOW[] = {PLUS, MINUS, STAR, DIV, RPARENT, SEMI, RBRACKET, LESSEQU, MOREEQU, EQU, NEQU, LESS, MORE};
+
+const int NOTAFUNC_FOLLOW_SIZE = 13;
+
+const tokenType NOTFACTOR_FOLLOW[] = {PLUS, MINUS, STAR, DIV, RPARENT, SEMI, RBRACKET, LESSEQU, MOREEQU, EQU, NEQU, LESS, MORE, COMMA, COLON};
+
+const int NOTFACTOR_FOLLOW_SIZE = 15;
+
+const tokenType NOTSTATEMENT_FOLLOW[] = {IF, WHILE, LBRACKET, SCANF, PRINTF, SEMI, SWITCH, RETURN, ID, ELSE, RBRACE};
+
+const int NOTSTATEMENT_FOLLOW_SIZE = 11;
+
+const tokenType NOTCONSTANT_FOLLOW[] = {COLON};
+
+const int NOTCONSTANT_FOLLOW_SIZE = 1;
+
 void Compiler:: errorHandle(errorType id)
 {
-	std::cout << this->sym << std::endl;
 	error *err = new error();
 	err->id = id;
-	err->lineCount = this->lineCount;
+	err->lineCount = this->lineCount + 1;
 	err->token = new std::string(this->sym);
 
 	this->errorList.push_back(err);
+	this->errorSkip(id);
+}
+
+void Compiler::errorSkip(errorType id)
+{
+	switch(id)
+	{
+	case NOTUNSIGNEDINT:
+		this->skip(UNSIGNEDINT_FOLLOW, UNSIGNEDINT_FOLLOW_SIZE);
+		break;
+	case NOTASSIGN:
+		this->skip(INT_ASSIGN_FOLLOW, INT_ASSIGN_FOLLOW_SIZE);
+		break;
+	case DUPLICATEDEF:
+		this->skip(DUPLICATEDEF_FOLLOW, DUPLICATEDEF_FOLLOW_SIZE);
+		break;
+	case NOTINT:
+		this->skip(UNSIGNEDINT_FOLLOW, UNSIGNEDINT_FOLLOW_SIZE);
+		break;
+	case NOTID:
+		this->skip(NOTID_FOLLOW, NOTID_FOLLOW_SIZE);
+		break;
+	case NOTSINGLECHAR:
+		this->skip(NOTSINGLECHAR_FOLLOW, NOTSINGLECHAR_FOLLOW_SIZE);
+		break;
+	case NOTINTORCHAR:
+		this->skip(NOTINTORCHAR_FOLLOW, NOTINTORCHAR_FOLLOW_SIZE);
+		break;
+	case IDNOTDEF:
+		this->skip(IDNOTDEF_FOLLOW, IDNOTDEF_FOLLOW_SIZE);
+		break;
+	case NOTANARRAY:
+		this->skip(NOTANARRAY_FOLLOW, NOTANARRAY_FOLLOW_SIZE);
+		break;
+	case NOTAFUNC:
+		this->skip(NOTAFUNC_FOLLOW, NOTAFUNC_FOLLOW_SIZE);
+		break;
+	case NOTFACTOR:
+		this->skip(NOTFACTOR_FOLLOW, NOTFACTOR_FOLLOW_SIZE);
+		break;
+	case NOTSTATEMENT:
+		this->skip(NOTSTATEMENT_FOLLOW, NOTSTATEMENT_FOLLOW_SIZE);
+		break;
+	case NOTCONSTANT:
+		this->skip(NOTCONSTANT_FOLLOW, NOTCONSTANT_FOLLOW_SIZE);
+		break;
+	}
+}
+
+void Compiler::skip(const tokenType follow[], const int size)
+{
+	//跳读直到遇到指定的单词
+	while(!this->isInRange(follow, size))
+	{	
+		this->inSym();
+	}
 }
 
 void Compiler:: errorSetup()
@@ -148,6 +254,7 @@ void Compiler:: errorSetup()
 	this->errorMsgList[NOTASIMPLE]			=	new std::string(NOTASIMPLEMSG);
 	this->errorMsgList[CASESWITCHDISMATCH]	=	new std::string(CASESWITCHDISMATCHMSG);
 	this->errorMsgList[NONERETURN]			=	new std::string(NONERETURNMSG);
+	this->errorMsgList[CANNOTRETURN]		=	new std::string(CANNOTRETURNMSG);
 	this->errorMsgList[RETURNTYPEDISMATCH]	=	new std::string(RETURNTYPEDISMATCHMSG);
 	this->errorMsgList[INTTOCHARNOTALLOW]	=	new std::string(INTTOCHARNOTALLOWMSG);
 	this->errorMsgList[NORETURNVALUE]		=	new std::string(NORETURNVALUEMSG);
