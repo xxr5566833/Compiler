@@ -88,6 +88,8 @@ const tokenType RELATION_OPERATOR[] = {LESSEQU, MOREEQU, EQU, NEQU, LESS, MORE,}
 
 const int RELATION_OPERATOR_SIZE = 6;
  
+//因为0作为一个操作数经常出现，所以这里用一个全局的来表示
+std::string *ZEROOPERAND = new std::string("0");
 
 bool Compiler:: isInRange(const tokenType range[],const int size)
 {
@@ -275,9 +277,9 @@ void Compiler:: varParaList(symbol *sym)
 	//std::cout << "进入 <值参数表>" << std::endl;
 	eRetType type = NOTTYPE;
 	int paraindex = 0;
-	std::string *temppara = new std::string();
-	this->expression(&type, temppara);
-	this->pushMidCode(REALPARAOP, new std::string(), new std::string(), temppara);
+	std::string temppara = std::string();
+	this->expression(&type, &temppara);
+	this->pushMidCode(REALPARAOP, &temppara, ZEROOPERAND, &temppara);
 	if(sym->feature > paraindex)
 	{
 		if(sym->paraList[paraindex] != type)
@@ -295,9 +297,9 @@ void Compiler:: varParaList(symbol *sym)
 	{
 		eRetType type = NOTTYPE;
 		this->inSym();
-		std::string *temppara = new std::string();
-		this->expression(&type, temppara);
-		this->pushMidCode(REALPARAOP, new std::string(), new std::string(), temppara);
+		std::string temppara = std::string();
+		this->expression(&type, &temppara);
+		this->pushMidCode(REALPARAOP, &temppara, ZEROOPERAND, &temppara);
 		if(sym->feature > paraindex)
 		{
 			if(sym->paraList[paraindex] != type)
@@ -311,13 +313,13 @@ void Compiler:: varParaList(symbol *sym)
 			this->errorHandle(PARANUMDISMATCH);
 		}
 		paraindex ++;
+		//释放空间
 	}
 	if(paraindex != sym->feature)
 	{
 		//个数不匹配不跳读
 		this->errorHandle(PARANUMDISMATCH);
 	}
-	//std::cout << "这是一个 <值参数表>" << std::endl;
 }
 
 void Compiler::factor(eRetType *resulttype, std::string *operand)
@@ -931,7 +933,6 @@ void Compiler:: mainDef()
 	{
 		this->pop();
 		//std::cout << "这是一个 <主函数定义>" << std::endl;
-
 		this->pushMidCode(EXITOP, new std::string(), new std::string(), new std::string());
 		return ;
 	}
@@ -1465,7 +1466,7 @@ void Compiler:: printfStatement()
 				this->errorHandle(NOTRPARENT);
 			}
 			//当确认后面没有表达式输出后，才输出字符串
-			this->pushMidCode(PRINTFOP, new std::string(), new std::string(), num);
+			this->pushMidCode(PRINTFOP, num, new std::string("0"), num);
 			//std::cout << "这是一个 <写语句>" << std::endl;
 			return ;
 		}
@@ -1477,15 +1478,15 @@ void Compiler:: printfStatement()
 	if(num)
 	{
 		//如果num不是0，那么说明需要输出字符串
-		this->pushMidCode(PRINTFOP, new std::string(), new std::string(), num);
+		this->pushMidCode(PRINTFOP, num, new std::string("0"), num);
 	}
 	switch(rettype)
 	{
 	case INTRET:
-		this->pushMidCode(PRINTFOP, new std::string("int"), new std::string(), temp);
+		this->pushMidCode(PRINTFOP, temp, new std::string("int"), temp);
 		break;
 	case CHARRET:
-		this->pushMidCode(PRINTFOP, new std::string("char"), new std::string(), temp);
+		this->pushMidCode(PRINTFOP, temp, new std::string("char"), temp);
 		break;
 	}
 	if(this->tok.id == RPARENT)

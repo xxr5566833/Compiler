@@ -724,7 +724,8 @@ void Compiler:: handleScanf(midcode *code)
 
 void Compiler::handlePrintf(midcode *code)
 {
-	if(code->op1name->length() == 0)
+	//为了和之前的四元式改动相匹配， 这里把判断是输出字符串还是输出表达式的方法改为判断第二个操作数是否为0
+	if(this->isIdEqual(*code->op2name, std::string("0")))
 	{
 		//说明是字符串
 		this->generateOrder(LI, V0, 4);
@@ -734,8 +735,8 @@ void Compiler::handlePrintf(midcode *code)
 		this->generateOrder(SYSCALL);
 	}
 	else{
-		//说明是表达式,根据op1name的第一个字符是什么字母来判断是输出整数还是字母
-		this->generateOrder(LI, V0, (*code->op1name)[0] == 'i' ? 1 : 11);
+		//说明是表达式,根据op2name的第一个字符是什么字母来判断是输出整数还是字母
+		this->generateOrder(LI, V0, (*code->op2name)[0] == 'i' ? 1 : 11);
 		//这里需要把要输出的数字/字符给到a0寄存器
 		std::string *rstreg = new std::string();
 		*rstreg = *T7;

@@ -1,220 +1,72 @@
-goto $label1
-被删除
-
-goto $label3
-被删除
-
-goto $label3
-被替换为:
 goto $label2
-
-goto $label5
 被删除
 
-goto $label5
+goto _aSfunc_1$end
 被替换为:
-goto $label4
+goto $label1
 
-goto fibo$end
+goto _aSfunc_1$end
 被替换为:
-goto $label4
+goto $label1
 
-goto fibo$end
+goto _aSfunc_1$end
 被替换为:
-goto $label4
-
-goto fibo$end
-被替换为:
-goto $label4
+goto $label1
 
 goto $label7
 被删除
 
-$t30 = $t30 + 0
+goto $label9
 被删除
+
+goto min$end
+被替换为:
+goto $label9
+
+goto min$end
+被替换为:
+goto $label9
+
+goto min$end
+被替换为:
+goto $label9
 
 goto $label11
 被删除
 
-$t36 = $t36 + 0
-被删除
-
-goto fib$end
+goto max$end
 被替换为:
 goto $label11
 
-goto fib$end
+goto max$end
 被替换为:
 goto $label11
 
-goto fib$end
-被替换为:
-goto $label11
-
-$t44 = $t44 + 0
+goto $label13
 被删除
 
-$t48 = $t48 - 0
-被删除
-
-goto $label21
+goto $label13
 被替换为:
-goto $label20
+goto $label12
+
+goto $label19
+被替换为:
+goto $label18
 
 goto $label17
 被替换为:
-goto $label19
+goto $label18
 
-goto $label15
-被替换为:
-goto $label19
-
-goto $label24
-被替换为:
-goto $label23
-
-goto $label27
+goto $label1
 被删除
 
-goto $label27
-被替换为:
-goto $label26
-
-goto $label31
-被替换为:
-goto $label30
-
-goto $label33
-被替换为:
-goto $label32
-
-goto $label40
-被删除
-
-goto $label36
-被替换为:
-goto $label40
-
-goto $label36
-被替换为:
-goto $label40
-
-goto $label44
-被删除
-
-goto $label46
-被删除
-
-goto $label44
-被替换为:
-goto $label46
-
-goto gcd$end
-被替换为:
-goto $label46
-
-goto gcd$end
-被替换为:
-goto $label46
-
-goto gcd$end
-被替换为:
-goto $label46
-
-goto $label48
-被删除
-
-goto $label50
-被删除
-
-goto $label48
-被替换为:
-goto $label50
-
-goto Combinatorial$end
-被替换为:
-goto $label50
-
-goto Combinatorial$end
-被替换为:
-goto $label50
-
-goto Combinatorial$end
-被替换为:
-goto $label50
-
-goto $label4
-被删除
-
-goto main4$end
+goto $label9
 被删除
 
 goto $label11
 被删除
 
-goto $label20
+goto $label18
 被删除
 
-goto printArray$end
-被删除
-
-goto $label30
-被删除
-
-goto quickSort$end
-被删除
-
-goto return1$end
-被删除
-
-goto return999$end
-被删除
-
-goto returnminus998$end
-被删除
-
-goto $label32
-被删除
-
-goto main2$end
-被删除
-
-goto returna$end
-被删除
-
-goto returnplus$end
-被删除
-
-goto returnStar$end
-被删除
-
-goto returnChar$end
-被删除
-
-goto mod$end
-被删除
-
-goto $label46
-被删除
-
-goto $label50
-被删除
-
-第25块有优化
-第26块有优化
-第27块有优化
-第28块有优化
-第33块有优化
-第68块有优化
-第71块有优化
-第90块有优化
-第92块有优化
-第96块有优化
-第133块有优化
-第250块有优化
-第269块有优化
-第283块有优化
-第303块有优化
-第335块有优化
-第365块有优化
-第395块有优化
+第30块有优化

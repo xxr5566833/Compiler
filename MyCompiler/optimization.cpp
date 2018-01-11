@@ -11,8 +11,6 @@ void Compiler::divideToBlock()
 		{
 			//函数开始符号(call的跳转目标)/标号（跳转的目标，其实函数名也是一个标号，但是这里用init 函数名代替了）作为入口语句
 		case LABOP:
-		case PRINTFOP:
-		case REALPARAOP:
 			if(!this->blockBeginFlag[i])
 			{
 				//初始化数据结构
@@ -25,21 +23,8 @@ void Compiler::divideToBlock()
 				this->blockBeginFlag[i] = true;
 			}
 			break;
-		case EXITOP:
-			if(!this->blockBeginFlag[i])
-			{
-				//初始化数据结构
-				Block *newblock = new Block();
-				newblock->prenum = 0;
-				newblock->next1 = -1;
-				newblock->next2 = -1;
-				this->blockArray[this->blockIndex] = newblock;
-				this->blockBegin[this->blockIndex++] = i;
-				this->blockBeginFlag[i] = true;
-			}
-			break;
-
 		//call的下一句是ret的返回地址/分支语句的下一句也是同理
+		case EXITOP:
 		case CALLOP:
 		case GOTOOP:
 		case EQUOP:
@@ -48,21 +33,9 @@ void Compiler::divideToBlock()
 		case MOREOP:
 		case LESSEQUOP:
 		case MOREEQUOP:
-			//给数组元素赋值虽然可以参与dag图的构建，但是它必须要作为
-			if(!this->blockBeginFlag[i + 1])
-			{
-				//初始化数据结构
-				Block *newblock = new Block();
-				newblock->prenum = 0;
-				newblock->next1 = -1;
-				newblock->next2 = -1;
-				this->blockArray[this->blockIndex] = newblock;
-				this->blockBegin[this->blockIndex++] = i + 1;
-				this->blockBeginFlag[i + 1] = true;
-			}
-			break;
 		case RETOP:
-			if(!this->blockBeginFlag[i + 1])
+			//首先得保证下一句没有达到超出数组范围
+			if((i + 1 < this->midindex) && !this->blockBeginFlag[i + 1])
 			{
 				//初始化数据结构
 				Block *newblock = new Block();
@@ -259,7 +232,6 @@ bool Compiler::canAdd(bool flag[],  Node *x, Node* midqueue[], int length, Node 
 	return choose;
 }
 
-
 void Compiler::DAG()
 {
 	//限制一个基本块最多有500个节点
@@ -295,8 +267,9 @@ void Compiler::DAG()
 		midcode *firstcode = this->codes[begin];
 
 		//基本块的第一句话需要特殊对待，因为它的类型是不确定的可能是：①init②运算③标号④goto⑤printf⑥scanf
-		//除了赋值以外的其他类型全部原样输出
-		if(firstcode->op != ADDOP && firstcode->op != SUBOP && firstcode->op != MULOP && firstcode->op != DIVOP)
+		//不能参与dag图建立的，都原样输出
+		if(firstcode->op != ADDOP && firstcode->op != SUBOP && firstcode->op != MULOP && firstcode->op != DIVOP && firstcode->op != RARRAYOP
+			&& firstcode->op != LARRAYOP && firstcode->op != SCANFOP && firstcode->op != REALPARAOP && firstcode->op != PRINTFOP)
 		{
 			this->pushMidCode(firstcode->op, firstcode->op1name, firstcode->op2name, firstcode->rstname);
 			begin += 1;
@@ -318,7 +291,7 @@ void Compiler::DAG()
 		midcode *endcode = this->codes[end - 1];
 		int endindex = 0;
 		if(endcode->op == SCANFOP || endcode->op == ADDOP || endcode->op == SUBOP || endcode->op == MULOP
-			|| endcode->op == DIVOP || endcode->op == RARRAYOP || endcode->op == LARRAYOP)
+			|| endcode->op == DIVOP || endcode->op == RARRAYOP || endcode->op == LARRAYOP || endcode->op == REALPARAOP || endcode->op == PRINTFOP)
 		{
 			endindex = end;
 		}
@@ -339,6 +312,8 @@ void Compiler::DAG()
 			case DIVOP:
 			case RARRAYOP:
 			case LARRAYOP:
+			case REALPARAOP:
+			case PRINTFOP:
 				ListNode *x = 0;
 
 				this->findNodeInTab(nodetab, tablength, code->op1name, &x);
@@ -386,14 +361,30 @@ void Compiler::DAG()
 				for(int k = 0 ; k < nodeindex ; k++)
 				{
 					Node *node = dag[k];
+					//现在加入了push ，push也必须每一次都创建新的中间节点，且push不改变相应标识符的nodeindex
+					//而且push与LARRAYOP不同之处还在于，左右节点相同的两个push，不能看做一个，必须要push两次！
+
 					//bug:数组名如果作为结果操作数，那么如果该结点的左右操作数相等，那么也不能把这个中间节点作为新四元式的中间节点
 					//因为数组名如果不一样，那么是不能作为等价的子节点存在的
 					//举个例子 a[1] = b  c[1] = b 那么如果按照原来的产生方式，a和c共享一个中间节点，此时如果再来一个t = c[1] 那么它就会把a所在的结点作为左操作数，因为
 					//a和c的index一样，所以这里我们对于LARRAYOP 的四元式，当且仅当 数组标识符也一样时才算作同一个中间节点
 					if(!(node->isLeaf) && node->op == code->op && node->xindex == x->index && node->yindex == y->index)
 					{
-
-						if(code->op != LARRAYOP)
+						if(code->op == LARRAYOP)
+						{
+							if(this->isIdEqual(*code->rstname, *node->mainname))
+							{
+								//只有当主名字一样时，才能算找到
+								mid = node;
+								findcount += 1;	
+							}
+						}
+						else if(code->op == REALPARAOP || code->op == PRINTFOP)
+						{
+							//如果发现了又一个push或者printf相同的变量的语句，那么不设置mid，因为两次操作并不能合并为一个
+							//那么下面又会为该操作创建一个中间节点，便于之后恢复
+						}
+						else
 						{
 							mid = node;
 							findcount += 1;	
@@ -401,14 +392,6 @@ void Compiler::DAG()
 							if(mid->flag)
 							{
 								*mid->mainname = *code->rstname;
-							}
-						}
-						else{
-							if(this->isIdEqual(*code->rstname, *node->mainname))
-							{
-								//只有当主名字一样时，才能算找到
-								mid = node;
-								findcount += 1;	
 							}
 						}
 						break;
@@ -433,6 +416,11 @@ void Compiler::DAG()
 					xnode->parentindex[xnode->parentnum ++] = nodeindex;
 					ynode->parentindex[ynode->parentnum ++] = nodeindex;
 					dag[nodeindex ++] = mid;
+				}
+				//这里如果是push或者是printf，那么直接break
+				if(code->op == REALPARAOP || code->op == PRINTFOP)
+				{
+					break;
 				}
 				//然后在节点表中找z
 				ListNode *z = 0;
@@ -473,8 +461,8 @@ void Compiler::DAG()
 		}
 		this->dagFile << "第" << i << "块有优化" << std::endl;
 		//建立好dag图和节点表以后，就可以导出新的中间代码了
-		Node *queue[kMaxNodeNum * 5] = {0};
-		int queuelength = 0;
+		/*Node *queue[kMaxNodeNum * 5] = {0};
+		int queuelength = 0;*/
 		Node *midqueue[kMaxNodeNum * 5] = {0};
 		//bug:因为数组空间开的太小，导致flag[超出最大的下标]一直为true。。tmd
 		bool flag[kMaxNodeNum * 5] = {0};
@@ -488,8 +476,9 @@ void Compiler::DAG()
 				midqueue[midlength ++] = node;
 			}
 		}
-		//然后采用启发式算法进行计算
-		while(1)
+		//原来是采用书上的启发式找最左子节点来构建新的中间代码的，但是原来启发式算法主要因为它们的临时寄存器太少
+		//所以需要按最左子节点找，现在根本不需要，直接按照中间节点建立的顺序恢复就好！因此现在也可以加入push printf了！
+		/*while(1)
 		{
 			bool endflag = true;
 			for(int j = 0 ; j < midlength ; j++)
@@ -531,15 +520,15 @@ void Compiler::DAG()
 				}
 			}
 
-		}
+		}*/
 		/*最后中间节点队列的逆序就是我们想要的计算顺序，这里还需要建立优化前中间
 		  代码和优化后中间代码之间的映射关系，很明显，临时变量的个数可能会减少，所以这里采取的映射方法是：如果这个临时变量在之后的基本块还活跃，那么不能删它，如果
 		  不活跃，那么就可以删了
 		  这里我们遍历中间节点队列里的每一个
 		*/
-		for(int j = queuelength - 1 ; j >= 0 ; j--)
+		for(int j = 0 ; j < midlength ; j++)
 		{
-			Node *midnode = queue[j];
+			Node *midnode = midqueue[j];
 			std::string *mid = new std::string();
 			//经过修改，是一定有主名字的,主名字是一定会被保留下来的
 
@@ -554,7 +543,14 @@ void Compiler::DAG()
 			
 
 			//这时就可以生成新的中间代码
-			this->pushMidCode(midnode->op, op1name, op2name, mid);
+			if(midnode->op == PRINTFOP || midnode->op == REALPARAOP)
+			{
+				//这两个符号，都是使用节点上的值，所以rst域需要是op1name
+				this->pushMidCode(midnode->op, op1name, op2name, op1name);
+			}
+			else{
+				this->pushMidCode(midnode->op, op1name, op2name, mid);
+			}
 			//同时这时还需要把和这个节点的index相同的 标识符 #RET 临时变量 都生成相应的赋值操作，其中临时变量是需要检查它还活不活跃，即看这个基本块的out集合里有没有它
 			for(int k = 0 ; k < tablength ; k++)
 			{
@@ -574,8 +570,9 @@ void Compiler::DAG()
 							this->pushMidCode(ADDOP, mid, new std::string("0"), listnode->name);
 						}
 						else{
+							this->dagFile << *listnode->name << " 不活跃了，被删除" << std::endl;
 							/*bug:
-							如果不活跃了，那么需要删除这个变量，但是注意，虽然以后不活跃了，但是在这个基本块以后可能还活跃
+							如果不活跃了，那么需要删除这个变量，但是注意，虽然以后不活跃了，但是在这个基本块中可能还活跃
 							即下面可能会有用到这个临时变量的情况，但是如果这个四元式参与了活跃变量分析，那么它一定能得到正确的值，但是如果
 							没有参与，（比如在最后一句话），那么它就需要把这个被删了的操作数换成等价的另外一个操作数
 							*/
@@ -594,22 +591,21 @@ void Compiler::DAG()
 									if(this->isIdEqual(*(code->op1name), *(listnode->name)))
 									{
 										//让这个节点的mainname作为新的操作数
+										//bug:原来输出在赋值只后，我就说怎么替换前后是一样的。。
+										this->dagFile << *code->op1name << " 被替换为了 " << *mid << std::endl;
 										*code->op1name = *mid;
-										std::cout << *code->op1name << " 被替换为了 " << *mid << std::endl;
 									}
 									if(this->isIdEqual(*code->op2name, *listnode->name))
 									{
+										this->dagFile << *code->op2name << " 被替换为了 " << *mid << std::endl;
 										*code->op2name = *mid;
-										std::cout << *code->op2name << " 被替换为了 " << *mid << std::endl;
 									}
 								}
 								break;
 							}
 						}
 					}
-					//不是临时变量，那么先判断是不是标识符，然后需要判断这个标识符是一个简单变量还是一个数组
-					//是一个数组，一定需要生成相应的补偿语句，不是数组再判断是不是一个全局变量，如果是全局变量或者是接下来还活跃，那么就需要有补偿性的赋值语句
-					//bug:如果是一个数组，那么就需要直接补上赋值语句
+					//不是临时变量，那么先判断是不是标识符，然后需要判断这个标识符是全局还是局部
 					else if(this->isOperandId(listnode->name))
 					{
 
@@ -627,7 +623,8 @@ void Compiler::DAG()
 									this->pushMidCode(ADDOP, mid, new std::string("0"), listnode->name);
 								}
 								else{
-									//如果不活跃，还是需要判断最后一句四元式有没有用到这个标识符
+									//可以删除了
+									this->dagFile << *listnode->name << "不活跃了，被删除" << std::endl;
 								}
 							}					
 					}
@@ -1279,8 +1276,6 @@ void Compiler:: dataFlowAnalysis()
 	delete[] in;
 	delete[] out;
 }
-
-
 
 //窥孔优化
 void Compiler::smallOptimize()

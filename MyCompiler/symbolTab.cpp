@@ -37,7 +37,8 @@ symbol* Compiler:: push(std::string *name, eRetType returntype, eSymType symbolt
 	this->symHash[hashindex] = this->top;
 
 	symbol *sym = new symbol();
-	sym->name =name;
+	sym->name = new std::string();
+	*sym->name = *name;
 	sym->returnType = returntype;
 	sym->symbolType = symboltype;
 	sym->feature = feature;
@@ -146,8 +147,9 @@ bool Compiler:: find(std::string *name, symbol **sym, bool local)
 
 void Compiler::writeSymtoFile()
 {
-	this->symtabFile << "序号" << "\t" << "标识符名称" << "\t" << "标识符声明行数" << "\t" << "标识符种类" << "\t" "数组长度或函数参数个数或常量值" << "\t"
-		<< "所处地址" << "\t" << "对应的寄存器" << "\t" << std::endl;
+	this->symtabFile << "对于常量，特征值为常量值，对于函数，特征值为参数个数，对于数组，特征值为数组长度" << std::endl;
+	this->symtabFile << "序号" << "\t\t" << "名称" << "\t\t" << "行数" << "\t\t" << "种类" << "\t\t" << "类型" << "\t\t" << "特征值" << "\t\t"
+		<< "地址" << "\t\t" << "寄存器" << "\t\t" << std::endl;
 	std::stringstream ss = std::stringstream();
 	for(int i = 0 ; i < this->funcNum ; i++)
 	{
@@ -156,14 +158,50 @@ void Compiler::writeSymtoFile()
 		for(int j = 0 ; j < length ; j++)
 		{
 			symbol *sym = tab[j];
-			ss << j << "\t";
-			ss << *(sym->name) << "\t";
-			ss << sym->decLine + 1 << "\t";
-			ss << sym->symbolType << "\t";
-			ss << sym->returnType << "\t";
-			ss << sym->feature << "\t";
-			ss << sym->address << "\t";
-			ss << sym->regIndex << "\t";
+			ss << j << "\t\t";
+			ss << *(sym->name) << "\t\t";
+			ss << sym->decLine + 1 << "\t\t";
+			switch(sym->symbolType)
+			{
+			case CONSTSYM:
+				ss << "常量" ;
+				break;
+			case SIMPLESYM:
+				ss << "简单" ;
+				break;
+			case ARRAYSYM:
+				ss << "数组" ;
+				break;
+			case PARASYM:
+				ss << "参数" ;
+				break;
+			case FUNCSYM:
+				ss << "函数";
+				break;
+			}
+			ss << "\t\t";
+			switch(sym->returnType)
+			{
+			case INTRET:
+				ss << "int";
+				break;
+			case CHARRET:
+				ss << "char";
+				break;
+			case VOIDRET:
+				ss << "void";
+				break;
+			}
+			ss << "\t\t";
+			ss << sym->feature << "\t\t";
+			ss << sym->address << "\t\t";
+			if(sym->regIndex == -1)
+			{
+				ss << "无" << "\t\t";
+			}
+			else{
+				ss << (sym->regIndex < (kMaxRegAvailable / 2) ? "$t" : "$s") << sym->regIndex % (kMaxRegAvailable / 2) << "\t\t";
+			}
 			ss << std::endl;
 		}
 		ss << "该函数表打印完毕" << std::endl;
@@ -172,15 +210,51 @@ void Compiler::writeSymtoFile()
 	for(int j = 0 ; j < this->top ; j++)
 	{
 		symbol *sym = this->symTab[j];
-		ss << j << "\t";
-		ss << *(sym->name) << "\t";
-		ss << sym->decLine + 1 << "\t";
-		ss << sym->symbolType << "\t";
-		ss << sym->returnType << "\t";
-		ss << sym->feature << "\t";
-		ss << sym->address << "\t";
-		ss << sym->regIndex << "\t";
-		ss << std::endl;
+		ss << j << "\t\t";
+			ss << *(sym->name) << "\t\t";
+			ss << sym->decLine + 1 << "\t\t";
+			switch(sym->symbolType)
+			{
+			case CONSTSYM:
+				ss << "常量" ;
+				break;
+			case SIMPLESYM:
+				ss << "简单" ;
+				break;
+			case ARRAYSYM:
+				ss << "数组" ;
+				break;
+			case PARASYM:
+				ss << "参数" ;
+				break;
+			case FUNCSYM:
+				ss << "函数";
+				break;
+			}
+			ss << "\t\t";
+			switch(sym->returnType)
+			{
+			case INTRET:
+				ss << "int";
+				break;
+			case CHARRET:
+				ss << "char";
+				break;
+			case VOIDRET:
+				ss << "void";
+				break;
+			}
+			ss << "\t\t";
+			ss << sym->feature << "\t\t";
+			ss << sym->address << "\t\t";
+			if(sym->regIndex == -1)
+			{
+				ss << "无" << "\t\t";
+			}
+			else{
+				ss << (sym->regIndex < (kMaxRegAvailable / 2) ? "$t" : "$s") << sym->regIndex % (kMaxRegAvailable / 2) << "\t\t";
+			}
+			ss << std::endl;
 	}
 	ss << "符号表打印完毕" << std::endl;
 	this->symtabFile << ss.str();

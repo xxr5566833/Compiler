@@ -76,13 +76,6 @@ const char *midvar = "var";
 const char *midpara = "para";
 
 
-
-
-
-const char *midBNZ = "BNZ";
-
-const char *midBZ = "BZ";
-
 void Compiler::int2string(std::string *s, int value)
 {
 	std::stringstream ss = std::stringstream();
@@ -175,7 +168,7 @@ void Compiler:: writeMidCode(midcode *code, std::fstream &tofile)
 		ss << "if" << " " << op1name << " " << midlessequ << " " << op2name << " " << "then goto" << " " << rst;
 		break;
 	case SCANFOP:
-		ss << midscanf << " " << op1name << " " << op2name << " " << rst;
+		ss << midscanf << " " << op2name << " " << rst;
 		break;
 	case PRINTFOP:
 		ss << midprintf << " " << rst;
@@ -254,7 +247,7 @@ void Compiler:: writeMidCode(midcode *code)
 		ss << "if" << " " << op1name << " " << midlessequ << " " << op2name << " " << "then goto" << " " << rst;
 		break;
 	case SCANFOP:
-		ss << midscanf << " " << op1name << " " << rst;
+		ss << midscanf << " " << op2name << " " << rst;
 		break;
 	case PRINTFOP:
 		ss << midprintf << " " << rst;
