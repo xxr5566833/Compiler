@@ -43,7 +43,6 @@ symbol* Compiler:: push(std::string *name, eRetType returntype, eSymType symbolt
 	sym->symbolType = symboltype;
 	sym->feature = feature;
 	sym->decLine = decline;
-	sym->useLine = new std::vector<int>();
 	sym->link = link;
 	sym->address = this->address;
 	//-1 表示尚未分配
@@ -256,7 +255,7 @@ void Compiler::writeSymtoFile()
 			}
 			ss << std::endl;
 	}
-	ss << "符号表打印完毕" << std::endl;
+	std::cout << "符号表打印完毕" << std::endl;
 	this->symtabFile << ss.str();
 	
 }

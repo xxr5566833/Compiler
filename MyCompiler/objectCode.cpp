@@ -78,10 +78,6 @@ std::string *A0 = new std::string("$a0");
 std::string *R0 = new std::string("$zero");
 
 
-const int kMaxTempReg = 10;
-
-const int kMaxSymReg = 8;
-
 
 void Compiler::objectInit()
 {
@@ -122,7 +118,7 @@ void Compiler::pushOrder(std::string *order)
 
 void Compiler::writeMipsOrderToFile(std::fstream &tofile)
 {
-	std::cout << "一共有" << this->mipsIndex << "条目标代码" << std::endl << std::endl;
+	std::cout << "一共有" << this->mipsIndex << "条目标代码" << std::endl ;
 	tofile << "#一共有" << this->mipsIndex << "条目标代码" << std::endl << std::endl;
 	for(int i = 0 ; i < this->mipsIndex ; i++)
 	{
@@ -199,7 +195,8 @@ void Compiler::funcBegin(std::string *name)
 	//currentaddress 存储需要分配的空间大小
 	int currentaddress = this->funcMaxAddress[sym->ref];
 	int paranum = sym->feature;
-	this->generateOrder(ADDI, SP, SP, paranum * 4);
+	if(paranum != 0)
+		this->generateOrder(ADDI, SP, SP, paranum * 4);
 
 	//寄存器压栈
 
@@ -302,7 +299,14 @@ void Compiler::getUseReg(std::string *rs, std::string *reg)
 	}
 	else if(this->isOperandNumber(rs))
 	{
-		this->generateOrder(LI, reg, rs);
+		//如果是0，那么直接返回$zero
+		if((*rs)[0] == '0')
+		{
+			*reg = *R0;
+		}
+		else{
+			this->generateOrder(LI, reg, rs);
+		}
 	}
 	else{
 		//这里是标识符或者是临时变量
@@ -324,7 +328,6 @@ void Compiler::getUseReg(std::string *rs, std::string *reg)
 		}
 		else{
 			//说明有相应的寄存器给它，那么此时先检查当前相应的寄存器有没有被使用
-			std::string *old = this->allReg[regindex];
 			std::stringstream ss = std::stringstream();
 			ss << (regindex < (kMaxRegAvailable / 2) ? "$t" : "$s") << regindex % (kMaxRegAvailable / 2);
 			*reg = ss.str();
@@ -359,7 +362,6 @@ void Compiler:: getResultReg(std::string *rd, std::string *reg){
 		}
 		else{
 			//说明有相应的寄存器给它，那么此时先检查当前相应的寄存器有没有被使用
-			std::string *old = this->allReg[regindex];
 			std::stringstream ss = std::stringstream();
 			ss << (regindex < (kMaxRegAvailable / 2) ? "$t" : "$s") << regindex % (kMaxRegAvailable / 2);
 			*reg = ss.str();
@@ -402,10 +404,10 @@ void Compiler::handleBranch(midcode *code)
 	*reg2 = *T8;
 	std::string *rstreg = new std::string();
 	*rstreg = *T7;
-	if(this->isOperandTemp(op1))
+	if(!this->isOperandNumber(op1))
 	{
-		//如果op1是一个临时变量
-		//获得这个临时变量对应的寄存器
+		//如果op1是一个临时变量或者标识符
+		//获得对应的寄存器
 		this->getUseReg(op1, reg1);
 		if(this->isOperandNumber(op2))
 		{
@@ -413,13 +415,11 @@ void Compiler::handleBranch(midcode *code)
 			this->generateOrder(SUBI, rstreg, reg1, op2);
 		}
 		else{
-			//第二个操作数是一个临时变量
+			//第二个操作数是一个临时变量或者标识符
 			this->getUseReg(op2, reg2);
-			//两个操作数都是临时变量，那么就把他俩减了后的结果放在t9，作为最后的判断
+			//两个操作数都不是数字，那么就把他俩减了后的结果放在t9，作为最后的判断
 			this->generateOrder(SUB, rstreg, reg1, reg2);
-			//释放空间
 		}
-		//释放空间
 	}
 	else{
 		//第一个操作数是一个数字
@@ -432,7 +432,7 @@ void Compiler::handleBranch(midcode *code)
 			this->generateOrder(LI, rstreg, value2);
 		}
 		else{
-			//第二个操作数是一个临时变量
+			//第二个操作数不是数字
 			this->getUseReg(op2, reg2);
 			//需要先把操作数1数字li到t9，
 			this->generateOrder(LI, T9, op1);
@@ -480,7 +480,7 @@ void Compiler::handleGoto(std::string *label)
 
 void Compiler::handleRealPara(std::string *para)
 {
-	//para也是从表达式得到的值，此时还是分为数字和临时变量
+	//para也是从表达式得到的值
 	std::string *rstreg = new std::string();
 	*rstreg = *T7;
 	this->getUseReg(para, rstreg);
@@ -512,17 +512,20 @@ void Compiler::handleAdd(midcode *code)
 	*rstreg = *T7;
 	if(this->isOperandNumber(op1))
 	{
-		if(this->isOperandTemp(op2))
+		if(!this->isOperandNumber(op2))
 		{
-			//操作数1是一个数字，那么此时操作数2如果是临时变量，那么结果操作数也是临时变量
+			
 			this->getUseReg(op2, reg2);
 			this->getResultReg(rst, rstreg);
 			this->generateOrder(ADDI, rstreg, reg2, op1);
 		}
 		else{
-			//操作数2只能是0了
+			//操作数2也是数字这里做计算
+			int value1 = atoi(op1->c_str());
+			int value2 = atoi(op2->c_str());
+			value2 = value1 + value2;
 			this->getResultReg(rst, rstreg);
-			this->generateOrder(LI, rstreg, op1);
+			this->generateOrder(LI, rstreg, value2);
 		}
 	}
 	else{
@@ -537,7 +540,6 @@ void Compiler::handleAdd(midcode *code)
 			//此时还需要看结果操作数是不是需要写回地址
 		}
 		else{
-			//操作数2是一个临时变量
 			//结果操作数是一个临时变量/#RET/标识符
 			this->getUseReg(op2, reg2);
 			this->getResultReg(rst, rstreg);
@@ -565,29 +567,19 @@ void Compiler::handleSub(midcode *code)
 	*rstreg = *T7;
 	if(this->isOperandNumber(op1))
 	{
-		//操作数1是一个数字，那么此时操作数2和结果操作数都是临时变量
-		if((*op1)[0] == '0')
-		{
-			//表示操作数1是0，那么此时直接用$zero就可以
-			*reg1 = *R0;
-		}
-		else{
-			//操作数1不是0，先LI
-			this->generateOrder(LI, reg1, op1);
-		}
+		this->getUseReg(op1, reg1);
 		this->getUseReg(op2, reg2);
 		this->getResultReg(rst, rstreg);
 		this->generateOrder(SUB, rstreg, reg1, reg2);
 	}
 	else{
-		//操作数1是一个临时变量
+		//操作数1是一个非数字
 		this->getUseReg(op1, reg1);
-		if(this->isOperandTemp(op2))
+		if(!this->isOperandNumber(op2))
 		{
-			//操作数2也是一个临时变量
 			this->getUseReg(op2, reg2);
 
-			//结果操作数也是一个临时变量
+			//结果操作数
 			this->getResultReg(rst, rstreg);
 
 			//获得了结果操作数对应的寄存器
@@ -595,7 +587,6 @@ void Compiler::handleSub(midcode *code)
 		}
 		else{
 			//操作数2是一个数字
-			//结果操作数是一个临时变量
 			this->getResultReg(rst, rstreg);
 			this->generateOrder(SUBI, rstreg, reg1, op2);
 		}
@@ -762,6 +753,7 @@ void Compiler::generate()
 	//开始读中间代码了
 	//加个gotomain
 	this->generateOrder(ADD, FP, SP, R0);
+	this->generateOrder(ADDI, GP, GP, 0x10000);
 	this->handleGoto(new std::string("main"));
 	for(int i = 0 ; i < this->midindex ; i++)
 	{

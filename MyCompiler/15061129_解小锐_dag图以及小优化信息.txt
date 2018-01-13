@@ -1,72 +1,245 @@
+goto $label1
+被删除
+
+goto $label3
+被删除
+
+goto $label3
+被替换为:
 goto $label2
-被删除
-
-goto _aSfunc_1$end
-被替换为:
-goto $label1
-
-goto _aSfunc_1$end
-被替换为:
-goto $label1
-
-goto _aSfunc_1$end
-被替换为:
-goto $label1
-
-goto $label7
-被删除
 
 goto $label9
-被删除
-
-goto min$end
 被替换为:
-goto $label9
-
-goto min$end
-被替换为:
-goto $label9
-
-goto min$end
-被替换为:
-goto $label9
-
-goto $label11
-被删除
-
-goto max$end
-被替换为:
-goto $label11
-
-goto max$end
-被替换为:
-goto $label11
-
-goto $label13
-被删除
+goto $label8
 
 goto $label13
 被替换为:
 goto $label12
 
-goto $label19
+goto $label15
 被替换为:
-goto $label18
+goto $label14
 
-goto $label17
+goto $label21
 被替换为:
-goto $label18
+goto $label20
 
-goto $label1
-被删除
-
-goto $label9
-被删除
-
-goto $label11
-被删除
+goto $label25
+被替换为:
+goto $label24
 
 goto $label18
 被删除
 
-第30块有优化
+goto $label18
+被替换为:
+goto $label26
+
+goto $label18
+被替换为:
+goto $label26
+
+goto $label32
+被替换为:
+goto $label31
+
+goto $label36
+被替换为:
+goto $label35
+
+goto $label29
+被删除
+
+goto $label29
+被替换为:
+goto $label37
+
+goto $label29
+被替换为:
+goto $label37
+
+goto charCount$end
+被替换为:
+goto $label28
+
+goto charCount$end
+被替换为:
+goto $label28
+
+goto $label38
+被替换为:
+goto $label41
+
+goto $label38
+被替换为:
+goto $label41
+
+goto $label38
+被替换为:
+goto $label41
+
+goto $label45
+被替换为:
+goto $label44
+
+goto $label47
+被替换为:
+goto $label46
+
+goto $label51
+被替换为:
+goto $label50
+
+goto max$end
+被删除
+
+goto calcu$end
+被删除
+
+goto calcuCov$end
+被删除
+
+goto $label8
+被删除
+
+goto $label12
+被删除
+
+goto partion$end
+被删除
+
+goto $label14
+被删除
+
+goto $label20
+被删除
+
+goto $label24
+被删除
+
+goto $label31
+被删除
+
+goto $label35
+被删除
+
+goto $label41
+被删除
+
+goto $label44
+被删除
+
+goto $label46
+被删除
+
+goto $label50
+被删除
+
+#RET 与 $t1 值相等
+第11块有优化
+c 与 $t4 值相等
+第17块有优化
+c不活跃了，被删除
+第20块有优化
+temp 与 $t11 值相等
+第26块有优化
+$t12 不活跃了，被删除
+temp不活跃了，被删除
+temp 与 $t15 值相等
+第28块有优化
+$t16 不活跃了，被删除
+temp不活跃了，被删除
+x 与 $t19 值相等
+i 与 $t20 值相等
+第32块有优化
+temp 与 $t23 值相等
+第33块有优化
+temp不活跃了，被删除
+temp 与 $t28 值相等
+第37块有优化
+temp不活跃了，被删除
+temp 与 $t32 值相等
+#RET 与 $t31 值相等
+第39块有优化
+$t33 不活跃了，被删除
+$t35 不活跃了，被删除
+temp不活跃了，被删除
+q 与 $t36 值相等
+第44块有优化
+temp 与 $t39 值相等
+第48块有优化
+temp不活跃了，被删除
+$t42 不活跃了，被删除
+temp 与 $t45 值相等
+第50块有优化
+temp不活跃了，被删除
+$t48 不活跃了，被删除
+第53块有优化
+第81块有优化
+$t85 不活跃了，被删除
+$t87 不活跃了，被删除
+$t89 不活跃了，被删除
+$t84 不活跃了，被删除
+$t81 不活跃了，被删除
+$t83 不活跃了，被删除
+$t88 不活跃了，被删除
+$t90 不活跃了，被删除
+$t82 不活跃了，被删除
+$t86 不活跃了，被删除
+第83块有优化
+$t111 不活跃了，被删除
+$t108 不活跃了，被删除
+$t109 不活跃了，被删除
+$t115 不活跃了，被删除
+$t116 不活跃了，被删除
+$t112 不活跃了，被删除
+$t113 不活跃了，被删除
+$t110 不活跃了，被删除
+$t117 不活跃了，被删除
+$t114 不活跃了，被删除
+$t120 不活跃了，被删除
+$t122 不活跃了，被删除
+$t121 不活跃了，被删除
+$t119 不活跃了，被删除
+$t118 不活跃了，被删除
+第85块有优化
+$t145 不活跃了，被删除
+$t153 不活跃了，被删除
+$t133 不活跃了，被删除
+$t146 不活跃了，被删除
+$t147 不活跃了，被删除
+$t152 不活跃了，被删除
+$t151 不活跃了，被删除
+$t150 不活跃了，被删除
+$t149 不活跃了，被删除
+$t148 不活跃了，被删除
+$t154 不活跃了，被删除
+$t157 不活跃了，被删除
+$t159 不活跃了，被删除
+$t158 不活跃了，被删除
+$t162 不活跃了，被删除
+$t156 不活跃了，被删除
+$t155 不活跃了，被删除
+$t161 不活跃了，被删除
+$t164 不活跃了，被删除
+$t163 不活跃了，被删除
+$t160 不活跃了，被删除
+第88块有优化
+$t167 不活跃了，被删除
+$t168 不活跃了，被删除
+$t169 不活跃了，被删除
+$t170 不活跃了，被删除
+$t173 不活跃了，被删除
+$t172 不活跃了，被删除
+$t174 不活跃了，被删除
+$t175 不活跃了，被删除
+$t177 不活跃了，被删除
+第90块有优化
+ra 与 $t181 值相等
+第91块有优化
+sum 与 $t189 值相等
+aver 与 $t190 值相等
+第101块有优化
+aver不活跃了，被删除
+cov 与 $t191 值相等
+第102块有优化

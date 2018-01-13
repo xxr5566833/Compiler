@@ -80,6 +80,8 @@ const tokenType STATEMENTLIST_BEGIN[] = {IF, WHILE, LBRACKET, SCANF, PRINTF, SEM
 
 const tokenType VARSTATE_BEGIN[] = {INT, CHAR};
 
+const int VARSTATE_BEGIN_SIZE = 2;
+
 const tokenType COMSTATEMENT_BEGIN[] = {CONST, INT, CHAR, IF, WHILE, LBRACKET, SCANF, PRINTF, SEMI, SWITCH, RETURN, ID};
 
 //关系运算符集合需要写一下
@@ -87,7 +89,25 @@ const tokenType COMSTATEMENT_BEGIN[] = {CONST, INT, CHAR, IF, WHILE, LBRACKET, S
 const tokenType RELATION_OPERATOR[] = {LESSEQU, MOREEQU, EQU, NEQU, LESS, MORE,};
 
 const int RELATION_OPERATOR_SIZE = 6;
+
+
+
+const tokenType COMPUTE[] = {PLUS, MINUS, STAR, DIV};
+
+const int COMPUTE_SIZE = 4;
+
+const tokenType FACTOR_FOLLOW[] = {PLUS, MINUS, STAR, DIV, SEMI, COMMA, RPARENT, RBRACKET};
+
+const int FACTOR_FOLLOW_SIZE = 8;
+
+const tokenType END[] = {COMMA, SEMI};
+
+const int END_SIZE = 2;
  
+const tokenType UNSIGNEDINT_FOLLOW[] = {LESSEQU, MOREEQU, EQU, NEQU, LESS, MORE, PLUS, MINUS, STAR, DIV, COMMA, COLON, SEMI, RBRACKET, RPARENT};
+
+const int UNSIGNEDINT_FOLLOW_SIZE = 15;
+
 //因为0作为一个操作数经常出现，所以这里用一个全局的来表示
 std::string *ZEROOPERAND = new std::string("0");
 
@@ -118,8 +138,9 @@ void Compiler:: int_(int *value)
 			this->inSym();
 		}
 		else{
-			//有正负号，但是后面不是一个无符号整数，那么此时进行报错，并跳读到无符号整数的follow集
+			//有正负号，但是后面不是一个无符号整数，那么此时进行报错
 			this->errorHandle(NOTUNSIGNEDINT);
+			this->skip(UNSIGNEDINT_FOLLOW, UNSIGNEDINT_FOLLOW_SIZE);
 		}
 	}
 	else if(this->tok.id == ZERO)
@@ -158,6 +179,7 @@ void Compiler:: constDef()
 				else{
 					//缺少=符号，此时跳读直到遇到整数或者字符
 					this->errorHandle(NOTASSIGN);
+					this->skip(INT_BEGIN, INT_BEGIN_SIZE);
 				}
 				if(this->isInRange(INT_BEGIN, INT_BEGIN_SIZE))
 				{
@@ -168,17 +190,18 @@ void Compiler:: constDef()
 						this->push(name, returntype, symboltype, value, this->lineCount);
 					}
 					else{
-						//常量标识符重复定义了,跳读
 						this->errorHandle(DUPLICATEDEF);
 					}
 				}
 				else{
 					this->errorHandle(NOTINT);
+					this->skip(END, END_SIZE);
 				}
 			}
 			else{
 				//不是标识符，那么跳读到逗号或者分号
 				this->errorHandle(NOTID);
+				this->skip(END, END_SIZE);
 			}
 
 		}while(this->tok.id == COMMA);
@@ -201,6 +224,7 @@ void Compiler:: constDef()
 				}
 				else{
 					this->errorHandle(NOTASSIGN);
+					this->skip(SINGLECHAR);
 				}
 				if(this->tok.id == SINGLECHAR)
 				{
@@ -218,16 +242,19 @@ void Compiler:: constDef()
 				}
 				else{
 					this->errorHandle(NOTSINGLECHAR);
+					this->skip(END, END_SIZE);
 				}
 
 			}
 			else{
 				this->errorHandle(NOTID);
+				this->skip(END, END_SIZE);
 			}
 		}while(this->tok.id == COMMA);
 	}
 	else{
 		this->errorHandle(NOTINTORCHAR);
+		this->skip(SEMI);
 		//不是一个int或者是char，跳读直到分号
 	}
 	//std::cout << "这是一个 <常量定义>" << std::endl;
@@ -244,7 +271,7 @@ void Compiler:: constState()
 			this->inSym();
 		}
 		else{
-			//缺少分号怎么办。。不跳读！假装它忘写了
+			//缺少分号
 			this->errorHandle(NOTSEMI);
 		}
 	}while(this->tok.id == CONST);
@@ -289,8 +316,10 @@ void Compiler:: varParaList(symbol *sym)
 		}
 	}
 	else{
-		//参数个数不匹配，不跳读
+		//参数个数不匹配
 		this->errorHandle(PARANUMDISMATCH);
+		this->skip(RPARENT);
+		return ;
 	}
 	paraindex ++;
 	while(this->tok.id == COMMA)
@@ -311,6 +340,8 @@ void Compiler:: varParaList(symbol *sym)
 		else{
 			//个数不匹配不跳读
 			this->errorHandle(PARANUMDISMATCH);
+			this->skip(RPARENT);
+			return ;
 		}
 		paraindex ++;
 		//释放空间
@@ -319,6 +350,8 @@ void Compiler:: varParaList(symbol *sym)
 	{
 		//个数不匹配不跳读
 		this->errorHandle(PARANUMDISMATCH);
+		this->skip(RPARENT);
+		return ;
 	}
 }
 
@@ -334,8 +367,8 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 		{
 			//说明这个标识符没有被定义，那么此时跳读并结束对这个因子的分析
 			this->errorHandle(IDNOTDEF);
+			this->skip(FACTOR_FOLLOW, FACTOR_FOLLOW_SIZE);
 			return ;
-			
 		}
 		*resulttype = sym->returnType;
 		this->inSym();
@@ -346,7 +379,6 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 			{
 				//标识符不是一个数组，那么此时跳读并结束对因子的分析即可
 				this->errorHandle(NOTANARRAY);
-				return ;
 			}
 			eRetType type = NOTTYPE;
 			this->inSym();
@@ -462,6 +494,7 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 	else{
 		//不是一个正确的因子，此时跳读
 		this->errorHandle(NOTFACTOR);
+		this->skip(FACTOR_FOLLOW, FACTOR_FOLLOW_SIZE);
 	}
 	*operand = *resultoperand;
 
@@ -476,17 +509,14 @@ void Compiler:: term(eRetType *resulttype, std::string *operand)
 	this->factor(resulttype, factoroperand);
 	std::string *resultoperand = new std::string();
 	*resultoperand = *factoroperand;
-	if(!this->isOperandTemp(resultoperand) && !this->isOperandNumber(resultoperand))
+	//如果这里第一个操作数是#ret 那么需要一个临时变量来承接，因为之后v0可能会被占用
+	if(this->isOperandRet(resultoperand))
 	{
-		//如果不是一个临时变量且不是一个数字，那么需要产生一个临时变量来接受这个操作数
-		//因为除了这两种情况以外，就只剩下 标识符 或者 v0寄存器，这两个都是不能作为中间结果的
 		std::string *temp = new std::string();
 		this->genTemp(temp);
 		this->pushMidCode(ADDOP, resultoperand, new std::string("0"), temp);
 		*resultoperand = *temp;
 	}
-	//所以第一个操作数，要么是一个临时变量，要么是一个数字
-
 	while(this->tok.id == STAR || this->tok.id == DIV)
 	{
 		//因为一旦有了计算，那么最后的项的类型一定是int
@@ -525,8 +555,7 @@ void Compiler:: term(eRetType *resulttype, std::string *operand)
 					//不是临时变量，那么需要生成临时变量，并把原来的操作数的值给这个临时变量，让这个临时变量参与运算并作为结果操作数
 					std::string *result = new std::string();
 					this->genTemp(result);
-					this->pushMidCode(ADDOP, factoroperand2, new std::string("0"), result);
-					this->pushMidCode(isstar ? MULOP : DIVOP, resultoperand, result, result);
+					this->pushMidCode(isstar ? MULOP : DIVOP, resultoperand, factoroperand2, result);
 					*resultoperand = *result;
 				}
 				else{
@@ -538,9 +567,26 @@ void Compiler:: term(eRetType *resulttype, std::string *operand)
 			}
 		}
 		else{
-			//第一个不是数字，那么只有可能是临时变量了，因为首先第一个之前的限制就是临时变量或者数字，之后如果参与了与第二个因子
-			//的运算，那么最后的结果也要么是临时变量，要么是数字
-			this->pushMidCode(isstar ? MULOP : DIVOP, resultoperand, factoroperand2, resultoperand);
+			if(this->isOperandNumber(factoroperand2))
+			{
+				int op2 = atoi(factoroperand2->c_str());
+				if(op2 == 0 && !isstar)
+				{
+					//不能除以0！
+					this->errorHandle(DIVZERO);
+				}
+			}
+			if(this->isOperandTemp(resultoperand))
+			{
+				this->pushMidCode(isstar ? MULOP : DIVOP, resultoperand, factoroperand2, resultoperand);
+			}
+			else{
+				//否则需要生成临时变量作为结果
+				std::string *result = new std::string();
+				this->genTemp(result);
+				this->pushMidCode(isstar ? MULOP : DIVOP, resultoperand, factoroperand2, result);
+				*resultoperand = *result;
+			}
 		}
 
 	}
@@ -577,9 +623,17 @@ void Compiler:: expression(eRetType *resulttype, std::string *operand)
 			//把结果给了第一个项操作数
 			*termoperand1 = *constvalue;
 		}
+		else if(this->isOperandId(termoperand1))
+		{
+			//如果是标识符，需要一个临时变量来“承接”它们
+			std::string *temp = new std::string();
+			this->genTemp(temp);
+			this->pushMidCode(SUBOP, ZEROOPERAND, termoperand1, temp);
+			*termoperand1 = *temp;
+		}
 		else{
-			//不是数字常量，那么肯定是临时变量了
-			this->pushMidCode(SUBOP, new std::string("0"), termoperand1, termoperand1);
+			//不是数字常量和标识符，那么肯定是临时变量了
+			this->pushMidCode(SUBOP, ZEROOPERAND, termoperand1, termoperand1);
 		}
 	}
 	*resulttype = flag ? INTRET : *resulttype;
@@ -605,12 +659,33 @@ void Compiler:: expression(eRetType *resulttype, std::string *operand)
 				*termoperand1 = *constvalue;
 			}
 			else{
-				this->pushMidCode(isplus ? ADDOP : SUBOP, termoperand1, termoperand2, termoperand2);
-				*termoperand1 = *termoperand2;
+				//bug:这里还需要看第二个term返回的是一个临时变量还是标识符，如果是标识符，需要用临时变量承接！
+				if(this->isOperandId(termoperand2))
+				{
+					std::string *temp = new std::string();
+					this->genTemp(temp);
+					this->pushMidCode(isplus ? ADDOP : SUBOP, termoperand1, termoperand2, temp);
+					*termoperand1 = *temp;
+				}
+				else{
+					this->pushMidCode(isplus ? ADDOP : SUBOP, termoperand1, termoperand2, termoperand2);
+					*termoperand1 = *termoperand2;
+				}
 			}
 		}
 		else{
-			this->pushMidCode(isplus ? ADDOP : SUBOP, termoperand1, termoperand2, termoperand1);
+			if(this->isOperandTemp(termoperand1))
+			{
+				//如果操作数1是一个临时变量
+				this->pushMidCode(isplus ? ADDOP : SUBOP, termoperand1, termoperand2, termoperand1);
+			}
+			else{
+				//如果操作数1是一个标识符，需要一个临时变量保存最后结果
+				std::string *temp = new std::string();
+				this->genTemp(temp);
+				this->pushMidCode(isplus ? ADDOP : SUBOP, termoperand1, termoperand2, temp);
+				*termoperand1 = *temp;
+			}
 		}
 	}
 	*operand = *termoperand1;
@@ -675,7 +750,6 @@ void Compiler:: varDef(eRetType rettype, std::string *name)
 			{
 				//重复定义了跳读，并continue
 				this->errorHandle(DUPLICATEDEF);
-				continue;
 			}
 			//保存在标识符信息
 			symname = this->tok.val.str; 
@@ -684,7 +758,6 @@ void Compiler:: varDef(eRetType rettype, std::string *name)
 		else{
 			//跳读并continue
 			this->errorHandle(NOTID);
-			continue;
 		}
 		int feature = -1;
 		if(this->tok.id == LBRACKET)
@@ -754,6 +827,10 @@ void Compiler:: decHead(eRetType *rettype, std::string **name)
 	}
 	else{
 		this->errorHandle(NOTID);
+		//造一个
+		*name = new std::string("#temp");
+		this->inSym();
+		
 	}
 	//std::cout << "这是一个 <声明头部>" << std::endl;
 
@@ -766,7 +843,10 @@ void Compiler:: para(symbol *sym)
 	eRetType rettype = NOTTYPE;
 	this->decHead(&rettype, &name);
 	if(!name)
-		return ;
+	{
+		name = new std::string();
+		this->genTemp(name);
+	}
 	sym->paraList[sym->feature++] = rettype;
 	symbol *tempsym = 0;
 	if(this->find(name, &tempsym, true))
@@ -784,7 +864,10 @@ void Compiler:: para(symbol *sym)
 		this->inSym();
 		this->decHead(&rettype, &name);
 		if(!name )
-			return ;
+		{
+			name = new std::string();
+			this->genTemp(name);
+		}
 		sym->paraList[sym->feature++] = rettype;
 		symbol *tempsym = 0;
 		if(this->find(name, &tempsym, true))
@@ -824,12 +907,12 @@ void Compiler:: noParaFuncDef(symbol *sym)
 		if(!returnflag && sym->returnType != VOIDRET)
 		{
 			//如果没有任何return语句而且返回类型是有返回值的类型，那么报错
-			this->errorHandle(NONERETURN);
+			this->errorHandle(NONERETURN); 
 		}
 	}
 	else{
 		//假设忘写
-		this->errorHandle(NOTRBRACKET);
+		this->errorHandle(NOTRBRACE);
 	}
 	//先生成函数结束的标号
 	std::stringstream ss = std::stringstream();
@@ -967,12 +1050,12 @@ void Compiler:: beginWithFunc()
 		//保存这个函数标识符
 		if(!name)
 		{
-			return ;
+			name = new std::string();
+			this->genTemp(name);
 		}
 		if(this->find(name, &sym, true))
 		{
 			this->errorHandle(DUPLICATEDEF);
-			return ;
 		}
 		else{
 			sym = this->push(name, rettype, FUNCSYM, 0, this->lineCount);
@@ -1013,7 +1096,10 @@ void Compiler:: beginWithVar()
 		symbol *sym = 0;
 		this->decHead(&rettype, &name);
 		if(!name)
-			return;
+		{
+			name = new std::string();
+			this->genTemp(name);
+		}
 		if(this->isInRange(VARDEF_BEGIN, VARDEF_BEGIN_SIZE))
 		{
 			this->varDef(rettype, name);
@@ -1139,6 +1225,7 @@ void Compiler:: ifStatement(bool *returnflag, eRetType returntype, std::string *
 	}
 	else{
 		this->errorHandle(NOTRPARENT);
+		this->skip(STATEMENT_BEGIN, STATEMENT_BEGIN_SIZE);
 	}
 	if(this->isInRange(STATEMENT_BEGIN, STATEMENT_BEGIN_SIZE))
 	{
@@ -1158,7 +1245,7 @@ void Compiler:: ifStatement(bool *returnflag, eRetType returntype, std::string *
 
 		//默认它没有写else，这里不跳读，直接结束
 		this->errorHandle(NOTELSE);
-		return ;
+		this->skip(STATEMENT_BEGIN, STATEMENT_BEGIN_SIZE);
 	}
 	if(this->isInRange(STATEMENT_BEGIN, STATEMENT_BEGIN_SIZE))
 	{
@@ -1166,6 +1253,7 @@ void Compiler:: ifStatement(bool *returnflag, eRetType returntype, std::string *
 	}
 	else{
 		this->errorHandle(NOTSTATEMENT);
+		this->skip(STATEMENT_BEGIN, STATEMENT_BEGIN_SIZE);
 	}
 	this->pushMidCode(LABOP, new std::string(), new std::string(), endlabel);
 	//std::cout << "这是一个 <条件语句>" << std::endl;
@@ -1196,8 +1284,8 @@ void Compiler:: caseStatement(eRetType switchtype, std::string *switchtemp, bool
 		this->pushMidCode(NEQUOP, constoperand, switchtemp, nextlab);
 	}
 	else{
-		//不是一个常量，跳读到冒号
 		this->errorHandle(NOTCONSTANT);
+		
 	}
 	if(this->tok.id == COLON)
 	{
@@ -1248,6 +1336,7 @@ void Compiler:: caseTab(eRetType switchtype, std::string *switchtemp, bool *retu
 	}
 	else{
 		this->errorHandle(NOTCASE);
+		this->skip(RBRACE);
 	}
 	//std::cout << "这是一个 <情况表>" << std::endl;
 }
@@ -1336,6 +1425,7 @@ void Compiler:: whileStatement(bool *returnflag, eRetType returntype, std::strin
 	}
 	else{
 		this->errorHandle(NOTRBRACE);
+		this->skip(STATEMENT_BEGIN, STATEMENT_BEGIN_SIZE);
 	}
 	if(this->isInRange(STATEMENT_BEGIN, STATEMENT_BEGIN_SIZE))
 	{
@@ -1368,6 +1458,7 @@ void Compiler::scanfStatement()
 		{
 			this->errorHandle(IDNOTDEF);
 			//直接return，不读了
+			this->skip(SEMI);
 			return ;
 		}
 		//注意只有参数类型和标识符类型可以被输入所改变
@@ -1390,6 +1481,8 @@ void Compiler::scanfStatement()
 	}
 	else{
 		this->errorHandle(NOTID);
+		this->skip(SEMI);
+		return ;
 	}
 	while(this->tok.id == COMMA)
 	{
@@ -1401,7 +1494,8 @@ void Compiler::scanfStatement()
 			if(!this->find(this->tok.val.str, &sym, false))
 			{
 				this->errorHandle(IDNOTDEF);
-				return;
+				this->skip(END, END_SIZE);
+				continue;
 			}
 			if(sym->symbolType != SIMPLESYM && sym->symbolType != PARASYM)
 			{
@@ -1420,6 +1514,8 @@ void Compiler::scanfStatement()
 		}
 		else{
 			this->errorHandle(NOTID);
+			this->skip(END, END_SIZE);
+			continue;
 		}
 	}
 	if(this->tok.id == RPARENT)
@@ -1495,6 +1591,7 @@ void Compiler:: printfStatement()
 	}
 	else{
 		this->errorHandle(NOTRPARENT);
+		this->skip(SEMI);
 	}
 	//std::cout << "这是一个 <写语句>" << std::endl;
 }
@@ -1613,6 +1710,7 @@ void Compiler:: statement(bool *returnflag, eRetType returntype, std::string *fu
 		if(!this->find(name, &sym, false))
 		{
 			this->errorHandle(IDNOTDEF);
+			this->skip(SEMI);
 			return ;
 		}
 		this->inSym();
@@ -1734,7 +1832,6 @@ void Compiler:: statement(bool *returnflag, eRetType returntype, std::string *fu
 			if(sym->symbolType != FUNCSYM || sym->feature != 0)
 			{
 				this->errorHandle(NOTANOPARAFUNC);
-				return ;
 			}
 			this->pushMidCode(CALLOP, new std::string(), new std::string(), name);
 			this->inSym();
@@ -1769,13 +1866,18 @@ void Compiler:: varState()
 	std::string *name = 0;
 	this->decHead(&rettype, &name);
 	if(!name)
-		return ;
+	{
+		name = new std::string();
+		this->genTemp(name);
+	}
 	if(this->isInRange(VARDEF_BEGIN, VARDEF_BEGIN_SIZE))
 	{
 		this->varDef(rettype, name);
 	}
 	else{
 		this->errorHandle(NOTVARDEF);
+		this->skip(VARSTATE_BEGIN, VARSTATE_BEGIN_SIZE);
+		return ;
 	}
 	while(this->isInRange(DECHEAD_BEGIN, DECHEAD_BEGIN_SIZE))
 	{
@@ -1783,13 +1885,18 @@ void Compiler:: varState()
 		std::string *name = 0;
 		this->decHead(&rettype, &name);
 		if(!name)
-			return ;
+		{
+			name = new std::string();
+			this->genTemp(name);
+		}
 		if(this->isInRange(VARDEF_BEGIN, VARDEF_BEGIN_SIZE))
 		{
 			this->varDef(rettype, name);
 		}
 		else{
 			this->errorHandle(NOTVARDEF);
+			this->skip(SEMI);
+			return ;
 		}
 	}
 	//std::cout << "这是一个 <变量说明>" << std::endl;

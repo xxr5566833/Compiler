@@ -234,8 +234,6 @@ bool Compiler::canAdd(bool flag[],  Node *x, Node* midqueue[], int length, Node 
 
 void Compiler::DAG()
 {
-	//限制一个基本块最多有500个节点
-	const int kMaxNodeNum = 100;
 	int oldindex = this->midindex;
 	this->midindex = 0;
 	for(int i = 0 ; i < this->blockIndex ; i++)
@@ -314,6 +312,49 @@ void Compiler::DAG()
 			case LARRAYOP:
 			case REALPARAOP:
 			case PRINTFOP:
+				//对于add 因为之前把赋值统一到了add里面，所以会有很多的add 操作数1 0 结果操作数，对于这样的四元式，如果操作数1已经是一个中间节点了
+				//那么只需要在节点表中把结果操作数和相应的中间节点index加入即可，不需要在dag图上增加新的结点了，所以现在需要对这种add做统一的处理
+				if(code->op == ADDOP && this->isIdEqual(*code->op2name, std::string("0")))
+				{
+					//如果第二个操作数是0而且操作符是加，那么此时需要看是不是直接维护结点表就可以了
+					ListNode *x = 0;
+					this->findNodeInTab(nodetab, tablength, code->op1name, &x);
+					if(x)
+					{
+						//表示这个x已经在dag图中有对应的结点了
+						Node *xdag = dag[x->index];
+						if(!xdag->isLeaf)
+						{
+							//如果xdag不是一个叶子结点，是一个中间节点，那么我们看rstname有没有对应的dag图结点，如果没有，那么直接在节点表加入即可，如果有
+							//那还得老老实实通过创建dag图方法维护，因为如果直接修改节点表，那么这个赋值操作的顺序无法保证正确
+							ListNode *z = 0;
+							this->findNodeInTab(nodetab, tablength, code->rstname, &z);
+							if(!z)
+							{
+								//表示z没有被创建，那么这里直接创建相应的节点表的表项，把index指到xdag对应的index即可
+								z = new ListNode();
+								z->name = code->rstname;
+					
+								nodetab[tablength ++] = z;
+								z->index = x->index;
+								//结束，下一个
+								this->dagFile << *code->rstname << " 与 " << *xdag->mainname << " 值相等" << std::endl;
+								//bug:注意此时让findcount+1 不然它以为没有优化直接原样输出了
+								findcount ++;
+								//注意，这里也可以替换其主名字，我们尽量让主名字是之后一直要被使用的
+								int index = -1;
+								this->getIndexInTab(&index, funcref, code->rstname);
+								if(xdag->flag)
+								{
+									*xdag->mainname = *code->rstname;
+									xdag->flag = false;
+								}
+								break;
+							}
+						}
+					}
+				}
+
 				ListNode *x = 0;
 
 				this->findNodeInTab(nodetab, tablength, code->op1name, &x);
@@ -389,9 +430,12 @@ void Compiler::DAG()
 							mid = node;
 							findcount += 1;	
 							//尝试：当主名字空缺时才更新它的主名字
-							if(mid->flag)
+							int index = -1;
+							this->getIndexInTab(&index, funcref, code->rstname);
+							if(mid->flag )
 							{
 								*mid->mainname = *code->rstname;
+								mid->flag = false;
 							}
 						}
 						break;
@@ -609,9 +653,9 @@ void Compiler::DAG()
 					else if(this->isOperandId(listnode->name))
 					{
 
-							int index = -1;
-							this->getIndexInTab(&index, funcref, listnode->name);
-							if(index == -1)
+						int index = -1;
+						this->getIndexInTab(&index, funcref, listnode->name);
+						if(index == -1)
 							{
 								//是一个全局变量，那么补偿
 								this->pushMidCode(ADDOP, mid, new std::string("0"), listnode->name);
@@ -625,6 +669,32 @@ void Compiler::DAG()
 								else{
 									//可以删除了
 									this->dagFile << *listnode->name << "不活跃了，被删除" << std::endl;
+									midcode *code = this->codes[end - 1];
+									switch(code->op)
+									{
+									case EQUOP:
+									case NEQUOP:
+									case MOREOP:
+									case MOREEQUOP:
+									case LESSOP:
+									case LESSEQUOP:
+										{
+											//检查它的两个操作数是不是需要替换
+											if(this->isIdEqual(*(code->op1name), *(listnode->name)))
+											{
+												//让这个节点的mainname作为新的操作数
+												//bug:原来输出在赋值只后，我就说怎么替换前后是一样的。。
+												this->dagFile << *code->op1name << " 被替换为了 " << *mid << std::endl;
+												*code->op1name = *mid;
+											}
+											if(this->isIdEqual(*code->op2name, *listnode->name))
+											{
+												this->dagFile << *code->op2name << " 被替换为了 " << *mid << std::endl;
+												*code->op2name = *mid;
+											}
+										}
+										break;
+									}
 								}
 							}					
 					}
@@ -680,7 +750,8 @@ void Compiler::initOptimize()
 {
 	this->blockIndex = 0;
 	//初始化flag数组全为false
-	for(int i = 0 ; i < kMaxBasicBlock ; i++)
+	//bug:一开始只初始化到了1000个，tmd
+	for(int i = 0 ; i < kMaxMidCode ; i++)
 	{
 		this->blockBeginFlag[i] = false;
 	}
@@ -749,11 +820,6 @@ void Compiler:: dataFlowAnalysis()
 				midcode *code = this->codes[k];
 				switch(code->op)
 				{
-				case FUNCBEGINOP:
-					{
-						
-					}
-					break;
 				case ADDOP:
 				case SUBOP:
 				case MULOP:
@@ -828,12 +894,12 @@ void Compiler:: dataFlowAnalysis()
 								use[blockindex][index] = true;
 							}
 						}
-						if(this->isOperandTemp(rstname))
+						if(this->isOperandTemp(rstname) || this->isOperandId(rstname))
 						{
 							int index = -1;
 							this->getIndexInTab(&index, funcref, rstname);
 							//临时变量一定在函数表里，这里就不判断了
-							if(!use[blockindex][index])
+							if(index != -1 && !use[blockindex][index])
 							{
 								def[blockindex][index] = true;
 							}
@@ -890,11 +956,13 @@ void Compiler:: dataFlowAnalysis()
 				case PRINTFOP:
 					{
 						std::string *rstname = code->rstname;
-						if(this->isOperandTemp(rstname))
+						//bug:真的是层与层之间的耦合性太强了，前面刚把表达式的返回类型扩充到标识符，临时变量和数字，就忘了把这里也扩充了
+						//话说为什么开始写的时候这里只写了个临时变量的情况？
+						if(this->isOperandId(rstname) || this->isOperandTemp(rstname))
 						{
 							int index = -1;
 							this->getIndexInTab(&index, funcref, rstname);
-							if(!def[blockindex][index])
+							if(index != -1 && !def[blockindex][index])
 							{
 								use[blockindex][index] = true;
 							}
@@ -1315,6 +1383,7 @@ void Compiler::smallOptimize()
 				this->dagFile << "被删除" << std::endl << std::endl;
 			}
 			break;
+
 		case LABOP:
 			//优化连续的label语句，把这个label后面的其他label都替换为这个label
 			{

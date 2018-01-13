@@ -66,23 +66,23 @@ void Compiler:: begin()
 		return ;
 	}
 	//先生成优化前的中间代码和目标代码，然后生成优化后的中间代码和目标代码
+	std::cout << "优化前" << std::endl;
 	this->writeMidCodetoFile(this->midFileBefore);
 	this->objectInit();
 	this->generate();
 	this->writeMipsOrderToFile(this->objectFileBefore);
 	//然后开始优化，并生成优化后的中间代码和目标代码
+	std::cout << "开始优化" << std::endl;
 	this->initOptimize();
 	this->smallOptimize();
 	this->divideToBlock();
 	this->initBlockConnect();
 	this->writeBlockToFile();
-
 	this->dataFlowAnalysis();
-
 	this->DAG();
-
-	this->writeMidCodetoFile(this->midFileAfter);
 	this->writeSymtoFile();
+	std::cout << "优化后" << std::endl;
+	this->writeMidCodetoFile(this->midFileAfter);
 	this->objectInit();
 	this->generate();
 	this->writeMipsOrderToFile(this->objectFileAfter);

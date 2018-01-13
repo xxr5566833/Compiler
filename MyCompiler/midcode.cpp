@@ -103,6 +103,7 @@ void Compiler:: pushMidCode(midop op,std::string *operand1, std::string *operand
 
 void Compiler:: writeMidCodetoFile(std::fstream &tofile)
 {
+	std::cout << "一共有" << this->midindex << "条四元式" << std::endl; 
 	tofile << "一共有" << this->midindex << "条四元式" << std::endl << std::endl; 
 	for(int i = 0 ; i < this->midindex ; i++)
 	{
@@ -171,7 +172,7 @@ void Compiler:: writeMidCode(midcode *code, std::fstream &tofile)
 		ss << midscanf << " " << op2name << " " << rst;
 		break;
 	case PRINTFOP:
-		ss << midprintf << " " << rst;
+		ss << midprintf << " " << op2name << " " << rst;
 		break;
 	case LARRAYOP:
 		ss << rst << "[" <<	op2name << "]" << " " << midassign << " " << op1name;
@@ -250,7 +251,7 @@ void Compiler:: writeMidCode(midcode *code)
 		ss << midscanf << " " << op2name << " " << rst;
 		break;
 	case PRINTFOP:
-		ss << midprintf << " " << rst;
+		ss << midprintf << " " << op2name << " " << rst;
 		break;
 	case LARRAYOP:
 		ss << rst << "[" <<	op2name << "]" << " " << midassign << " " << op1name;

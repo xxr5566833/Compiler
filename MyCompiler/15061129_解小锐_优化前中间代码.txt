@@ -1,248 +1,616 @@
-一共有246条四元式
+一共有614条四元式
 
-init _aSfunc_1
-$t0 = a + 0
-aa = $t0 + 0
-$t1 = c + 0
-cc = $t1 + 0
-bb = 1 + 0
-$t2 = aa + 0
-$t3 = bb + 0
-if $t2 <= $t3 then goto $label0
-$t4 = cc + 0
-$t4 = $t4 - 105
-$t5 = 0 + 0
-if $t5 != $t4 then goto $label3
-$t6 = a + 0
-$t7 = aa + 0
-$t8 = bb + 0
-$t7 = $t7 - $t8
-push $t7
-push 105
-call _aSfunc_1
-$t6 = $t6 * #RET
-#RET = $t6 + 0
-goto _aSfunc_1$end
-goto $label2
-$label3:
-$t9 = a + 0
-$t10 = aa + 0
-$t10 = $t10 - 1
-push $t10
-push 99
-call _aSfunc_1
-$t9 = $t9 * #RET
-#RET = $t9 + 0
-goto _aSfunc_1$end
-$label2:
+init defi
+a = value + 0
+d[5] = value
+a = 100 + 0
+v___ = 43 + 0
+printf 0 0
+defi$end:
+ret defi
+init defi_test
+push 66
+call defi
+defi_test$end:
+ret defi_test
+init max
+if a <= b then goto $label0
+#RET = a + 0
+goto max$end
 goto $label1
 $label0:
-$t11 = cc + 0
-$t12 = 105 + 0
-if $t12 != $t11 then goto $label5
-printf 0
-goto $label4
-$label5:
-printf 1
-$label4:
-#RET = 1 + 0
-goto _aSfunc_1$end
 $label1:
-_aSfunc_1$end:
-ret _aSfunc_1
-init min
-$t13 = a + 0
-$t14 = b + 0
-if $t13 >= $t14 then goto $label6
-$t15 = a + 0
-#RET = $t15 + 0
-goto min$end
-goto $label7
-$label6:
-$t16 = a + 0
-$t17 = b + 0
-if $t16 != $t17 then goto $label8
-$t18 = a + 0
-#RET = $t18 + 0
-goto min$end
-goto $label9
-$label8:
-$t19 = b + 0
-#RET = $t19 + 0
-goto min$end
-$label9:
-$label7:
-min$end:
-ret min
-init max
-$t20 = a + 0
-$t21 = b + 0
-if $t20 <= $t21 then goto $label10
-$t22 = a + 0
-#RET = $t22 + 0
+if b <= a then goto $label2
+#RET = b + 0
 goto max$end
-goto $label11
-$label10:
-$t23 = b + 0
-#RET = $t23 + 0
+goto $label3
+$label2:
+$label3:
+$t0 = 0 - b
+$t1 = a - $t0
+$t1 = $t1 / 2
+#RET = $t1 + 0
 goto max$end
-$label11:
 max$end:
 ret max
-init no_Sfc
-$t24 = a + 0
-aa = $t24 + 0
-$t25 = b + 0
-bb = $t25 + 0
-$t26 = aa + 0
-if $t26 <= 2000 then goto $label12
-res = -1 + 0
-goto no_Sfc$end
+init fun_def_test
+push 5
+push 5
+call max
+$t2 = #RET + 0
+push $t2
+push 5
+call max
+$t3 = #RET + 0
+push $t3
+push 5
+call max
+$t4 = #RET + 0
+c = $t4 + 0
+printf 0 1
+printf int c
+fun_def_test$end:
+ret fun_def_test
+init calcu
+i = 0 + 0
+sum = 0 + 0
+$t5 = number[i]
+$t6 = sum + $t5
+sum = $t6 + 0
+$t7 = i + 1
+i = $t7 + 0
+$label4:
+if i >= size then goto $label5
+$t8 = number[i]
+$t9 = sum + $t8
+sum = $t9 + 0
+$t10 = i + 1
+i = $t10 + 0
+goto $label4
+$label5:
+#RET = sum + 0
+goto calcu$end
+calcu$end:
+ret calcu
+init calcuCov
+i = 0 + 0
+cov = 0 + 0
+$t11 = number[i]
+$t11 = $t11 - aver
+$t12 = number[i]
+$t12 = $t12 - aver
+$t11 = $t11 * $t12
+temp = $t11 + 0
+$t13 = cov + temp
+cov = $t13 + 0
+$t14 = i + 1
+i = $t14 + 0
+$label6:
+if i >= size then goto $label7
+$t15 = number[i]
+$t15 = $t15 - aver
+$t16 = number[i]
+$t16 = $t16 - aver
+$t15 = $t15 * $t16
+temp = $t15 + 0
+$t17 = cov + temp
+cov = $t17 + 0
+$t18 = i + 1
+i = $t18 + 0
+goto $label6
+$label7:
+#RET = cov + 0
+goto calcuCov$end
+calcuCov$end:
+ret calcuCov
+init partion
+$t19 = number[end]
+x = $t19 + 0
+$t20 = sta - 1
+i = $t20 + 0
+j = sta + 0
+$t21 = number[j]
+if $t21 > x then goto $label8
+$t22 = i + 1
+i = $t22 + 0
+$t23 = number[i]
+temp = $t23 + 0
+$t24 = number[j]
+number[i] = $t24
+number[j] = temp
+goto $label9
+$label8:
+$label9:
+$t25 = j + 1
+j = $t25 + 0
+$label10:
+if j >= end then goto $label11
+$t26 = number[j]
+if $t26 > x then goto $label12
+$t27 = i + 1
+i = $t27 + 0
+$t28 = number[i]
+temp = $t28 + 0
+$t29 = number[j]
+number[i] = $t29
+number[j] = temp
 goto $label13
 $label12:
 $label13:
-$t27 = aa + 0
-push $t27
-$t28 = bb + 0
-push $t28
-call min
-$t29 = #RET + 0
-begin = $t29 + 0
-$t30 = aa + 0
-push $t30
-$t31 = bb + 0
-push $t31
-call max
-$t32 = #RET + 0
-end = $t32 + 0
-$t33 = begin + 0
-$t34 = end + 0
-$t33 = $t33 + $t34
-$t35 = end + 0
-$t36 = begin + 0
-$t35 = $t35 - $t36
-$t35 = $t35 + 1
-$t33 = $t33 * $t35
-$t33 = $t33 / 2
-res = $t33 + 0
-no_Sfc$end:
-ret no_Sfc
-init print1
-printf 2
-$t37 = res1 + 0
-printf $t37
-$t38 = res2 + 0
-$t38 = $t38 + 2
-$t38 = $t38 - 1
-$t38 = $t38 - 1
-printf 3
-printf $t38
-print1$end:
-ret print1
-init print2
-$t39 = res + 0
-if $t39 == -1 then goto $label14
-$t40 = res + 0
-printf 4
-printf $t40
+$t30 = j + 1
+j = $t30 + 0
+goto $label10
+$label11:
+$t31 = i + 1
+$t32 = number[$t31]
+temp = $t32 + 0
+$t33 = i + 1
+$t34 = number[end]
+number[$t33] = $t34
+number[end] = temp
+$t35 = i + 1
+#RET = $t35 + 0
+goto partion$end
+partion$end:
+ret partion
+init quick_sort
+if sta >= end then goto $label14
+push sta
+push end
+call partion
+$t36 = #RET + 0
+q = $t36 + 0
+push sta
+$t37 = q - 1
+push $t37
+call quick_sort
+$t38 = q + 1
+push $t38
+push end
+call quick_sort
 goto $label15
 $label14:
-printf 5
 $label15:
-print2$end:
-ret print2
-init main
-scanf int s_firi
-scanf int s_seci
-scanf char s_firc
-scanf char s_secc
-$t41 = s_firi + 0
-if $t41 >= 0 then goto $label16
-printf 6
-exit 
-goto $label17
+quick_sort$end:
+ret quick_sort
+init reverse
+i = 0 + 0
+$t39 = str_test[i]
+temp = $t39 + 0
+$t40 = len - i
+$t41 = str_test[$t40]
+str_test[i] = $t41
+$t42 = len - i
+str_test[$t42] = temp
+$t43 = i + 1
+i = $t43 + 0
 $label16:
-$t42 = s_seci + 0
-if $t42 >= 0 then goto $label18
-printf 6
-exit 
-goto $label19
-$label18:
-$label19:
+$t44 = len / 2
+if i >= $t44 then goto $label17
+$t45 = str_test[i]
+temp = $t45 + 0
+$t46 = len - i
+$t47 = str_test[$t46]
+str_test[i] = $t47
+$t48 = len - i
+str_test[$t48] = temp
+$t49 = i + 1
+i = $t49 + 0
+goto $label16
 $label17:
-$t43 = s_firi + 0
-$t44 = s_seci + 0
-if $t43 < $t44 then goto $label20
-$t45 = s_firi + 0
-ni = $t45 + 0
+reverse$end:
+ret reverse
+init charCount
+sum = 0 + 0
+i = 0 + 0
+$t50 = str_test[i]
+$t51 = 83 + 0
+if $t51 != $t50 then goto $label19
+$t52 = str_test[i]
+if $t52 != 97 then goto $label20
+$t53 = sum + 1
+sum = $t53 + 0
 goto $label21
 $label20:
-$t46 = s_seci + 0
-ni = $t46 + 0
 $label21:
-$t47 = ni + 0
-if $t47 > 0 then goto $label22
-$label24:
-$t48 = ni + 0
-if $t48 > 0 then goto $label25
-$t49 = ni + 0
-$t49 = $t49 + 1
-ni = $t49 + 0
-goto $label24
-$label25:
-goto $label23
+$t54 = i + 1
+i = $t54 + 0
 $label22:
-$t50 = ni + 0
-$t50 = $t50 + 1
-ni = $t50 + 0
+if i > 10 then goto $label23
+$t55 = str_test[i]
+if $t55 != 97 then goto $label24
+$t56 = sum + 1
+sum = $t56 + 0
+goto $label25
+$label24:
+$label25:
+$t57 = i + 1
+i = $t57 + 0
+goto $label22
 $label23:
-$t51 = s_firc + 0
-$t52 = s_secc + 0
-$t51 = $t51 - $t52
-$t53 = 1 + 0
-if $t53 != $t51 then goto $label27
-nc = 1 + 0
-goto $label26
-$label27:
-$t54 = 2 + 0
-if $t54 != $t51 then goto $label28
-nc = 2 + 0
-goto $label26
-$label28:
-$t55 = -1 + 0
-if $t55 != $t51 then goto $label29
-nc = 3 + 0
-goto $label26
-$label29:
-$t56 = -2 + 0
-if $t56 != $t51 then goto $label30
-nc = 4 + 0
-goto $label26
-$label30:
-nc = 5 + 0
+goto $label18
+$label19:
+$t58 = 69 + 0
+if $t58 != $t50 then goto $label26
+#RET = sum + 0
+goto charCount$end
+goto $label18
 $label26:
-$t57 = ni + 0
-push $t57
-push 105
-call _aSfunc_1
-$t58 = #RET + 0
-resultI = $t58 + 0
-$t59 = nc + 0
-push $t59
-push 99
-call _aSfunc_1
-$t60 = #RET + 0
-resultC = $t60 + 0
-$t61 = resultI + 0
-push $t61
-$t62 = resultC + 0
-push $t62
-call print1
-$t63 = resultI + 0
-push $t63
-$t64 = resultC + 0
-push $t64
-call no_Sfc
-call print2
+$label18:
+$t59 = i + 1
+i = $t59 + 0
+$label27:
+if 1 == 0 then goto $label28
+$t60 = str_test[i]
+$t61 = 83 + 0
+if $t61 != $t60 then goto $label30
+$t62 = str_test[i]
+if $t62 != 97 then goto $label31
+$t63 = sum + 1
+sum = $t63 + 0
+goto $label32
+$label31:
+$label32:
+$t64 = i + 1
+i = $t64 + 0
+$label33:
+if i > 10 then goto $label34
+$t65 = str_test[i]
+if $t65 != 97 then goto $label35
+$t66 = sum + 1
+sum = $t66 + 0
+goto $label36
+$label35:
+$label36:
+$t67 = i + 1
+i = $t67 + 0
+goto $label33
+$label34:
+goto $label29
+$label30:
+$t68 = 69 + 0
+if $t68 != $t60 then goto $label37
+#RET = sum + 0
+goto charCount$end
+goto $label29
+$label37:
+$label29:
+$t69 = i + 1
+i = $t69 + 0
+goto $label27
+$label28:
+charCount$end:
+ret charCount
+init other_test1
+printf 0 2
+printf 0 3
+scanf char score
+$t70 = 49 + 0
+if $t70 != score then goto $label39
+printf 0 4
+$t71 = 5 + 0
+number[0] = $t71
+$t72 = 7 + 0
+number[1] = $t72
+$t73 = 9 + 0
+number[2] = $t73
+$t74 = 4 + 0
+number[3] = $t74
+$t75 = 1 + 0
+number[4] = $t75
+$t76 = 3 + 0
+number[5] = $t76
+$t77 = 8 + 0
+number[6] = $t77
+$t78 = 10 + 0
+number[7] = $t78
+$t79 = 2 + 0
+number[8] = $t79
+$t80 = 6 + 0
+number[9] = $t80
+$t81 = 1 + 0
+ans[0] = $t81
+$t82 = 2 + 0
+ans[1] = $t82
+$t83 = 3 + 0
+ans[2] = $t83
+$t84 = 4 + 0
+ans[3] = $t84
+$t85 = 5 + 0
+ans[4] = $t85
+$t86 = 6 + 0
+ans[5] = $t86
+$t87 = 7 + 0
+ans[6] = $t87
+$t88 = 8 + 0
+ans[7] = $t88
+$t89 = 9 + 0
+ans[8] = $t89
+$t90 = 10 + 0
+ans[9] = $t90
+goto $label38
+$label39:
+$t91 = 50 + 0
+if $t91 != score then goto $label40
+printf 0 5
+$t92 = ra + 5
+ra = $t92 + 0
+$t93 = 45 + 0
+number[0] = $t93
+$t94 = 19 + 0
+number[1] = $t94
+$t95 = 23 + 0
+number[2] = $t95
+$t96 = 78 + 0
+number[3] = $t96
+$t97 = 83 + 0
+number[4] = $t97
+$t98 = 55 + 0
+number[5] = $t98
+$t99 = 69 + 0
+number[6] = $t99
+$t100 = 37 + 0
+number[7] = $t100
+$t101 = 95 + 0
+number[8] = $t101
+$t102 = 77 + 0
+number[9] = $t102
+$t103 = 145 + 0
+number[10] = $t103
+$t104 = 189 + 0
+number[11] = $t104
+$t105 = 156 + 0
+number[12] = $t105
+$t106 = 123 + 0
+number[13] = $t106
+$t107 = 100 + 0
+number[14] = $t107
+$t108 = 19 + 0
+ans[0] = $t108
+$t109 = 23 + 0
+ans[1] = $t109
+$t110 = 37 + 0
+ans[2] = $t110
+$t111 = 45 + 0
+ans[3] = $t111
+$t112 = 55 + 0
+ans[4] = $t112
+$t113 = 69 + 0
+ans[5] = $t113
+$t114 = 77 + 0
+ans[6] = $t114
+$t115 = 78 + 0
+ans[7] = $t115
+$t116 = 83 + 0
+ans[8] = $t116
+$t117 = 95 + 0
+ans[9] = $t117
+$t118 = 100 + 0
+ans[10] = $t118
+$t119 = 123 + 0
+ans[11] = $t119
+$t120 = 145 + 0
+ans[12] = $t120
+$t121 = 156 + 0
+ans[13] = $t121
+$t122 = 189 + 0
+ans[14] = $t122
+goto $label38
+$label40:
+$t123 = 51 + 0
+if $t123 != score then goto $label41
+printf 0 6
+$t124 = ra + 10
+ra = $t124 + 0
+$t125 = 120 + 0
+number[0] = $t125
+$t126 = 854 + 0
+number[1] = $t126
+$t127 = 165 + 0
+number[2] = $t127
+$t128 = 785 + 0
+number[3] = $t128
+$t129 = 666 + 0
+number[4] = $t129
+$t130 = 475 + 0
+number[5] = $t130
+$t131 = 324 + 0
+number[6] = $t131
+$t132 = 218 + 0
+number[7] = $t132
+$t133 = 165 + 0
+number[8] = $t133
+$t134 = 994 + 0
+number[9] = $t134
+$t135 = 1230 + 0
+number[10] = $t135
+$t136 = 1542 + 0
+number[11] = $t136
+$t137 = 1462 + 0
+number[12] = $t137
+$t138 = 1864 + 0
+number[13] = $t138
+$t139 = 1023 + 0
+number[14] = $t139
+$t140 = 1000 + 0
+number[15] = $t140
+$t141 = 1765 + 0
+number[16] = $t141
+$t142 = 1952 + 0
+number[17] = $t142
+$t143 = 1949 + 0
+number[18] = $t143
+$t144 = 1764 + 0
+number[19] = $t144
+$t145 = 120 + 0
+ans[0] = $t145
+$t146 = 165 + 0
+ans[1] = $t146
+$t147 = 165 + 0
+ans[2] = $t147
+$t148 = 218 + 0
+ans[3] = $t148
+$t149 = 324 + 0
+ans[4] = $t149
+$t150 = 475 + 0
+ans[5] = $t150
+$t151 = 666 + 0
+ans[6] = $t151
+$t152 = 785 + 0
+ans[7] = $t152
+$t153 = 854 + 0
+ans[8] = $t153
+$t154 = 994 + 0
+ans[9] = $t154
+$t155 = 1000 + 0
+ans[10] = $t155
+$t156 = 1023 + 0
+ans[11] = $t156
+$t157 = 1230 + 0
+ans[12] = $t157
+$t158 = 1462 + 0
+ans[13] = $t158
+$t159 = 1542 + 0
+ans[14] = $t159
+$t160 = 1764 + 0
+ans[15] = $t160
+$t161 = 1765 + 0
+ans[16] = $t161
+$t162 = 1864 + 0
+ans[17] = $t162
+$t163 = 1949 + 0
+ans[18] = $t163
+$t164 = 1952 + 0
+ans[19] = $t164
+goto $label38
+$label41:
+$label38:
+other_test1$end:
+ret other_test1
+init other_test2
+$t165 = 83 + 0
+str_test[0] = $t165
+$t166 = 97 + 0
+str_test[1] = $t166
+$t167 = 97 + 0
+str_test[2] = $t167
+$t168 = 97 + 0
+str_test[3] = $t168
+$t169 = 97 + 0
+str_test[4] = $t169
+$t170 = 97 + 0
+str_test[5] = $t170
+$t171 = 98 + 0
+str_test[6] = $t171
+$t172 = 98 + 0
+str_test[7] = $t172
+$t173 = 97 + 0
+str_test[8] = $t173
+$t174 = 98 + 0
+str_test[9] = $t174
+$t175 = 98 + 0
+str_test[10] = $t175
+$t176 = 69 + 0
+str_test[11] = $t176
+$t177 = 69 + 0
+str_test[12] = $t177
+push 12
+call reverse
+call charCount
+$t178 = #RET + 0
+printf 0 7
+printf int $t178
+ra = 10 + 0
+rb = 10 + 0
+rc = 10 + 0
+rd = 10 + 0
+$t179 = 0 + 0
+ss[0] = $t179
+$t180 = rb * rc
+$t181 = ra + $t180
+$t181 = $t181 + rd
+$t182 = rb * rc
+$t183 = ra + rd
+$t182 = $t182 + $t183
+$t182 = $t182 + 88
+$t181 = $t181 / $t182
+push ra
+push rb
+call max
+$t184 = #RET + 0
+$t181 = $t181 + $t184
+$t185 = ss[0]
+$t186 = str_test[$t185]
+$t181 = $t181 - $t186
+$t181 = $t181 + 72
+$t181 = $t181 + -70
+ra = $t181 + 0
+$t187 = ra + -10
+ra = $t187 + 0
+$label42:
+if ra < 20 then goto $label43
+$t188 = ra + -10
+ra = $t188 + 0
+goto $label42
+$label43:
+if ra >= 20 then goto $label44
+ra = 10 + 0
+goto $label45
+$label44:
+$label45:
+other_test2$end:
+ret other_test2
+init main
+call other_test2
+call other_test1
+push ra
+call calcu
+$t189 = #RET + 0
+sum = $t189 + 0
+$t190 = sum / ra
+aver = $t190 + 0
+push ra
+push aver
+call calcuCov
+$t191 = #RET + 0
+cov = $t191 + 0
+$t192 = cov / ra
+cov = $t192 + 0
+printf 0 8
+printf int sum
+printf 0 9
+printf int cov
+push 0
+$t193 = ra - 1
+push $t193
+call quick_sort
+i = 0 + 0
+$t194 = number[i]
+$t195 = ans[i]
+if $t194 == $t195 then goto $label46
+printf 0 10
+exit 
+goto $label47
+$label46:
+$label47:
+$t196 = i + 1
+i = $t196 + 0
+$label48:
+if i >= ra then goto $label49
+$t197 = number[i]
+$t198 = ans[i]
+if $t197 == $t198 then goto $label50
+printf 0 10
+exit 
+goto $label51
+$label50:
+$label51:
+$t199 = i + 1
+i = $t199 + 0
+goto $label48
+$label49:
+printf 0 11
+call fun_def_test
+call defi_test
 exit 
 exit 

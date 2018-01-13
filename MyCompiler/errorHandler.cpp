@@ -152,7 +152,14 @@ void Compiler:: errorHandle(errorType id)
 	err->token = new std::string(this->sym);
 
 	this->errorList.push_back(err);
-	this->errorSkip(id);
+	//this->errorSkip(id);
+}
+
+void Compiler::skip(tokenType id){
+	while(this->tok.id != id)
+	{
+		this->inSym();
+	}
 }
 
 void Compiler::errorSkip(errorType id)
@@ -204,7 +211,7 @@ void Compiler::errorSkip(errorType id)
 void Compiler::skip(const tokenType follow[], const int size)
 {
 	//跳读直到遇到指定的单词
-	while(!this->isInRange(follow, size))
+	while(!this->isInRange(follow, size) && !this->isEof())
 	{	
 		this->inSym();
 	}

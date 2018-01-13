@@ -14,7 +14,7 @@ const int kMaxWord = 100;
 //最大符号表空间
 const int kMaxSymbol = 5000;
 //分函数最大符号表空间
-const int kMaxFuncSymbol = 500;
+const int kMaxFuncSymbol = 1000;
 //最多有多少个函数
 const int kMaxFuncNum = 500;
 //hash索引最大值
@@ -26,7 +26,7 @@ const int kMaxMidCode = 5000;
 //最大常量字符串数
 const int kMaxStringNum = 1000;
 //最大基本快的数量
-const int kMaxBasicBlock = 1000;
+const int kMaxBasicBlock = 2000;
 //最大临时变量的数量
 const int kMaxTemp = 1000;
 //最多目标代码条数
@@ -50,8 +50,6 @@ typedef struct
 	int ref;
 	//记录下声明的行数，便于报错和调试
 	int decLine;
-	//记录下使用的行数，便于报错和调试
-	std::vector<int> *useLine;
 	//因为使用hash分离链表法，所以这里记录冲突项的位置，默认为-1
 	int link;
 	//关于函数还必须要获得它的参数的个数和类型，所以这里专门给函数开一个数组，规定最大参数个数
@@ -225,6 +223,7 @@ private:
 	void errorPrint();
 	//跳读
 	void skip(const tokenType follow[], const int size);
+	void skip(tokenType toktype);
 	//根据错误的类型跳读
 	void errorSkip(errorType id);
 	//处理警告
@@ -315,7 +314,7 @@ private:
 	bool blockBeginFlag[kMaxMidCode];
 	//记录每个基本块的开始的四元式的index
 	int blockBegin[kMaxBasicBlock];
-	//记录最大基本块的长度
+	//记录数量
 	int blockIndex;
 	//分成基本块
 	void divideToBlock();
