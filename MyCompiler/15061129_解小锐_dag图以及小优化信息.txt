@@ -8,125 +8,207 @@ goto $label3
 被替换为:
 goto $label2
 
-goto $label9
-被替换为:
-goto $label8
+goto $label5
+被删除
 
-goto $label13
+goto $label5
 被替换为:
-goto $label12
+goto $label4
 
-goto $label15
+goto fibo$end
 被替换为:
-goto $label14
+goto $label4
+
+goto fibo$end
+被替换为:
+goto $label4
+
+goto fibo$end
+被替换为:
+goto $label4
+
+goto $label7
+被删除
+
+$t22 = $t22 + 0
+被删除
+
+goto $label11
+被删除
+
+$t28 = $t28 + 0
+被删除
+
+goto fib$end
+被替换为:
+goto $label11
+
+goto fib$end
+被替换为:
+goto $label11
+
+goto fib$end
+被替换为:
+goto $label11
+
+$t36 = $t36 - 0
+被删除
 
 goto $label21
 被替换为:
 goto $label20
 
-goto $label25
+goto $label17
 被替换为:
-goto $label24
+goto $label19
 
-goto $label18
+goto $label15
+被替换为:
+goto $label19
+
+goto $label24
+被替换为:
+goto $label23
+
+goto $label27
 被删除
 
-goto $label18
+goto $label27
 被替换为:
 goto $label26
 
-goto $label18
-被替换为:
-goto $label26
-
-goto $label32
-被替换为:
 goto $label31
+被替换为:
+goto $label30
+
+goto $label33
+被替换为:
+goto $label32
+
+goto $label40
+被删除
 
 goto $label36
 被替换为:
-goto $label35
+goto $label40
 
-goto $label29
+goto $label36
+被替换为:
+goto $label40
+
+goto $label44
 被删除
 
-goto $label29
-被替换为:
-goto $label37
+goto $label46
+被删除
 
-goto $label29
-被替换为:
-goto $label37
-
-goto charCount$end
-被替换为:
-goto $label28
-
-goto charCount$end
-被替换为:
-goto $label28
-
-goto $label38
-被替换为:
-goto $label41
-
-goto $label38
-被替换为:
-goto $label41
-
-goto $label38
-被替换为:
-goto $label41
-
-goto $label45
-被替换为:
 goto $label44
-
-goto $label47
 被替换为:
 goto $label46
 
-goto $label51
+goto gcd$end
+被替换为:
+goto $label46
+
+goto gcd$end
+被替换为:
+goto $label46
+
+goto gcd$end
+被替换为:
+goto $label46
+
+goto $label48
+被删除
+
+goto $label50
+被删除
+
+goto $label48
 被替换为:
 goto $label50
 
-goto max$end
+goto Combinatorial$end
+被替换为:
+goto $label50
+
+goto Combinatorial$end
+被替换为:
+goto $label50
+
+goto Combinatorial$end
+被替换为:
+goto $label50
+
+goto $label56
+被替换为:
+goto $label55
+
+goto $label60
+被替换为:
+goto $label59
+
+goto $label68
+被替换为:
+goto $label67
+
+goto $label72
+被替换为:
+goto $label71
+
+goto $label70
+被替换为:
+goto $label69
+
+goto $label4
 被删除
 
-goto calcu$end
+goto main4$end
 被删除
 
-goto calcuCov$end
-被删除
-
-goto $label8
-被删除
-
-goto $label12
-被删除
-
-goto partion$end
-被删除
-
-goto $label14
+goto $label11
 被删除
 
 goto $label20
 被删除
 
-goto $label24
+goto printArray$end
 被删除
 
-goto $label31
+goto $label30
 被删除
 
-goto $label35
+goto quickSort$end
 被删除
 
-goto $label41
+goto return1$end
 被删除
 
-goto $label44
+goto return999$end
+被删除
+
+goto returnminus998$end
+被删除
+
+goto $label32
+被删除
+
+goto main2$end
+被删除
+
+goto returna$end
+被删除
+
+goto returnplus$end
+被删除
+
+goto returnStar$end
+被删除
+
+goto returnChar$end
+被删除
+
+goto mod$end
 被删除
 
 goto $label46
@@ -135,111 +217,192 @@ goto $label46
 goto $label50
 被删除
 
-#RET 与 $t1 值相等
-第11块有优化
-c 与 $t4 值相等
-第17块有优化
-c不活跃了，被删除
+goto $label55
+被删除
+
+goto $label59
+被删除
+
+goto $label67
+被删除
+
+goto $label71
+被删除
+
+goto $label69
+被删除
+
+fib1 与 $t9 值相等
+第18块有优化
+fib1 与 $t11 值相等
+第19块有优化
+fib2 与 $t13 值相等
+_int_temp 与 $t14 值相等
+#RET 与 $t14 值相等
 第20块有优化
-temp 与 $t11 值相等
-第26块有优化
-$t12 不活跃了，被删除
-temp不活跃了，被删除
-temp 与 $t15 值相等
+fib2不活跃了，被删除
+_int_temp不活跃了，被删除
+第21块有优化
+$t17 不活跃了，被删除
+#RET 与 $t22 值相等
+第22块有优化
+$t19 不活跃了，被删除
+$t23 不活跃了，被删除
+$t24 不活跃了，被删除
+#RET 与 $t28 值相等
+第23块有优化
+$t26 不活跃了，被删除
 第28块有优化
-$t16 不活跃了，被删除
-temp不活跃了，被删除
-x 与 $t19 值相等
-i 与 $t20 值相等
-第32块有优化
-temp 与 $t23 值相等
-第33块有优化
-temp不活跃了，被删除
-temp 与 $t28 值相等
-第37块有优化
-temp不活跃了，被删除
-temp 与 $t32 值相等
-#RET 与 $t31 值相等
-第39块有优化
-$t33 不活跃了，被删除
+$t32 不活跃了，被删除
 $t35 不活跃了，被删除
-temp不活跃了，被删除
-q 与 $t36 值相等
-第44块有优化
-temp 与 $t39 值相等
-第48块有优化
-temp不活跃了，被删除
-$t42 不活跃了，被删除
-temp 与 $t45 值相等
-第50块有优化
-temp不活跃了，被删除
-$t48 不活跃了，被删除
+a 与 $t47 值相等
 第53块有优化
-第81块有优化
-$t85 不活跃了，被删除
-$t87 不活跃了，被删除
-$t89 不活跃了，被删除
-$t84 不活跃了，被删除
-$t81 不活跃了，被删除
-$t83 不活跃了，被删除
-$t88 不活跃了，被删除
-$t90 不活跃了，被删除
-$t82 不活跃了，被删除
-$t86 不活跃了，被删除
-第83块有优化
-$t111 不活跃了，被删除
-$t108 不活跃了，被删除
-$t109 不活跃了，被删除
-$t115 不活跃了，被删除
-$t116 不活跃了，被删除
-$t112 不活跃了，被删除
-$t113 不活跃了，被删除
-$t110 不活跃了，被删除
-$t117 不活跃了，被删除
+tmp 与 $t50 值相等
+第56块有优化
+$t55 不活跃了，被删除
+$t56 不活跃了，被删除
+第71块有优化
+i 与 $t64 值相等
+第77块有优化
+第115块有优化
+第133块有优化
 $t114 不活跃了，被删除
-$t120 不活跃了，被删除
-$t122 不活跃了，被删除
-$t121 不活跃了，被删除
-$t119 不活跃了，被删除
-$t118 不活跃了，被删除
-第85块有优化
-$t145 不活跃了，被删除
-$t153 不活跃了，被删除
-$t133 不活跃了，被删除
-$t146 不活跃了，被删除
-$t147 不活跃了，被删除
-$t152 不活跃了，被删除
-$t151 不活跃了，被删除
-$t150 不活跃了，被删除
-$t149 不活跃了，被删除
-$t148 不活跃了，被删除
+第140块有优化
+$t126 不活跃了，被删除
+第146块有优化
+$t139 不活跃了，被删除
+第155块有优化
 $t154 不活跃了，被删除
-$t157 不活跃了，被删除
-$t159 不活跃了，被删除
-$t158 不活跃了，被删除
-$t162 不活跃了，被删除
-$t156 不活跃了，被删除
-$t155 不活跃了，被删除
-$t161 不活跃了，被删除
-$t164 不活跃了，被删除
-$t163 不活跃了，被删除
-$t160 不活跃了，被删除
-第88块有优化
-$t167 不活跃了，被删除
-$t168 不活跃了，被删除
-$t169 不活跃了，被删除
-$t170 不活跃了，被删除
-$t173 不活跃了，被删除
-$t172 不活跃了，被删除
-$t174 不活跃了，被删除
+第170块有优化
 $t175 不活跃了，被删除
-$t177 不活跃了，被删除
-第90块有优化
-ra 与 $t181 值相等
-第91块有优化
-sum 与 $t189 值相等
-aver 与 $t190 值相等
-第101块有优化
-aver不活跃了，被删除
-cov 与 $t191 值相等
-第102块有优化
+第185块有优化
+$t196 不活跃了，被删除
+z 与 $t214 值相等
+#RET 与 $t214 值相等
+第201块有优化
+z不活跃了，被删除
+result 与 $t218 值相等
+第215块有优化
+result不活跃了，被删除
+t2 与 t1 值相等
+t3 与 t1 值相等
+t4 与 t1 值相等
+t5 与 t1 值相等
+第231块有优化
+t2不活跃了，被删除
+t3不活跃了，被删除
+t4不活跃了，被删除
+t5不活跃了，被删除
+x1 与 $t226 值相等
+第239块有优化
+x1不活跃了，被删除
+x1 被替换为了 $t226
+xxr 与 $t228 值相等
+第240块有优化
+xxr不活跃了，被删除
+k2 与 $t234 值相等
+第253块有优化
+x2 与 $t235 值相等
+第255块有优化
+x2不活跃了，被删除
+x2 被替换为了 $t235
+x2 与 $t238 值相等
+第259块有优化
+x2不活跃了，被删除
+x2 被替换为了 $t238
+合并
+$t36 = _int_i + 1
+_int_i = $t36 + 0
+为
+_int_i = _int_i + 1
+
+合并
+$t43 = _simple_int_num - 1
+_simple_int_num = $t43 + 0
+为
+_simple_int_num = _simple_int_num - 1
+
+合并
+$t46 = A + 1
+A = $t46 + 0
+为
+A = A + 1
+
+合并
+$t47 = head + 1
+a = $t47 + 0
+为
+a = head + 1
+
+合并
+$t57 = _simple_int_count + 1
+_simple_int_count = $t57 + 0
+为
+_simple_int_count = _simple_int_count + 1
+
+合并
+$t58 = a + 1
+a = $t58 + 0
+为
+a = a + 1
+
+合并
+$t75 = i + 1
+i = $t75 + 0
+为
+i = i + 1
+
+合并
+$t227 = n + 1
+n = $t227 + 0
+为
+n = n + 1
+
+合并
+$t229 = s - i
+s = $t229 + 0
+为
+s = s - i
+
+合并
+$t230 = i + 1
+i = $t230 + 0
+为
+i = i + 1
+
+合并
+$t232 = i + 1
+i = $t232 + 0
+为
+i = i + 1
+
+合并
+$t233 = j + 1
+j = $t233 + 0
+为
+j = j + 1
+
+合并
+$t234 = m - 1
+k2 = $t234 + 0
+为
+k2 = m - 1
+
+合并
+$t236 = i + 1
+i = $t236 + 0
+为
+i = i + 1
+
+合并
+$t237 = h + 1
+h = $t237 + 0
+为
+h = h + 1
+
+合并
+$t239 = m + 1
+m = $t239 + 0
+为
+m = m + 1
+

@@ -333,6 +333,9 @@ private:
 	//一些小的优化
 	void smallOptimize();
 
+	//窥孔优化
+	void kongOptimize();
+
 	//数据流分析输出文件：
 	std::fstream dataAnalysisFile;
 	//数据流分析方法

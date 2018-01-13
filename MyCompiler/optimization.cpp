@@ -234,6 +234,7 @@ bool Compiler::canAdd(bool flag[],  Node *x, Node* midqueue[], int length, Node 
 
 void Compiler::DAG()
 {
+	const int kMaxNodeNum = 100; 
 	int oldindex = this->midindex;
 	this->midindex = 0;
 	for(int i = 0 ; i < this->blockIndex ; i++)
@@ -1345,7 +1346,7 @@ void Compiler:: dataFlowAnalysis()
 	delete[] out;
 }
 
-//窥孔优化
+//小优化
 void Compiler::smallOptimize()
 {
 	//最后结果放在codes里
@@ -1480,4 +1481,39 @@ void Compiler::smallOptimize()
 		}
 	}
 	std::cout << "小优化结束" << std::endl;
+}
+//窥孔优化
+void Compiler:: kongOptimize()
+{
+	int index = this->midindex;
+	this->midindex = 0;
+	for(int i = 0 ; i < index - 1 ; i++)
+	{
+		midcode *code1 = this->codes[i];
+
+		midcode *code2 = this->codes[i + 1];
+
+		if((code1->op == ADDOP || code1->op == SUBOP || code1->op == MULOP || code1->op == DIVOP) && code2->op == ADDOP && (*code2->op2name)[0] == '0'
+			&& this->isIdEqual(*code1->rstname, *code2->op1name) && this->isOperandId(code2->rstname) && !(this->isOperandId(code1->rstname) || this->isOperandRet(code1->rstname))
+			&& ( this->isOperandId(code1->op1name) || this->isOperandNumber(code1->op1name) )
+			)
+		{
+			//第一个操作数是运算操作，然后第二个操作数是赋值操作（加法，第二个操作数是0）
+			this->codes[this->midindex ++] = code1;
+
+			this->dagFile << "合并" << std::endl;
+			this->writeMidCode(code1, this->dagFile);
+			this->writeMidCode(code2, this->dagFile);
+			this->dagFile << "为" << std::endl;
+			*code1->rstname = *code2->rstname;
+			this->writeMidCode(code1, this->dagFile);
+			this->dagFile << std::endl;
+
+
+			i++;
+		}
+		else{
+			this->codes[this->midindex++] = code1;
+		}
+	}
 }

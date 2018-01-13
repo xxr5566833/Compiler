@@ -80,6 +80,7 @@ void Compiler:: begin()
 	this->writeBlockToFile();
 	this->dataFlowAnalysis();
 	this->DAG();
+	this->kongOptimize();
 	this->writeSymtoFile();
 	std::cout << "ÓÅ»¯ºó" << std::endl;
 	this->writeMidCodetoFile(this->midFileAfter);
