@@ -75,12 +75,12 @@ void Compiler:: begin()
 	std::cout << "开始优化" << std::endl;
 	this->initOptimize();
 	this->smallOptimize();
+	this->kongOptimize();
 	this->divideToBlock();
 	this->initBlockConnect();
 	this->writeBlockToFile();
 	this->dataFlowAnalysis();
 	this->DAG();
-	this->kongOptimize();
 	this->writeSymtoFile();
 	std::cout << "优化后" << std::endl;
 	this->writeMidCodetoFile(this->midFileAfter);

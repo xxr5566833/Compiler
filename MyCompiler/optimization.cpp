@@ -482,11 +482,21 @@ void Compiler::DAG()
 				else{
 					//表示在结点表中找到了z，那么如果z原来是某个结点的主名字，那么就需要设置相应结点的flag
 					Node *node = dag[z->index];
+					z->index = mid->index;
 					if(this->isIdEqual(*node->mainname, *z->name))
 					{
 						node->flag = true;
+						//bug:如果这个节点的mainname失效，那么当时就要找到是否有可以被代替的name，否则可能之后如果没有补充的mainname，这个中间节点的mainname可能就会一直是错的
+						for(int k = 0 ; k < tablength ; k++)
+						{
+							if(nodetab[k]->index == node->index)
+							{
+								*node->mainname = *nodetab[k]->name;
+								//如果找到，那么标志位要设置为false
+								node->flag = false;
+							}
+						}
 					}
-					z->index = mid->index;
 					
 				}
 
@@ -1514,6 +1524,11 @@ void Compiler:: kongOptimize()
 		}
 		else{
 			this->codes[this->midindex++] = code1;
+			//bug:这里一开始忘了把最后一句加上了
+			if(i == index - 2)
+			{
+				this->codes[this->midindex++] = code2;
+			}
 		}
 	}
 }
