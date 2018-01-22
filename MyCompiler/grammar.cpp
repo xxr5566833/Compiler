@@ -4,35 +4,13 @@
 //一些限制
 const int kMaxCaseNum = 11;
 
-const tokenType PROGRAM_BEGIN[] = {CONST, INT, CHAR, VOID};
-
-const int PROGRAM_BEGIN_SIZE = 4;
-
-const tokenType CONSTSTATE_BEGIN[] = {CONST};
-
-const int CONSTSTATE_BEGIN_SIZE = 1;
-
-const tokenType BEGINWITHVAR_BEGIN[] = {INT, CHAR, VOID};
-
-const int BEGINWITHVAR_BEGIN_SIZE = 3;
-
 const tokenType INT_BEGIN[] = {PLUS, MINUS, ZERO, UNSIGNEDINT};
 
 const int INT_BEGIN_SIZE = 4;
 
-const tokenType CONSTDEF_BEGIN[] = {INT, CHAR};
-
 const tokenType CONSTANT_BEGIN[] = {SINGLECHAR, PLUS, MINUS, ZERO, UNSIGNEDINT};
 
 const int CONSTANT_BEGIN_SIZE = 5;
-
-const tokenType VARPARALIST_BEGIN[] = {ID, LPARENT, PLUS, MINUS, SINGLECHAR, ZERO, UNSIGNEDINT};
-
-const tokenType FACTOR_BEGIN[] = {ID, LPARENT, PLUS, MINUS, SINGLECHAR, ZERO, UNSIGNEDINT};
-
-const tokenType TERM_BEGIN[] = {ID, LPARENT, PLUS, MINUS, SINGLECHAR, ZERO, UNSIGNEDINT};
-
-const tokenType EXPRESSION_BEGIN[] = {ID, LPARENT, PLUS, MINUS, SINGLECHAR, ZERO, UNSIGNEDINT};
 
 const tokenType VARDEF_BEGIN[] = {LBRACKET, COMMA, SEMI};
 
@@ -42,47 +20,13 @@ const tokenType DECHEAD_BEGIN[] = {INT, CHAR};
 
 const int DECHEAD_BEGIN_SIZE = 2;
 
-const tokenType PARA_BEGIN[] = {INT, CHAR};
-
-const tokenType NOPARAFUNCDEF_BEGIN[] = {LBRACE};
-
-const tokenType HAVEPARAFUNCDEF_BEGIN[] = {LPARENT};
-
-const tokenType NOTMAINVOIDFUNCDEF_BEGIN[] = {ID};
-
-const tokenType MAINDEF_BEGIN[] = {MAIN};
-
-const tokenType BEGINWITHFUNC_BEGIN[] = {VOID, INT, CHAR};
-
-const tokenType CONDITION_BEGIN[] = {IF};
-
-const tokenType CASESTATEMENT_BEGIN[] = {CASE};
-
-const tokenType CASETAB_BEGIN[] = {CASE};
-
-const tokenType SWITCHSTATEMENT_BEGIN[] = {SWITCH};
-
-const tokenType WHILESTATEMENT_BEGIN[] = {WHILE};
-
-const tokenType SCANFSTATEMENT_BEGIN[] = {SCANF};
-
-const tokenType PRINTFSTATEMENT_BEGIN[] = {PRINTF};
-
-const tokenType RETURNSTATEMENT_BEGIN[] = {RETURN};
-
 const tokenType STATEMENT_BEGIN[] = {IF, WHILE, LBRACE, SCANF, PRINTF, SEMI, SWITCH, RETURN, ID};
 
 const int STATEMENT_BEGIN_SIZE = 9;
 
-const tokenType STATEMENTLIST_BEGIN[] = {IF, WHILE, LBRACKET, SCANF, PRINTF, SEMI, SWITCH, RETURN, ID};
-
-//TODO 这里不需要语句列，复合语句的开始单词集合
-
 const tokenType VARSTATE_BEGIN[] = {INT, CHAR};
 
 const int VARSTATE_BEGIN_SIZE = 2;
-
-const tokenType COMSTATEMENT_BEGIN[] = {CONST, INT, CHAR, IF, WHILE, LBRACKET, SCANF, PRINTF, SEMI, SWITCH, RETURN, ID};
 
 //关系运算符集合需要写一下
 
@@ -91,10 +35,6 @@ const tokenType RELATION_OPERATOR[] = {LESSEQU, MOREEQU, EQU, NEQU, LESS, MORE,}
 const int RELATION_OPERATOR_SIZE = 6;
 
 
-
-const tokenType COMPUTE[] = {PLUS, MINUS, STAR, DIV};
-
-const int COMPUTE_SIZE = 4;
 
 const tokenType FACTOR_FOLLOW[] = {PLUS, MINUS, STAR, DIV, SEMI, COMMA, RPARENT, RBRACKET};
 
@@ -359,7 +299,6 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 {
 	//std::cout<< "进入 <因子>" << std::endl;
 	//保存名称，最后赋给 *operand
-	std::string *resultoperand = new std::string();
 	if(this->tok.id == ID)
 	{
 		symbol *sym = 0;
@@ -382,17 +321,17 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 			}
 			eRetType type = NOTTYPE;
 			this->inSym();
-			std::string *temp = new std::string();
-			this->expression(&type, temp);
+			std::string indextemp = std::string();
+			this->expression(&type, &indextemp);
 			if(type != INTRET)
 			{
 				//不是一个int型的表达式，不做跳读处理
 				this->errorHandle(NOTAINT);
 			}
-			if(this->isOperandNumber(temp))
+			if(this->isOperandNumber(&indextemp))
 			{
 				//如果表达式返回的是一个常数，那么这里就需要检查数组下标是否越界
-				int constvalue = atoi(temp->c_str());
+				int constvalue = atoi(indextemp.c_str());
 				//注意还要和0比较
 				if(constvalue >= sym->feature || constvalue < 0)
 				{
@@ -400,8 +339,8 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 					this->errorHandle(ARRAYINDEXOUTOFRANGE);
 				}
 			}
-			this->genTemp(resultoperand);
-			this->pushMidCode(RARRAYOP, sym->name, temp, resultoperand);
+			this->genTemp(operand);
+			this->pushMidCode(RARRAYOP, sym->name, &indextemp, operand);
 			if(this->tok.id == RBRACKET)
 			{
 				this->inSym();
@@ -432,7 +371,7 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 			{
 				//执行相关函数调用
 				this->pushMidCode(CALLOP, new std::string(), new std::string(), sym->name);
-				resultoperand = new std::string("#RET");
+				*operand = std::string("#RET");
 				this->inSym();
 			}
 			else{
@@ -444,7 +383,7 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 			if(sym->symbolType == SIMPLESYM || sym->symbolType == PARASYM)
 			{
 				//标识符直接作为操作数返回
-				*resultoperand = *sym->name;
+				*operand = *sym->name;
 			}
 			else if(sym->symbolType == FUNCSYM){
 				if(sym->feature != 0)
@@ -453,16 +392,16 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 					this->errorHandle(NOTANOPARAFUNC);
 				}
 				this->pushMidCode(CALLOP, new std::string(), new std::string(), sym->name);
-				resultoperand = new std::string("#RET");
+				*operand = std::string("#RET");
 			}
 			//不要忘记常量标识符
 			else if(sym->symbolType == CONSTSYM){
 				//老师说了，数组下标如果是一个整形常量，那么也需要检查，即只要能够确定值的，都需要检查，
 				//所以说这里我们把常量直接当做一个值传出去，这样也好计算最后的下标
 				int value = sym->feature;
-				std::string *constvalue = new std::string();
-				this->int2string(constvalue, value);
-				*resultoperand = *constvalue;
+				std::string constvalue = std::string();
+				this->int2string(&constvalue, value);
+				*operand = constvalue;
 			}
 			else{
 				//不是一个被正确使用的标识符，不跳读
@@ -473,7 +412,7 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 	else if(this->tok.id == LPARENT)
 	{
 		this->inSym();
-		this->expression(resulttype, resultoperand);
+		this->expression(resulttype, operand);
 		if(this->tok.id == RPARENT)
 		{
 			this->inSym();
@@ -487,16 +426,15 @@ void Compiler::factor(eRetType *resulttype, std::string *operand)
 		//常数，那么此时直接把它的值作为操作数
 		int value;
 		this->constant(&value, resulttype);
-		std::string *constvalue = new std::string();
-		this->int2string(constvalue, value);
-		*resultoperand = *constvalue;
+		std::string constvalue = std::string();
+		this->int2string(&constvalue, value);
+		*operand = constvalue;
 	}
 	else{
 		//不是一个正确的因子，此时跳读
 		this->errorHandle(NOTFACTOR);
 		this->skip(FACTOR_FOLLOW, FACTOR_FOLLOW_SIZE);
 	}
-	*operand = *resultoperand;
 
 	//std::cout<< "这是一个 <因子>" << std::endl;
 }
@@ -505,17 +443,15 @@ void Compiler:: term(eRetType *resulttype, std::string *operand)
 {
 	//std::cout << "进入 <项>" << std::endl;
 	//这个是这个term的最终返回的中间代码
-	std::string *factoroperand = new std::string();
-	this->factor(resulttype, factoroperand);
-	std::string *resultoperand = new std::string();
-	*resultoperand = *factoroperand;
+	std::string resultoperand = std::string();
+	this->factor(resulttype, &resultoperand);
 	//如果这里第一个操作数是#ret 那么需要一个临时变量来承接，因为之后v0可能会被占用
-	if(this->isOperandRet(resultoperand))
+	if(this->isOperandRet(&resultoperand))
 	{
-		std::string *temp = new std::string();
-		this->genTemp(temp);
-		this->pushMidCode(ADDOP, resultoperand, new std::string("0"), temp);
-		*resultoperand = *temp;
+		std::string temp = std::string();
+		this->genTemp(&temp);
+		this->pushMidCode(ADDOP, &resultoperand, ZEROOPERAND, &temp);
+		resultoperand = temp;
 	}
 	while(this->tok.id == STAR || this->tok.id == DIV)
 	{
@@ -524,17 +460,17 @@ void Compiler:: term(eRetType *resulttype, std::string *operand)
 
 		bool isstar = this->tok.id == STAR;
 		eRetType fact = NOTTYPE;
-		std::string *factoroperand2 = new std::string();
+		std::string factoroperand2 = std::string();
 		this->inSym();
-		this->factor(&fact, factoroperand2);
+		this->factor(&fact, &factoroperand2);
 
-		if(this->isOperandNumber(resultoperand))
+		if(this->isOperandNumber(&resultoperand))
 		{
-			if(this->isOperandNumber(factoroperand2))
+			if(this->isOperandNumber(&factoroperand2))
 			{
 				//如果两个都是数字，那么可以直接计算结果
-				int op1 = atoi(resultoperand->c_str());
-				int op2 = atoi(factoroperand2->c_str());
+				int op1 = atoi(resultoperand.c_str());
+				int op2 = atoi(factoroperand2.c_str());
 				if(op2 == 0 && !isstar)
 				{
 					//不能除以0！
@@ -543,54 +479,54 @@ void Compiler:: term(eRetType *resulttype, std::string *operand)
 					op2 +=1;
 				}
 				int result = isstar ? op1 * op2 : op1 / op2;
-				std::string *constvalue = new std::string();
-				this->int2string(constvalue, result);
-				*resultoperand = *constvalue;
+				std::string constvalue = std::string();
+				this->int2string(&constvalue, result);
+				resultoperand = constvalue;
 			}
 			else{
 				//第一个是数字，第二个不是数字，同样的道理，这里需要对于那些不是临时变量且不是数字的因子操作数赋给一个临时变量操作数
 
-				if(!this->isOperandTemp(factoroperand2))
+				if(!this->isOperandTemp(&factoroperand2))
 				{
 					//不是临时变量，那么需要生成临时变量，并把原来的操作数的值给这个临时变量，让这个临时变量参与运算并作为结果操作数
-					std::string *result = new std::string();
-					this->genTemp(result);
-					this->pushMidCode(isstar ? MULOP : DIVOP, resultoperand, factoroperand2, result);
-					*resultoperand = *result;
+					std::string result = std::string();
+					this->genTemp(&result);
+					this->pushMidCode(isstar ? MULOP : DIVOP, &resultoperand, &factoroperand2, &result);
+					resultoperand = result;
 				}
 				else{
 					//是临时变量，那么直接把它作为最后的操作数
-					this->pushMidCode(isstar ? MULOP : DIVOP, resultoperand, factoroperand2, factoroperand2);
+					this->pushMidCode(isstar ? MULOP : DIVOP, &resultoperand, &factoroperand2, &factoroperand2);
 					//然后需要让resultoperand始终存放结果操作数
-					*resultoperand = *factoroperand2;
+					resultoperand = factoroperand2;
 				}
 			}
 		}
 		else{
-			if(this->isOperandNumber(factoroperand2))
+			if(this->isOperandNumber(&factoroperand2))
 			{
-				int op2 = atoi(factoroperand2->c_str());
+				int op2 = atoi(factoroperand2.c_str());
 				if(op2 == 0 && !isstar)
 				{
 					//不能除以0！
 					this->errorHandle(DIVZERO);
 				}
 			}
-			if(this->isOperandTemp(resultoperand))
+			if(this->isOperandTemp(&resultoperand))
 			{
-				this->pushMidCode(isstar ? MULOP : DIVOP, resultoperand, factoroperand2, resultoperand);
+				this->pushMidCode(isstar ? MULOP : DIVOP, &resultoperand, &factoroperand2, &resultoperand);
 			}
 			else{
 				//否则需要生成临时变量作为结果
-				std::string *result = new std::string();
-				this->genTemp(result);
-				this->pushMidCode(isstar ? MULOP : DIVOP, resultoperand, factoroperand2, result);
-				*resultoperand = *result;
+				std::string result = std::string();
+				this->genTemp(&result);
+				this->pushMidCode(isstar ? MULOP : DIVOP, &resultoperand, &factoroperand2, &result);
+				resultoperand = result;
 			}
 		}
 
 	}
-	*operand = *resultoperand;
+	*operand = resultoperand;
 	//std::cout << "这是一个 <项>" << std::endl;
 }
 
@@ -598,7 +534,7 @@ void Compiler:: expression(eRetType *resulttype, std::string *operand)
 {
 	//std::cout << "进入 <表达式>" << std::endl;
 	//表示有无+ - 如果有，那么为true
-	std::string *termoperand1 = new std::string();
+	std::string termoperand1 = std::string();
 	bool flag = false;
 	bool neg = false;
 	if(this->tok.id == PLUS || this->tok.id == MINUS)
@@ -608,32 +544,32 @@ void Compiler:: expression(eRetType *resulttype, std::string *operand)
 		neg = MINUS == this->tok.id;
 		this->inSym();
 	}
-	this->term(resulttype, termoperand1);
+	this->term(resulttype, &termoperand1);
 	if(neg)
 	{
 		//同样这里还是需要看，如果项是一个常量，那么直接就可以计算结果
-		if(this->isOperandNumber(termoperand1))
+		if(this->isOperandNumber(&termoperand1))
 		{
 			//项返回了一个数字常量
-			int value = atoi(termoperand1->c_str());
+			int value = atoi(termoperand1.c_str());
 			value = -1 * value;
-			std::string *constvalue = new std::string();
+			std::string constvalue = std::string();
 			//先获得它的int值，然后取相反数，然后再变成string
-			this->int2string(constvalue, value);
+			this->int2string(&constvalue, value);
 			//把结果给了第一个项操作数
-			*termoperand1 = *constvalue;
+			termoperand1 = constvalue;
 		}
-		else if(this->isOperandId(termoperand1))
+		else if(this->isOperandId(&termoperand1))
 		{
-			//如果是标识符，需要一个临时变量来“承接”它们
-			std::string *temp = new std::string();
-			this->genTemp(temp);
-			this->pushMidCode(SUBOP, ZEROOPERAND, termoperand1, temp);
-			*termoperand1 = *temp;
+			//如果是标识符，需要一个临时变量来“承接”它
+			std::string temp = std::string();
+			this->genTemp(&temp);
+			this->pushMidCode(SUBOP, ZEROOPERAND, &termoperand1, &temp);
+			termoperand1 = temp;
 		}
 		else{
 			//不是数字常量和标识符，那么肯定是临时变量了
-			this->pushMidCode(SUBOP, ZEROOPERAND, termoperand1, termoperand1);
+			this->pushMidCode(SUBOP, ZEROOPERAND, &termoperand1, &termoperand1);
 		}
 	}
 	*resulttype = flag ? INTRET : *resulttype;
@@ -641,54 +577,54 @@ void Compiler:: expression(eRetType *resulttype, std::string *operand)
 	{
 		bool isplus = this->tok.id == PLUS;
 		eRetType result = NOTTYPE;
-		std::string *termoperand2 = new std::string();
+		std::string termoperand2 = std::string();
 		this->inSym();
-		this->term(&result, termoperand2);
+		this->term(&result, &termoperand2);
 		*resulttype = INTRET;
 		//还是需要看两个操作数是不是数字
-		if(this->isOperandNumber(termoperand1))
+		if(this->isOperandNumber(&termoperand1))
 		{
-			if(this->isOperandNumber(termoperand2))
+			if(this->isOperandNumber(&termoperand2))
 			{
 				//两个操作数都是数字常量，那么计算，并把结果给termoperand1
-				int op1 = atoi(termoperand1->c_str());
-				int op2 = atoi(termoperand2->c_str());
+				int op1 = atoi(termoperand1.c_str());
+				int op2 = atoi(termoperand2.c_str());
 				int result = isplus ? op1 + op2 : op1 - op2;
-				std::string *constvalue = new std::string();
-				this->int2string(constvalue, result);
-				*termoperand1 = *constvalue;
+				std::string constvalue = std::string();
+				this->int2string(&constvalue, result);
+				termoperand1 = constvalue;
 			}
 			else{
 				//bug:这里还需要看第二个term返回的是一个临时变量还是标识符，如果是标识符，需要用临时变量承接！
-				if(this->isOperandId(termoperand2))
+				if(this->isOperandId(&termoperand2))
 				{
-					std::string *temp = new std::string();
-					this->genTemp(temp);
-					this->pushMidCode(isplus ? ADDOP : SUBOP, termoperand1, termoperand2, temp);
-					*termoperand1 = *temp;
+					std::string temp = std::string();
+					this->genTemp(&temp);
+					this->pushMidCode(isplus ? ADDOP : SUBOP, &termoperand1, &termoperand2, &temp);
+					termoperand1 = temp;
 				}
 				else{
-					this->pushMidCode(isplus ? ADDOP : SUBOP, termoperand1, termoperand2, termoperand2);
-					*termoperand1 = *termoperand2;
+					this->pushMidCode(isplus ? ADDOP : SUBOP, &termoperand1, &termoperand2, &termoperand2);
+					termoperand1 = termoperand2;
 				}
 			}
 		}
 		else{
-			if(this->isOperandTemp(termoperand1))
+			if(this->isOperandTemp(&termoperand1))
 			{
 				//如果操作数1是一个临时变量
-				this->pushMidCode(isplus ? ADDOP : SUBOP, termoperand1, termoperand2, termoperand1);
+				this->pushMidCode(isplus ? ADDOP : SUBOP, &termoperand1, &termoperand2, &termoperand1);
 			}
 			else{
 				//如果操作数1是一个标识符，需要一个临时变量保存最后结果
-				std::string *temp = new std::string();
-				this->genTemp(temp);
-				this->pushMidCode(isplus ? ADDOP : SUBOP, termoperand1, termoperand2, temp);
-				*termoperand1 = *temp;
+				std::string temp = std::string();
+				this->genTemp(&temp);
+				this->pushMidCode(isplus ? ADDOP : SUBOP, &termoperand1, &termoperand2, &temp);
+				termoperand1 = temp;
 			}
 		}
 	}
-	*operand = *termoperand1;
+	*operand = termoperand1;
 	//std::cout << "这是一个 <表达式>" << std::endl;
 }
 
@@ -1159,45 +1095,45 @@ void Compiler:: condition(std::string *label)
 {
 	//std::cout << "进入 <条件>" << std::endl;
 	eRetType rettype = NOTTYPE;
-	std::string *tempoperand1 = new std::string();
-	this->expression(&rettype, tempoperand1);
+	std::string tempoperand1 = std::string();
+	this->expression(&rettype, &tempoperand1);
 	if(this->isInRange(RELATION_OPERATOR, RELATION_OPERATOR_SIZE))
 	{
 		//处理关系运算符
 		int token = this->tok.id ;
 
 		eRetType rettype2 = NOTTYPE;
-		std::string *tempoperand2 = new std::string();
+		std::string tempoperand2 = std::string();
 		this->inSym();
-		this->expression(&rettype2, tempoperand2);
+		this->expression(&rettype2, &tempoperand2);
 		//如果类型不一样，那么可以统一转换为int计算
 		//生成语句
 		//这里统一让操作数1减去操作数2
 		switch(token)
 		{
 		case EQU:
-			this->pushMidCode(NEQUOP, tempoperand1, tempoperand2, label);
+			this->pushMidCode(NEQUOP, &tempoperand1, &tempoperand2, label);
 			break;
 		case NEQU:
-			this->pushMidCode(EQUOP, tempoperand1, tempoperand2, label);
+			this->pushMidCode(EQUOP, &tempoperand1, &tempoperand2, label);
 			break;
 		case LESSEQU:
-			this->pushMidCode(MOREOP, tempoperand1, tempoperand2, label);
+			this->pushMidCode(MOREOP, &tempoperand1, &tempoperand2, label);
 			break;
 		case LESS:
-			this->pushMidCode(MOREEQUOP, tempoperand1, tempoperand2, label);
+			this->pushMidCode(MOREEQUOP, &tempoperand1, &tempoperand2, label);
 			break;
 		case MORE:
-			this->pushMidCode(LESSEQUOP, tempoperand1, tempoperand2, label);
+			this->pushMidCode(LESSEQUOP, &tempoperand1, &tempoperand2, label);
 			break;
 		case MOREEQU:
-			this->pushMidCode(LESSOP, tempoperand1, tempoperand2, label);
+			this->pushMidCode(LESSOP, &tempoperand1, &tempoperand2, label);
 			break;
 
 		}
 	}
 	else{
-		this->pushMidCode(EQUOP, tempoperand1, new std::string("0"), label);
+		this->pushMidCode(EQUOP, &tempoperand1, ZEROOPERAND, label);
 	}
 	
 	//std::cout << "这是一个 <条件>" << std::endl;
@@ -1353,8 +1289,8 @@ void Compiler:: switchStatement(bool *returnflag, eRetType returntype, std::stri
 		this->errorHandle(NOTLPARENT);
 	}
 	eRetType switchtype = NOTTYPE;
-	std::string *switchtemp = new std::string();
-	this->expression(&switchtype, switchtemp);
+	std::string switchtemp = std::string();
+	this->expression(&switchtype, &switchtemp);
 	
 	//结束时的标号
 	std::string *done = new std::string();
@@ -1373,7 +1309,7 @@ void Compiler:: switchStatement(bool *returnflag, eRetType returntype, std::stri
 	else{
 		this->errorHandle(NOTLBRACE);
 	}
-	this->caseTab(switchtype, switchtemp, returnflag, returntype, done, name);
+	this->caseTab(switchtype, &switchtemp, returnflag, returntype, done, name);
 	if(this->tok.id == DEFAULT)
 	{
 		this->inSym();
@@ -1392,7 +1328,7 @@ void Compiler:: switchStatement(bool *returnflag, eRetType returntype, std::stri
 			this->errorHandle(NOTSTATEMENT);
 		}
 	}
-	this->pushMidCode(LABOP, new std::string(), new std::string(), done);
+	this->pushMidCode(LABOP, &(std::string()), &(std::string()), done);
 	if(this->tok.id == RBRACE){
 		this->inSym();
 	}
@@ -1568,21 +1504,21 @@ void Compiler:: printfStatement()
 		}
 	}
 	eRetType rettype = NOTTYPE;
-	std::string *temp = new std::string();
-	this->expression(&rettype, temp);
+	std::string temp = std::string();
+	this->expression(&rettype, &temp);
 	//这时产生表达式的四元式已经生成，其中包括可能的函数调用
 	if(num)
 	{
 		//如果num不是0，那么说明需要输出字符串
-		this->pushMidCode(PRINTFOP, num, new std::string("0"), num);
+		this->pushMidCode(PRINTFOP, num, ZEROOPERAND, num);
 	}
 	switch(rettype)
 	{
 	case INTRET:
-		this->pushMidCode(PRINTFOP, temp, new std::string("int"), temp);
+		this->pushMidCode(PRINTFOP, &temp, new std::string("int"), &temp);
 		break;
 	case CHARRET:
-		this->pushMidCode(PRINTFOP, temp, new std::string("char"), temp);
+		this->pushMidCode(PRINTFOP, &temp, new std::string("char"), &temp);
 		break;
 	}
 	if(this->tok.id == RPARENT)
@@ -1604,8 +1540,8 @@ void Compiler:: returnStatement(bool *returnflag, eRetType returntype, std::stri
 	{
 		this->inSym();
 		eRetType rettype = NOTTYPE;
-		std::string *temp = new std::string();
-		this->expression(&rettype, temp);
+		std::string temp = std::string();
+		this->expression(&rettype, &temp);
 		if(returntype == VOIDRET)
 		{
 			//是void类型的，却有return()这样的语句，那么提示，不跳读
@@ -1614,7 +1550,15 @@ void Compiler:: returnStatement(bool *returnflag, eRetType returntype, std::stri
 		else 
 		{
 			//int / char
-			this->pushMidCode(ADDOP, temp, new std::string("0"), new std::string("#RET"));
+			//这里和赋值一样，也是如果发现表达式返回的是一个临时变量，那么直接把其操作数换成#RET
+			if(this->isOperandTemp(&temp))
+			{
+				midcode *code = this->codes[this->midindex - 1];
+				*code->rstname = std::string("#RET");
+			}
+			else{
+				this->pushMidCode(ADDOP, &temp, ZEROOPERAND, new std::string("#RET"));	
+			}
 			if(returntype != rettype)
 			{
 				//return类型不匹配，提示，不跳读
@@ -1748,8 +1692,8 @@ void Compiler:: statement(bool *returnflag, eRetType returntype, std::string *fu
 			}
 			this->inSym();
 			eRetType rettype = NOTTYPE;
-			std::string *expressoperand = new std::string();
-			this->expression(&rettype, expressoperand);
+			std::string expressoperand = std::string();
+			this->expression(&rettype, &expressoperand);
 			//做赋值
 
 			//int-> char 把int的值给char 这个是不被允许的！
@@ -1757,7 +1701,16 @@ void Compiler:: statement(bool *returnflag, eRetType returntype, std::string *fu
 			{
 				this->errorHandle(INTTOCHARNOTALLOW);
 			}
-			this->pushMidCode(ADDOP, expressoperand, new std::string("0"), sym->name);
+			//表达式只能返回三种操作数，数字，标识符还有临时变量，如果返回的是临时变量
+			//那么可以直接把以这个临时变量为结果操作数的那个四元式改为现在要被赋值的这个标识符
+			if(this->isOperandTemp(&expressoperand))
+			{
+				midcode *code = this->codes[this->midindex - 1];
+				*code->rstname = *sym->name;
+			}
+			else{
+				this->pushMidCode(ADDOP, &expressoperand, ZEROOPERAND, sym->name);
+			}
 			if(this->tok.id == SEMI)
 			{
 				this->inSym();
@@ -1775,13 +1728,13 @@ void Compiler:: statement(bool *returnflag, eRetType returntype, std::string *fu
 			}
 			this->inSym();
 			eRetType rettype = NOTTYPE;
-			std::string *indexoperand = new std::string();
-			this->expression(&rettype, indexoperand);
+			std::string indexoperand = std::string();
+			this->expression(&rettype, &indexoperand);
 			//这里看indexoperand是不是一个整数常量
-			if(this->isOperandNumber(indexoperand))
+			if(this->isOperandNumber(&indexoperand))
 			{
 				//如果是一个可以直接获得值的数字，那么需要检查
-				int index = atoi(indexoperand->c_str());
+				int index = atoi(indexoperand.c_str());
 				if(index >= sym->feature)
 				{
 					this->errorHandle(ARRAYINDEXOUTOFRANGE);
@@ -1802,22 +1755,14 @@ void Compiler:: statement(bool *returnflag, eRetType returntype, std::string *fu
 				this->errorHandle(NOTASSIGN);
 			}
 			eRetType righttype = NOTTYPE;
-			std::string *tempoperand = new std::string();
-			this->expression(&righttype, tempoperand);
-			//这里为了之后好处理，把要给数组元素赋值的右边变量统一用临时变量表示
-			if(this->isOperandNumber(tempoperand))
-			{
-				std::string *temp = new std::string();
-				this->genTemp(temp);
-				this->pushMidCode(ADDOP, tempoperand, new std::string("0"), temp);
-				*tempoperand = *temp;
-			}
-			//如果是int给char类型赋值，那么不允许！这里一开始怎么没把判断加上
+			std::string tempoperand = std::string();
+			this->expression(&righttype, &tempoperand);
+			//bug:如果是int给char类型赋值，那么不允许！这里一开始怎么没把判断加上
 			if(sym->returnType == CHARRET && righttype == INTRET)
 			{
 				this->errorHandle(INTTOCHARNOTALLOW);
 			}
-			this->pushMidCode(LARRAYOP, tempoperand, indexoperand, name);
+			this->pushMidCode(LARRAYOP, &tempoperand, &indexoperand, name);
 			if(this->tok.id == SEMI)
 			{
 				this->inSym();

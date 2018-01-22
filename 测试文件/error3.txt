@@ -9,7 +9,8 @@ const int _int_minus400 = -400, _int_minus888 = -888, _int_minus1563 = -1563;
 const int _int_plus567 = +567, _int_plus5 = +5, _int_plus1000 = +1000;
 const int _int_temp = 77;
 const int _int_i = 56;
-const int MAX_NUM = 1024 ;
+const int MAX_NUM = * ;
+
 
 char _array_char_a[1000], _array_char_c[1000], _simple_char_t;
 int _simple_int_e, _array_int_fibarray[1000], _array_int_fibarray_temp[1000], _simple_int_num, _array_int_a[1000];
@@ -17,11 +18,10 @@ int _simple_int_e, _array_int_fibarray[1000], _array_int_fibarray_temp[1000], _s
 
 int _array_int_quicksort_[100], _simple_int_count;
 int _simple_int_length;
-
 int fibo(int num)
 {
-	if(num <= 0)	return (0);	else ;
-	if(num == 1)	return (1);	else ;
+	if(num <= 0)	return (0);	else +
+	if(num == 1)	return (1);	
 	if(num >= 2)	return (fibo(num - 1) + fibo(num - 2));	else;
 }
 
@@ -436,12 +436,15 @@ void main6
 void main7
 {
 	int t1, t2, t3, t4, t5;
+char a;
 	t1 = 1;
 	t2 = t1;
 	t3 = t2;
 	t4 = t3;
 	t5 = t2;
-	printf(Combinatorial(t1, t5));
+	printf(Combinatorial(a, t5));
+printf(Combinatorial(t5));
+printf(Combinatorial(t5, t1, t2));
 	
 }
 
@@ -452,8 +455,8 @@ void optest
   int i,j,n,s,x1;
 
   int m,k2,h,leap,x2;
-  
-  int xxr;
+
+int i;
 
   j = 2;
   while(j< MAX_NUM)
@@ -593,7 +596,7 @@ void main()
 	scanf(choose);
 	switch(choose)
 	{
-	case 'a' : main1;
+	cas 'a'  main1;
 	case 'b' : main2;
 	case 'c' : main3;
 	case 'd' : main4;

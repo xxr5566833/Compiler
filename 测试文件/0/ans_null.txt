@@ -1,0 +1,44 @@
+输入：
+1
+1
+1
+0
+a
+输出：
+if test ok
+please input 3 int(the 3rd int must >0):
+loop test ok
+please input int(0-9) & char values(a-e):
+97
+A
+passed
+
+输入：
+1
+2
+3
+2
+d
+输出：
+if test ok
+please input 3 int(the 3rd int must >0):
+loop test ok
+please input int(0-9) & char values(a-e):
+102
+D
+passed
+
+输入：
+10
+1
+8
+9
+c
+输出：
+if test ok
+please input 3 int(the 3rd int must >0):
+loop test ok
+please input int(0-9) & char values(a-e):
+108
+C
+passed

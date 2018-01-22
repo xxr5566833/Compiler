@@ -1,0 +1,25 @@
+1.
+输入：
+6
+2
+输出：
+no errors seem found. 
+m! = 720
+repeat m! : 720
+n! = 2
+repeat n! : 2
+C(m, n) = 15
+
+2.
+输入
+-1
+1
+输出：
+n should be no greater than m.
+
+3.
+输入
+11
+0
+输出：
+m is too big.

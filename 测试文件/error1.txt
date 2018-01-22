@@ -1,13 +1,13 @@
 const char _char__ = '_', _char_lower_a = 'a', _char_lower_b = 'b', _char_lower_c = 'c', _char_lower_d = 'd';
 const char _char_upper_A = 'A', _char_upper_B = 'B', _char_upper_C = 'C', _char_D = 'D';
 const char _char_0 = '0', _char_1 = '1', _char_2 = '2', _char_3 = '3', _char_4 = '4', _char_5 = '5', _char_6 = '6', _char_7 = '7', _char_8 = '8', _char_9 = '9';
-const char _char_plus = '+', _char_minus = '-', _char_mul = '*', _char_div = '/';
+const char _char_plus = '+', _char_minus = '-', _char_mul = 1, _char_div = '/';
 
 const int _int_0 = 0;
 const int _int_1 = 1, _int_256 = 256, _int_34545 = 34545;
 const int _int_minus400 = -400, _int_minus888 = -888, _int_minus1563 = -1563;
 const int _int_plus567 = +567, _int_plus5 = +5, _int_plus1000 = +1000;
-const int _int_temp = 77;
+const int _int_temp  77;
 const int _int_i = 56;
 const int MAX_NUM = 1024 ;
 
@@ -15,10 +15,11 @@ char _array_char_a[1000], _array_char_c[1000], _simple_char_t;
 int _simple_int_e, _array_int_fibarray[1000], _array_int_fibarray_temp[1000], _simple_int_num, _array_int_a[1000];
 
 
-int _array_int_quicksort_[100], _simple_int_count;
+int _array_int_quicksort_[100, _simple_int_count;
 int _simple_int_length;
+int +;
 
-int fibo(int num)
+int fibo(VOID num)
 {
 	if(num <= 0)	return (0);	else ;
 	if(num == 1)	return (1);	else ;
@@ -452,8 +453,6 @@ void optest
   int i,j,n,s,x1;
 
   int m,k2,h,leap,x2;
-  
-  int xxr;
 
   j = 2;
   while(j< MAX_NUM)

@@ -1,0 +1,45 @@
+测试结果:
+测设一:
+输入:
+1
+输出:(控制台所有的输出如下)
+Please input your choice number:(<0>quit <1>Test 1 <2>Test 2 <3>Test 3)
+1Test 1:
+left_index=
+7
+right_index=
+10
+Subarray sum=
+43
+Test 1 passed!
+Quit Test...
+
+测试二:
+输入:
+2
+输出:(控制台所有的输出如下)
+Please input your choice number:(<0>quit <1>Test 1 <2>Test 2 <3>Test 3)
+2Test 2:
+left_index=
+5
+right_index=
+11
+Subarray sum=
+47
+Test 2 passed!
+Quit Test...
+
+测试三:
+输入:
+3
+输出:(控制台所有的输出如下)
+Please input your choice number:(<0>quit <1>Test 1 <2>Test 2 <3>Test 3)
+3Test 3:
+left_index=
+8
+right_index=
+8
+Subarray sum=
+5
+Test 3 passed!
+Quit Test...

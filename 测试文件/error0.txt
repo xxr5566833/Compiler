@@ -1,4 +1,4 @@
-const char _char__ = '_', _char_lower_a = 'a', _char_lower_b = 'b', _char_lower_c = 'c', _char_lower_d = 'd';
+const char _char__ = '_, _char_lower_a = 'гд', _char_lower_b = 'b', _char_lower_c = 'c', _char_lower_d = 'd';
 const char _char_upper_A = 'A', _char_upper_B = 'B', _char_upper_C = 'C', _char_D = 'D';
 const char _char_0 = '0', _char_1 = '1', _char_2 = '2', _char_3 = '3', _char_4 = '4', _char_5 = '5', _char_6 = '6', _char_7 = '7', _char_8 = '8', _char_9 = '9';
 const char _char_plus = '+', _char_minus = '-', _char_mul = '*', _char_div = '/';
@@ -21,7 +21,7 @@ int _simple_int_length;
 int fibo(int num)
 {
 	if(num <= 0)	return (0);	else ;
-	if(num == 1)	return (1);	else ;
+	if(num ! 1)	return (1);	else ;
 	if(num >= 2)	return (fibo(num - 1) + fibo(num - 2));	else;
 }
 
@@ -452,8 +452,6 @@ void optest
   int i,j,n,s,x1;
 
   int m,k2,h,leap,x2;
-  
-  int xxr;
 
   j = 2;
   while(j< MAX_NUM)

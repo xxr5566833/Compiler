@@ -404,62 +404,88 @@ void Compiler::handleBranch(midcode *code)
 	*reg2 = *T8;
 	std::string *rstreg = new std::string();
 	*rstreg = *T7;
-	if(!this->isOperandNumber(op1))
+	//首先考虑beq和bne，因为它们是需要两个操作数的
+	if(code->op == EQUOP || code->op == NEQUOP)
 	{
-		//如果op1是一个临时变量或者标识符
-		//获得对应的寄存器
-		this->getUseReg(op1, reg1);
-		if(this->isOperandNumber(op2))
+		if(this->isOperandNumber(op1))
 		{
-			//如果第二个操作数是一个数字，那么就把他俩减了以后的结果作为结果操作数
-			this->generateOrder(SUBI, rstreg, reg1, op2);
+			if(this->isOperandNumber(op2))
+			{
+				//两个都是数字，减的结果放在reg1，zero设置为reg2
+				int value1 = atoi(op1->c_str());
+				int value2 = atoi(op2->c_str());
+				value2 = value1 - value2;
+				std::string constvalue = std::string();
+				this->int2string(&constvalue, value2);
+				this->getUseReg(&constvalue, reg1);
+				*reg2 = *R0;
+			}
+			else{
+				//第一个是数字，第二个不是数字
+				this->getUseReg(op1, reg1);
+				this->getUseReg(op2, reg2);
+			}
 		}
 		else{
-			//第二个操作数是一个临时变量或者标识符
+			this->getUseReg(op1, reg1);
 			this->getUseReg(op2, reg2);
-			//两个操作数都不是数字，那么就把他俩减了后的结果放在t9，作为最后的判断
-			this->generateOrder(SUB, rstreg, reg1, reg2);
 		}
+		//其实除了两个数字的情况以外，剩下的都是一样的
+		this->generateOrder(code->op == EQUOP ? BEQ : BNE, reg1, reg2, code->rstname);
 	}
 	else{
-		//第一个操作数是一个数字
-		if(this->isOperandNumber(op2))
+		if(!this->isOperandNumber(op1))
 		{
-			//两个操作数都是数字，把他俩减了之后的结果给t9
-			int value1 = atoi(op1->c_str());
-			int value2 = atoi(op2->c_str());
-			value2 = value1 - value2;
-			this->generateOrder(LI, rstreg, value2);
+			//如果op1是一个临时变量或者标识符
+			//获得对应的寄存器
+			this->getUseReg(op1, reg1);
+			if(this->isOperandNumber(op2))
+			{
+				//如果第二个操作数是一个数字，那么就把他俩减了以后的结果作为结果操作数
+				this->generateOrder(SUBI, rstreg, reg1, op2);
+			}
+			else{
+				//第二个操作数是一个临时变量或者标识符
+				this->getUseReg(op2, reg2);
+				//两个操作数都不是数字，那么就把他俩减了后的结果放在t9，作为最后的判断
+				this->generateOrder(SUB, rstreg, reg1, reg2);
+			}
 		}
 		else{
-			//第二个操作数不是数字
-			this->getUseReg(op2, reg2);
-			//需要先把操作数1数字li到t9，
-			this->generateOrder(LI, T9, op1);
-			this->generateOrder(SUB, rstreg, T9, reg2);
-			//释放空间
+			//第一个操作数是一个数字
+			if(this->isOperandNumber(op2))
+			{
+				//两个操作数都是数字
+				int value1 = atoi(op1->c_str());
+				int value2 = atoi(op2->c_str());
+				value2 = value1 - value2;
+				std::string constvalue = std::string();
+				this->int2string(&constvalue, value2);
+				this->getUseReg(&constvalue, rstreg);
+			}
+			else{
+				//第二个操作数不是数字
+				this->getUseReg(op2, reg2);
+				this->getUseReg(op1, reg1);
+				this->generateOrder(SUB, rstreg, reg1, reg2);
+				//释放空间
+			}
 		}
-	}
-	switch(code->op)
-	{
-	case EQUOP:
-		this->generateOrder(BEQ, rstreg, R0, code->rstname);
-		break;
-	case NEQUOP:
-		this->generateOrder(BNE, rstreg, R0, code->rstname);
-		break;
-	case MOREEQUOP:
-		this->generateOrder(BGEZ, rstreg, code->rstname);
-		break;
-	case MOREOP:
-		this->generateOrder(BGTZ, rstreg, code->rstname);
-		break;
-	case LESSEQUOP:
-		this->generateOrder(BLEZ, rstreg, code->rstname);
-		break;
-	case LESSOP:
-		this->generateOrder(BLTZ, rstreg, code->rstname);
-		break;
+		switch(code->op)
+		{
+		case MOREEQUOP:
+			this->generateOrder(BGEZ, rstreg, code->rstname);
+			break;
+		case MOREOP:
+			this->generateOrder(BGTZ, rstreg, code->rstname);
+			break;
+		case LESSEQUOP:
+			this->generateOrder(BLEZ, rstreg, code->rstname);
+			break;
+		case LESSOP:
+			this->generateOrder(BLTZ, rstreg, code->rstname);
+			break;
+		}
 	}
 	//一开始忘了加nop..
 	this->generateOrder(NOP);
@@ -637,7 +663,6 @@ void Compiler::handleRarray(midcode *code)
 	bool global = false;
 	symbol *sym = 0;
 	this->findSym(code->op1name, &sym, &global);
-
 	this->getUseReg(code->op2name, reg2);
 	this->generateOrder(ADDI, T9, reg2, sym->address);
 	this->generateOrder(SLL, T9, T9, 2);

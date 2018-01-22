@@ -1,0 +1,37 @@
+输入和输出
+输入：1
+输出：
+The character a in str_test is encountered 0
+ !#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~
+please input the mode before test(1~3)
+Easy
+The sum of input numbers is 55
+The cov of input number is 8
+quick sort success!
+c is 5
+variable and const defination passed!
+
+输入：2
+输出：
+The character a in str_test is encountered 0
+ !#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~
+please input the mode before test(1~3)
+Middle
+The sum of input numbers is 1294
+The cov of input number is 2305
+quick sort success!
+c is 5
+variable and const defination passed!
+
+输入：3
+The character a in str_test is encountered 0
+ !#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~
+please input the mode before test(1~3)
+Hard
+The sum of input numbers is 20317
+The cov of input number is 398502
+quick sort success!
+c is 5
+variable and const defination passed!
+
+**其中，输入在输出“please input the mode before test(1~3)”在之后**

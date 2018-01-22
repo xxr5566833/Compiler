@@ -1,0 +1,273 @@
+const int maxsize = 100;
+const int MAXNUM = 100000;
+const int MINNUM = -100000;
+int array[100];
+int O_left, O_right,O_sum;
+void find_max_crossing_subarray(int left_index, int right_index)
+{
+    int left_sum,right_sum,sum,mid,i;
+    mid = (left_index + right_index) / 2;
+    left_sum = MINNUM;
+    sum = 0;
+    i = mid;
+    sum = sum + array[i];
+        if (sum > left_sum)
+        {
+            left_sum = sum;
+            O_left = i;
+        }else{}
+        i = i - 1;
+    while (i >= left_index) {
+        sum = sum + array[i];
+        if (sum > left_sum)
+        {
+            left_sum = sum;
+            O_left = i;
+        }else{}
+        i = i - 1;
+    } 
+    right_sum = MINNUM;
+    sum = 0;
+    i = mid+1;
+    sum = sum + array[i];
+        if (sum > right_sum)
+        {
+            right_sum = sum;
+            O_right = i;
+        }else{}
+        i = i + 1;
+    while (i <=right_index) {
+        sum = sum + array[i];
+        if (sum > right_sum)
+        {
+            right_sum = sum;
+            O_right = i;
+        }else{}
+        i = i + 1;
+    } 
+    O_sum = left_sum + right_sum;
+    return;
+}
+int find_maximum_subarray(int left_index, int right_index)
+{
+    int mid,sum;
+    int ll, lr, rl, rr, crossingl, crossingr,lsum, rsum, crossingsum;
+    char tag;
+    if (left_index == right_index)
+    {
+        O_left = left_index;
+        O_right = right_index;
+        return (array[left_index]);
+    }else{}
+    mid = (left_index + right_index) / 2;
+    lsum=find_maximum_subarray(left_index, mid);
+    ll = O_left;
+    lr = O_right;
+    rsum=find_maximum_subarray(mid + 1, right_index);
+    rl = O_left;
+    rr = O_right;
+    find_max_crossing_subarray(left_index, right_index);
+    crossingsum = O_sum;
+    crossingl = O_left;
+    crossingr = O_right;
+
+    tag = 'l';
+    sum = lsum;
+    if (rsum > sum)
+    {
+        sum = rsum;
+        tag = 'r';
+    }else{}
+    if (crossingsum > sum)
+    {
+        sum = crossingsum;
+        tag = 'm';
+    }else{}
+    switch (tag)
+    {
+    case 'l': {
+        O_left = ll;
+        O_right = lr;
+        return (sum);
+    }
+    case'm': {
+        O_left = crossingl;
+        O_right = crossingr;
+        return (sum);
+    }
+    case'r': {
+        O_left = rl;
+        O_right = rr;
+        return (sum);
+    }
+    }
+}
+void test1
+{
+    int arraysize,i,subarraysum_max;
+    i=0;
+    array[i]=13;
+    i=i+1;
+    array[i]=-3;
+    i=i+1;
+    array[i]=-25;
+    i=i+1;
+    array[i]=20;
+    i=i+1;
+    array[i]=-3;
+    i=i+1;
+    array[i]=-16;
+    i=i+1;
+    array[i]=-23;
+    i=i+1;
+    array[i]=18;
+    i=i+1;
+    array[i]=20;
+    i=i+1;
+    array[i]=-7;
+    i=i+1;
+    array[i]=12;
+    i=i+1;
+    array[i]=-5;
+    i=i+1;
+    array[i]=-22;
+    i=i+1;
+    array[i]=15;
+    i=i+1;
+    array[i]=-4;
+    i=i+1;
+    array[i]=7;
+    i=i+1;
+    subarraysum_max=find_maximum_subarray(0, i - 1);
+    printf("Test 1:");
+    printf("left_index=", O_left);
+    printf("right_index=", O_right);
+    printf("Subarray sum=", subarraysum_max);
+    if(subarraysum_max==43)
+    {
+        if(O_left==7)
+        {
+            if(10==O_right)
+            {
+                printf("Test 1 passed!");
+                return ;
+            }else{}
+        }else{}    
+    }else{}
+    printf("Test 1 failed!");
+    return ;
+}
+void test2
+{
+    int arraysize,i,subarraysum_max;
+    i=0;
+    array[i]=3;
+    i=i+1;
+    array[i]=5;
+    i=i+1;
+    array[i]=-2;
+    i=i+1;
+    array[i]=-6;
+    i=i+1;
+    array[i]=-5;
+    i=i+1;
+    array[i]=8;
+    i=i+1;
+    array[i]=12;
+    i=i+1;
+    array[i]=-5;
+    i=i+1;
+    array[i]=-6;
+    i=i+1;
+    array[i]=24;
+    i=i+1;
+    array[i]=8;
+    i=i+1;
+    array[i]=6;
+    i=i+1;
+    array[i]=-8;
+    i=i+1;
+    array[i]=-7;
+    i=i+1;
+    subarraysum_max=find_maximum_subarray(0, i - 1);
+    printf("Test 2:");
+    printf("left_index=", O_left);
+    printf("right_index=", O_right);
+    printf("Subarray sum=", subarraysum_max);
+    if(subarraysum_max==47)
+    {
+        if(O_left==5)
+        {
+            if(11==O_right)
+            {
+                printf("Test 2 passed!");
+                return;
+            }else{}
+        }    else{}
+    }else{}
+    printf("Test 2 failed!");
+    return;
+}
+void test3
+{
+    int arraysize,i,subarraysum_max;
+    i=0;
+    array[i]=1;
+    i=i+1;
+    array[i]=-1;
+    i=i+1;
+    array[i]=2;
+    i=i+1;
+    array[i]=-2;
+    i=i+1;
+    array[i]=3;
+    i=i+1;
+    array[i]=-3;
+    i=i+1;
+    array[i]=4;
+    i=i+1;
+    array[i]=-4;
+    i=i+1;
+    array[i]=5;
+    i=i+1;
+    array[i]=-5;
+    i=i+1;
+    subarraysum_max=find_maximum_subarray(0, i - 1);
+    printf("Test 3:");
+    printf("left_index=", O_left);
+    printf("right_index=", O_right);
+    printf("Subarray sum=", subarraysum_max);
+    if(subarraysum_max==5)
+    {
+        if(O_left==8)
+        {
+            if(8==O_right)
+            {
+                printf("Test 3 passed!");
+                return;
+            }else{}
+        } else{}   
+    }else{}
+    printf("Test 3 failed!");
+    return;
+}
+
+void main()
+{
+    char Tag;
+    printf("Please input your choice number:(<0>quit <1>Test 1 <2>Test 2 <3>Test 3)");
+    scanf(Tag);
+    switch(Tag)
+    {
+    case '0':
+        ;
+    case '1':
+        test1;
+    case '2':
+        test2;
+    case '3':
+        test3;
+    }
+    printf("Quit Test...");
+    return;
+}

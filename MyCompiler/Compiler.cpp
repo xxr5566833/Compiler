@@ -10,28 +10,28 @@ Compiler::Compiler(char *path)
 		exit(0);
 	}
 	std::stringstream ss = std::stringstream();
-	ss << "15061129_解小锐_基本块划分情况.txt";
+	ss << "_基本块划分情况.txt";
 	this->blockFile = std::fstream(ss.str(), std::ios::out);
 	ss.str("");
-	ss << "15061129_解小锐_优化前中间代码.txt";
+	ss << "_优化前中间代码.txt";
 	this->midFileBefore = std::fstream(ss.str(), std::ios::out);
 	ss.str("");
-	ss << "15061129_解小锐_优化后中间代码.txt";
+	ss << "_优化后中间代码.txt";
 	this->midFileAfter = std::fstream(ss.str(), std::ios::out);
 	ss.str("");
-	ss << "15061129_解小锐_优化前目标代码.asm";
+	ss << "_优化前目标代码.asm";
 	this->objectFileBefore = std::fstream(ss.str(), std::ios::out);
 	ss.str("");
-	ss << "15061129_解小锐_优化后目标代码.asm";
+	ss << "_优化后目标代码.asm";
 	this->objectFileAfter = std::fstream(ss.str(), std::ios::out);
 	ss.str("");
-	ss << "15061129_解小锐_符号表信息.txt";
+	ss << "_符号表信息.txt";
 	this->symtabFile = std::fstream(ss.str(), std::ios::out);
 	ss.str("");
-	ss << "15061129_解小锐_数据流分析信息.txt";
+	ss << "_数据流分析信息.txt";
 	this->dataAnalysisFile = std::fstream(ss.str(), std::ios::out);
 	ss.str("");
-	ss << "15061129_解小锐_dag图以及小优化信息.txt";
+	ss << "_dag图以及小优化调试信息.txt";
 	this->dagFile = std::fstream(ss.str(), std::ios::out);
 
 	this->sym = std::string();
@@ -75,7 +75,6 @@ void Compiler:: begin()
 	std::cout << "开始优化" << std::endl;
 	this->initOptimize();
 	this->smallOptimize();
-	this->kongOptimize();
 	this->divideToBlock();
 	this->initBlockConnect();
 	this->writeBlockToFile();

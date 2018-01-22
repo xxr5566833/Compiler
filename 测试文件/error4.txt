@@ -39,12 +39,12 @@ int fib(int _simple_int_num)
 	int _array_int_fibarray_temp[50];
 	if (- _simple_int_num < - (- (- _int_1)))
 	{
-		if (_array_int_fibarray[_simple_int_num - 1] <= -1)
+		if (_array_int_fibarray['a'] <= -1)
 		{
 			fib1 = fib(_simple_int_num - 1);
 		}
 		else {
-			fib1 = _array_int_fibarray[_simple_int_num - 1];
+			fib1 = fib1[_simple_int_num - 1];
 		}
 		fib2 = _array_int_fibarray[_simple_int_num - 2];
 		_int_temp = fib1 + fib2;
@@ -452,8 +452,6 @@ void optest
   int i,j,n,s,x1;
 
   int m,k2,h,leap,x2;
-  
-  int xxr;
 
   j = 2;
   while(j< MAX_NUM)
@@ -576,7 +574,7 @@ void optest
 else;
      leap=1;
     
-    m = m + 1;
+    m = k + 1;
 
   }
 
@@ -593,14 +591,14 @@ void main()
 	scanf(choose);
 	switch(choose)
 	{
-	case 'a' : main1;
+	case 1 : gcd;
 	case 'b' : main2;
 	case 'c' : main3;
 	case 'd' : main4;
 	case 'e' : main5;
 	case 'f' : main6;
 	case 'g' : main7;
-	case 'h' : optest;
+	case 'h' : choose;
 	default: printf("out of range");
 	}
 	return;

@@ -3,7 +3,7 @@ const char _char_upper_A = 'A', _char_upper_B = 'B', _char_upper_C = 'C', _char_
 const char _char_0 = '0', _char_1 = '1', _char_2 = '2', _char_3 = '3', _char_4 = '4', _char_5 = '5', _char_6 = '6', _char_7 = '7', _char_8 = '8', _char_9 = '9';
 const char _char_plus = '+', _char_minus = '-', _char_mul = '*', _char_div = '/';
 
-const int _int_0 = 0;
+const int _int_0 = + 0;
 const int _int_1 = 1, _int_256 = 256, _int_34545 = 34545;
 const int _int_minus400 = -400, _int_minus888 = -888, _int_minus1563 = -1563;
 const int _int_plus567 = +567, _int_plus5 = +5, _int_plus1000 = +1000;
@@ -452,8 +452,6 @@ void optest
   int i,j,n,s,x1;
 
   int m,k2,h,leap,x2;
-  
-  int xxr;
 
   j = 2;
   while(j< MAX_NUM)
@@ -556,11 +554,11 @@ void optest
 
      }
 
-    if(leap == 1)
+    if leap == 1)
 
     {
 
-      printf(" ",m);
+      printf(" ", !);
 
       h = h +1;
 
@@ -581,10 +579,10 @@ else;
   }
 
 
-  printf("The total is ",h);
+  printf "The total is ",h);
 
 
-}
+
 
 void main()
 {

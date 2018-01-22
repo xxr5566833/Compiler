@@ -1,0 +1,40 @@
+期望输出
+#TEST0
+输出：INPUT YOUR OPCODE,0 : function1_x , 1: function2
+输入：0
+输出：input a num
+输入：4
+输出：return code is 16
+
+#TEST1
+输出：INPUT YOUR OPCODE,0 : function1_x , 1: function2
+输入：0
+输出：input a num
+输入：15
+输出：return code is 15
+
+
+#TEST2
+输出：INPUT YOUR OPCODE,0 : function1_x , 1: function2
+输入：1
+输出：input a char 
+输入：a 
+输出： input a num (num < 11)
+输入：2
+输出：
+H    
+E
+a
+L
+O
+W
+W
+O
+R
+L
+D
+
+#TEST3
+输出：INPUT YOUR OPCODE,0 : function1_x , 1: function2
+输入：13
+输出：error op! 13
