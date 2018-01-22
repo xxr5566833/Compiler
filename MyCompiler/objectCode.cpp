@@ -1,4 +1,9 @@
 #include "Compiler.h"
+
+////////////////////////////////////////////////
+//目标代码生成相关							  //
+//											  //
+////////////////////////////////////////////////
 //mips保留字
 std::string *SW = new std::string("sw");
 
@@ -107,7 +112,7 @@ void Compiler::initAscii()
 		this->generateOrder(&(ss.str()));
 	}
 }
-
+//添加指令
 void Compiler::pushOrder(std::string *order)
 {
 	//std::cout << *order;
@@ -183,7 +188,7 @@ void Compiler::genMipsLabel(std::string *label)
 	this->pushOrder(newlab);
 	delete newlab;
 }
-
+//init 函数名 四元式转化为目标代码
 void Compiler::funcBegin(std::string *name)
 {
 	//进入时 sp已经存好了实参，所以sp的地址已经改变，为了方便处理，这里把sp的指针变回放入形参之前的位置
@@ -222,7 +227,7 @@ void Compiler::funcBegin(std::string *name)
 	this->generateOrder(ADDI, SP, SP , - currentaddress * 4);
 
 }
-
+//ret 函数名 四元式转化为目标代码
 void Compiler::handleRet(std::string *name)
 {
 	//函数结束运行时需要做
@@ -503,7 +508,7 @@ void Compiler::handleGoto(std::string *label)
 	this->generateOrder(J, newlab);
 	this->generateOrder(NOP);
 }
-
+//push转化为目标代码
 void Compiler::handleRealPara(std::string *para)
 {
 	//para也是从表达式得到的值
@@ -514,7 +519,7 @@ void Compiler::handleRealPara(std::string *para)
 	this->generateOrder(ADDI, SP, SP, -4);
 	delete rstreg;
 }
-
+//call 转化为目标代码
 void Compiler::handleCall(std::string *name)
 {
 	std::string *newlab = new std::string();

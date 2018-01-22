@@ -1,5 +1,8 @@
 #include "Compiler.h"
-
+////////////////////////////////////////////////
+//中间代码生成相关							  //
+//											  //
+////////////////////////////////////////////////
 
 //临时变量首个标识符
 
@@ -82,7 +85,7 @@ void Compiler::int2string(std::string *s, int value)
 	ss << value;
 	*s = ss.str();
 }
-
+//增加四元式
 void Compiler:: pushMidCode(midop op,std::string *operand1, std::string *operand2, std::string *rst)
 {
 	//这里统一重新申请空间
@@ -100,7 +103,7 @@ void Compiler:: pushMidCode(midop op,std::string *operand1, std::string *operand
 
 }
 
-
+//输出所有四元式到指定文件
 void Compiler:: writeMidCodetoFile(std::fstream &tofile)
 {
 	std::cout << "一共有" << this->midindex << "条四元式" << std::endl; 
@@ -111,7 +114,7 @@ void Compiler:: writeMidCodetoFile(std::fstream &tofile)
 		this->writeMidCode(code, tofile);
 	}
 }
-
+//输出四元式到指定文件
 void Compiler:: writeMidCode(midcode *code, std::fstream &tofile)
 {
 	std::stringstream ss = std::stringstream();
@@ -190,7 +193,7 @@ void Compiler:: writeMidCode(midcode *code, std::fstream &tofile)
 		
 
 }
-
+//输出四元式到控制台
 void Compiler:: writeMidCode(midcode *code)
 {
 	std::stringstream ss = std::stringstream();
@@ -278,7 +281,7 @@ void Compiler::initMidCode()
 	this->stringNum = 0;
 
 }
-
+//生成临时变量
 void Compiler:: genTemp(std::string *temp)
 {
 	std::stringstream ss = std::stringstream();
@@ -288,7 +291,7 @@ void Compiler:: genTemp(std::string *temp)
 	//这里顺便把这个临时变量给push到相应的符号表里
 	this->push(temp, INTRET, SIMPLESYM, -1, this->lineCount);
 }
-
+//生成label
 void Compiler:: genLabel(std::string *lab)
 {
 	std::stringstream ss = std::stringstream();
@@ -296,7 +299,7 @@ void Compiler:: genLabel(std::string *lab)
 	ss << this->label++;
 	*lab = ss.str();
 }
-
+//记录string 
 void Compiler:: pushString(std::string *str, int *strindex)
 {
 	//这里增加一条，判断是否有重复的string，如果有，那么就不用push了，直接返回下标即可
@@ -313,14 +316,6 @@ void Compiler:: pushString(std::string *str, int *strindex)
 	//遍历了一遍没有相同的，那么push进数组，然后设置strindex
 	*strindex = this->stringNum;
 	this->stringTab[this->stringNum ++] = str;
-}
-
-void Compiler ::genMessage(std::string *str, int num)
-{
-	std::stringstream ss = std::stringstream();
-	ss << messageid;
-	ss << num;
-	*str = ss.str();
 }
 //注意rs的长度，如果长度小于0，那么直接返回false
 bool Compiler::isOperandNumber(std::string *rs)

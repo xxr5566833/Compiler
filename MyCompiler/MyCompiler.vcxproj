@@ -91,7 +91,6 @@
   <ItemGroup>
     <ClInclude Include="Compiler.h" />
     <ClInclude Include="errorHandler.h" />
-    <ClInclude Include="grammar.h" />
     <ClInclude Include="midcode.h" />
     <ClInclude Include="objectCode.h" />
     <ClInclude Include="optimization.h" />

@@ -1,7 +1,10 @@
 #include "Compiler.h"
-#include "grammar.h"
 
-//一些限制
+////////////////////////////////////////////////
+//语法分析相关								  //
+//											  //
+////////////////////////////////////////////////
+
 const int kMaxCaseNum = 11;
 
 const tokenType INT_BEGIN[] = {PLUS, MINUS, ZERO, UNSIGNEDINT};

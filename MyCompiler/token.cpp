@@ -1,7 +1,4 @@
 #include "Compiler.h"
-#include "token.h"
-#include "errorHandler.h"
-#include "warningHandler.h"
 //±£Áô×Ö£º
 //const
 const char *CONSTSY = "const";

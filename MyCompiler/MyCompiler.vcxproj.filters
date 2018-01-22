@@ -74,9 +74,6 @@
     <ClInclude Include="warningHandler.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="grammar.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="symbolTab.h">
       <Filter>头文件</Filter>
     </ClInclude>

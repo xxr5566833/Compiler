@@ -1,6 +1,11 @@
 #include "stdafx.h"
 #include "Compiler.h"
 
+////////////////////////////////////////////////
+//Compiler类的构造方法和编译器的启动方法	  //
+//											  //
+////////////////////////////////////////////////
+
 Compiler::Compiler(char *path)
 {
 	this->file = std::fstream(path, std::ios::in);
@@ -46,16 +51,16 @@ Compiler::~Compiler()
 	this->sym.clear();
 	
 }
-
+//编译的运行函数
 void Compiler:: begin()
 {
 	//符号表初始化
 	this->initSymTab();
+	//建立保留字表，便于得到当前单词是不是一个保留字
+	this->setup();
 	//语法分析时生成中间代码初始化
 	this->initMidCode();
-	this->setup();
-	this->initWordArray();
-	int i = 0;
+	//进行语法制导翻译
 	this->program();
 	//注意这里如果有错误，那么直接输出错误并结束
 	if(this->errorList.size() > 0)
@@ -74,16 +79,24 @@ void Compiler:: begin()
 	//然后开始优化，并生成优化后的中间代码和目标代码
 	std::cout << "开始优化" << std::endl;
 	this->initOptimize();
+	//首先做label和goto的优化
 	this->smallOptimize();
+	//基本块划分
 	this->divideToBlock();
+	//流图建立
 	this->initBlockConnect();
+	//流图信息写到文件
 	this->writeBlockToFile();
+	//活跃变量分析
 	this->dataFlowAnalysis();
+	//dag图优化
 	this->DAG();
+	//符号表信息写到文件中
 	this->writeSymtoFile();
 	std::cout << "优化后" << std::endl;
 	this->writeMidCodetoFile(this->midFileAfter);
 	this->objectInit();
+	//生成目标代码
 	this->generate();
 	this->writeMipsOrderToFile(this->objectFileAfter);
 }
