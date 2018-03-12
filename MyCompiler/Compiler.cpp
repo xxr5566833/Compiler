@@ -101,7 +101,6 @@ void Compiler:: begin()
 	this->writeMipsOrderToFile(this->objectFileAfter);
 }
 
-//一些所有模块都可能用到的方法加在这里吧
 
 void Compiler::str2Lower(std::string *oldstr, std::string *newstr)
 {
